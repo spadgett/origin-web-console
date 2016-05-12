@@ -30,6 +30,9 @@
     <div flex></div>
   </div>
   <div column grow="4" class="stages-block">
+    <div column grow="1" ng-if="!jenkinsStatus.stages.length" class="stage">
+      <div grow="1" class="stage-name">Build has no Jenkins stages</div>
+    </div>
     <div row class="pipeline-label" ng-class="build.status.phase">
       {{build.status.phase}}
     </div>

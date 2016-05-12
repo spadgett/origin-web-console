@@ -4311,6 +4311,9 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div flex></div>\n" +
     "</div>\n" +
     "<div column grow=\"4\" class=\"stages-block\">\n" +
+    "<div column grow=\"1\" ng-if=\"!jenkinsStatus.stages.length\" class=\"stage\">\n" +
+    "<div grow=\"1\" class=\"stage-name\">Build has no Jenkins stages</div>\n" +
+    "</div>\n" +
     "<div row class=\"pipeline-label\" ng-class=\"build.status.phase\">\n" +
     "{{build.status.phase}}\n" +
     "</div>\n" +
