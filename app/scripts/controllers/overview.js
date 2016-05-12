@@ -484,14 +484,20 @@ angular.module('openshiftConsole')
           Logger.log("deploymentconfigs (subscribe)", $scope.deploymentConfigs);
         }));
 
+        var isPipelineBuild = $filter('isJenkinsPipelineStrategy');
         function updateRecentBuildsByOutputImage() {
           $scope.recentBuildsByOutputImage = {};
+          $scope.recentPipelineBuilds = [];
           angular.forEach($scope.builds, function(build) {
             // pre-filter the list to save us some time on each digest loop later
             if ($filter('isRecentBuild')(build) || $filter('isOscActiveObject')(build)) {
               var buildOutputImage = imageObjectRefFilter(build.spec.output.to, build.metadata.namespace);
               $scope.recentBuildsByOutputImage[buildOutputImage] = $scope.recentBuildsByOutputImage[buildOutputImage] || [];
               $scope.recentBuildsByOutputImage[buildOutputImage].push(build);
+
+              if (isPipelineBuild(build)) {
+                $scope.recentPipelineBuilds.push(build);
+              }
             }
           });
         }
@@ -519,7 +525,8 @@ angular.module('openshiftConsole')
             hashSizeFilter($scope.unfilteredServices) === 0 &&
             hashSizeFilter($scope.pods) === 0 &&
             hashSizeFilter($scope.deployments) === 0 &&
-            hashSizeFilter($scope.deploymentConfigs) === 0;
+            hashSizeFilter($scope.deploymentConfigs) === 0 &&
+            hashSizeFilter($scope.builds) === 0;
 
           $scope.renderOptions.showToolbar = !projectEmpty;
           $scope.renderOptions.showSidebarRight = !projectEmpty;

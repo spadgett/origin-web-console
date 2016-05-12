@@ -1486,7 +1486,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div class=\"table-filter-wrapper\">\n" +
     "<project-filter></project-filter>\n" +
     "</div>\n" +
-    "<table class=\"table table-bordered table-hover table-mobile\">\n" +
+    "<table ng-if=\"!(buildConfig | isJenkinsPipelineStrategy)\" class=\"table table-bordered table-hover table-mobile\">\n" +
     "<thead>\n" +
     "<tr>\n" +
     "<th>Build</th>\n" +
@@ -1537,6 +1537,14 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</tr>\n" +
     "</tbody>\n" +
     "</table>\n" +
+    "<div ng-if=\"buildConfig | isJenkinsPipelineStrategy\">\n" +
+    "<build-pipeline build=\"build\" ng-repeat=\"build in orderedBuilds\"></build-pipeline>\n" +
+    "<table ng-if=\"(builds | hashSize) === 0\" class=\"table table-bordered table-hover table-mobile\">\n" +
+    "<tbody ng-if=\"(builds | hashSize) == 0\">\n" +
+    "<tr><td><em>{{emptyMessage}}</em></td></tr>\n" +
+    "</tbody>\n" +
+    "</table>\n" +
+    "</div>\n" +
     "</div>\n" +
     "</uib-tab>\n" +
     "<uib-tab ng-if=\"buildConfig\">\n" +
@@ -1796,6 +1804,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<uib-tabset>\n" +
     "<uib-tab active=\"selectedTab.details\">\n" +
     "<uib-tab-heading>Details</uib-tab-heading>\n" +
+    "<build-pipeline build=\"build\" ng-if=\"build | isJenkinsPipelineStrategy\"></build-pipeline>\n" +
     "<ng-include src=\" 'views/browse/_build-details.html' \"></ng-include>\n" +
     "</uib-tab>\n" +
     "<uib-tab heading=\"Environment\" active=\"selectedTab.environment\" ng-if=\"!(build | isJenkinsPipelineStrategy)\">\n" +
@@ -4270,6 +4279,54 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
   );
 
 
+  $templateCache.put('views/directives/build-pipeline.html',
+    "<div row mobile=\"column\" class=\"build-pipeline\">\n" +
+    "<div column grow=\"1\" class=\"build-summary\">\n" +
+    "\n" +
+    "<div flex></div>\n" +
+    "<div>\n" +
+    "<a ng-if=\"showConfigName\" ng-href=\"{{(build | buildConfigForBuild) | navigateResourceURL : build.metadata.name\">{{build | buildConfigForBuild}}</a>\n" +
+    "<a ng-href=\"{{build | navigateResourceURL}}\"><span ng-if=\"!showConfigName\">Build </span>#{{build | annotation : 'buildNumber'}}</a>\n" +
+    "</div>\n" +
+    "<div class=\"status-icon\" ng-class=\"build.status.phase\">\n" +
+    "<span ng-switch=\"build.status.phase\" class=\"hide-ng-leave\">\n" +
+    "<span ng-switch-when=\"Complete\" class=\"inverse fa-stack\" aria-hidden=\"true\">\n" +
+    "<i class=\"fa fa-circle fa-stack-2x\"></i>\n" +
+    "<i class=\"fa fa-check fa-stack-1x fa-inverse\"></i>\n" +
+    "</span>\n" +
+    "<span ng-switch-when=\"Failed\" class=\"inverse fa-stack\" aria-hidden=\"true\">\n" +
+    "<i class=\"fa fa-circle fa-stack-2x\"></i>\n" +
+    "<i class=\"fa fa-times fa-stack-1x fa-inverse\"></i>\n" +
+    "</span>\n" +
+    "<span ng-switch-default>\n" +
+    "<status-icon status=\"build.status.phase\"></status-icon>\n" +
+    "</span>\n" +
+    "</span>\n" +
+    "</div>\n" +
+    "<div class=\"small text-muted\">\n" +
+    "Started <relative-timestamp timestamp=\"build.metadata.creationTimestamp\"></relative-timestamp>\n" +
+    "</div>\n" +
+    "<div ng-if=\"build | buildLogURL\" class=\"small\"><a ng-href=\"{{build | buildLogURL}}\">View Log</a></div>\n" +
+    "\n" +
+    "<div flex></div>\n" +
+    "</div>\n" +
+    "<div column grow=\"4\" class=\"stages-block\">\n" +
+    "<div row class=\"pipeline-label\" ng-class=\"build.status.phase\">\n" +
+    "{{build.status.phase}}\n" +
+    "</div>\n" +
+    "<div row mobile=\"column\" class=\"stages\">\n" +
+    "<div column grow=\"1\" ng-repeat=\"stage in jenkinsStatus.stages\" class=\"stage\">\n" +
+    "<div class=\"stage-name\">{{stage.name}}</div>\n" +
+    "<pipeline-status ng-if=\"stage.status\" status=\"stage.status\"></pipeline-status>\n" +
+    "<div ng-if=\"stage.durationMillis\" class=\"stage-duration\">{{stage.durationMillis | humanizeDurationValue}}</div>\n" +
+    "<div ng-if=\"!stage.durationMillis\" class=\"stage-duration\">not started</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>"
+  );
+
+
   $templateCache.put('views/directives/delete-button.html',
     "<div class=\"actions\">\n" +
     "\n" +
@@ -5140,6 +5197,44 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<li ng-repeat=\"tab in tabs\" ng-class=\"{ active: tab.isSelected() }\">\n" +
     "<a ng-href=\"{{tab.href()}}\" ng-click=\"tab.click($event);\">{{tab.title()}}</a>\n" +
     "</li>"
+  );
+
+
+  $templateCache.put('views/directives/pipeline-status.html',
+    "<span class=\"pipeline-status\" ng-class=\"status\">\n" +
+    "<span ng-switch=\"status\" class=\"hide-ng-leave\">\n" +
+    "\n" +
+    "<span ng-switch-when=\"ABORTED\" title=\"Aborted\">\n" +
+    "<i class=\"fa fa-ban text-muted\" aria-hidden=\"true\"></i>\n" +
+    "<span class=\"sr-only\">Aborted</span>\n" +
+    "</span>\n" +
+    "<span ng-switch-when=\"FAILED\" title=\"Failed\">\n" +
+    "<span class=\"fa-stack\">\n" +
+    "<i class=\"fa fa-circle fa-stack-2x\"></i>\n" +
+    "<i class=\"fa fa-times fa-stack-1x fa-inverse\"></i>\n" +
+    "</span>\n" +
+    "<span class=\"sr-only\">Failed</span>\n" +
+    "</span>\n" +
+    "<span ng-switch-when=\"IN_PROGRESS\" title=\"In Progress\">\n" +
+    "<i class=\"fa fa-refresh fa-spin\" aria-hidden=\"true\"></i>\n" +
+    "<span class=\"sr-only\">In Progress</span>\n" +
+    "</span>\n" +
+    "<span ng-switch-when=\"NOT_EXECUTED\" title=\"Not Executed\">\n" +
+    "\n" +
+    "</span>\n" +
+    "<span ng-switch-when=\"PAUSED_PENDING_INPUT\" title=\"Paused (Pending Input)\">\n" +
+    "<i class=\"fa fa-pause\" aria-hidden=\"true\"></i>\n" +
+    "<span class=\"sr-only\">Paused Pending Input</span>\n" +
+    "</span>\n" +
+    "<span ng-switch-when=\"SUCCESS\" title=\"Success\">\n" +
+    "<span class=\"fa-stack\" aria-hidden=\"true\">\n" +
+    "<i class=\"fa fa-circle fa-stack-2x\"></i>\n" +
+    "<i class=\"fa fa-check fa-stack-1x fa-inverse\"></i>\n" +
+    "</span>\n" +
+    "<span class=\"sr-only\">Success</span>\n" +
+    "</span>\n" +
+    "</span>\n" +
+    "</span>"
   );
 
 
@@ -6473,6 +6568,10 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "<div ng-if=\"overviewMode == 'tiles'\">\n" +
     "\n" +
+    "<section ng-if=\"recentPipelineBuilds | hashSize\" class=\"mar-bottom-lg overview-pipelines\">\n" +
+    "<build-pipeline ng-repeat=\"pipelineBuild in recentPipelineBuilds\" build=\"pipelineBuild\" show-config-name=\"true\">\n" +
+    "</build-pipeline>\n" +
+    "</section>\n" +
     "<section ng-repeat=\"(serviceId, service) in services\" class=\"components components-group\" ng-attr-id=\"service-{{serviceId}}\">\n" +
     "<div class=\"osc-object components-panel service\" ng-init=\"numPorts = service.spec.ports.length\" kind=\"Service\" resource=\"service\">\n" +
     "<div class=\"component-block\">\n" +

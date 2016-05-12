@@ -2590,15 +2590,15 @@ h.covers(i) && (a[f][e] = d, c[f][j] = c[f][j] || {}, c[f][j][e] = d, g = !0);
 });
 }
 function A() {
-b.recentBuildsByOutputImage = {}, angular.forEach(b.builds, function(a) {
+b.recentBuildsByOutputImage = {}, b.recentPipelineBuilds = [], angular.forEach(b.builds, function(a) {
 if (p("isRecentBuild")(a) || p("isOscActiveObject")(a)) {
 var c = h(a.spec.output.to, a.metadata.namespace);
-b.recentBuildsByOutputImage[c] = b.recentBuildsByOutputImage[c] || [], b.recentBuildsByOutputImage[c].push(a);
+b.recentBuildsByOutputImage[c] = b.recentBuildsByOutputImage[c] || [], b.recentBuildsByOutputImage[c].push(a), L(a) && b.recentPipelineBuilds.push(a);
 }
 });
 }
 function B() {
-var a = 0 === g(b.unfilteredServices) && 0 === g(b.pods) && 0 === g(b.deployments) && 0 === g(b.deploymentConfigs);
+var a = 0 === g(b.unfilteredServices) && 0 === g(b.pods) && 0 === g(b.deployments) && 0 === g(b.deploymentConfigs) && 0 === g(b.builds);
 b.renderOptions.showToolbar = !a, b.renderOptions.showSidebarRight = !a, b.renderOptions.showGetStarted = a;
 }
 function C() {
@@ -2611,7 +2611,7 @@ function D() {
 function a(a) {
 return a.kind + a.metadata.uid;
 }
-L = null;
+M = null;
 var c = [], d = {};
 angular.forEach(b.services, function(b) {
 d[a(b)] = b;
@@ -2660,7 +2660,7 @@ b.topologyItems = d, b.topologyRelations = c;
 });
 }
 function E() {
-L || (L = window.setTimeout(D, 100));
+M || (M = window.setTimeout(D, 100));
 }
 function F(a) {
 b.topologySelection = a;
@@ -2729,7 +2729,9 @@ a.causes = i(a);
 b.imageStreams = a.by("metadata.name"), m.buildDockerRefMapForImageStreams(b.imageStreams, b.imageStreamImageRefByDockerReference), m.fetchReferencedImageStreamImages(b.pods, b.imagesByDockerReference, b.imageStreamImageRefByDockerReference, e), E(), l.log("imagestreams (subscribe)", b.imageStreams);
 })), v.push(c.watch("deploymentconfigs", e, function(a) {
 b.deploymentConfigs = a.by("metadata.name"), x(), B(), E(), l.log("deploymentconfigs (subscribe)", b.deploymentConfigs);
-})), v.push(c.watch("builds", e, function(a) {
+}));
+var L = p("isJenkinsPipelineStrategy");
+v.push(c.watch("builds", e, function(a) {
 b.builds = a.by("metadata.name"), A(), u.push(q(A, 3e5)), E(), l.log("builds (subscribe)", b.builds);
 })), c.list("limitranges", e, function(a) {
 b.limitRanges = a.by("metadata.name");
@@ -2738,7 +2740,7 @@ b.$apply(function() {
 b.services = a.select(b.unfilteredServices), C(), D();
 });
 });
-var L = null;
+var M = null;
 b.$on("select", function(a, c) {
 b.$apply(function() {
 b.topologySelection = c, c ? n.setObject(c, c.kind) :n.clearObject();
@@ -2746,7 +2748,7 @@ b.topologySelection = c, c ? n.setObject(c, c.kind) :n.clearObject();
 }, !0), n.onResourceChanged(F), b.$watch("overviewMode", function(a) {
 "topology" === a && (n.source = null);
 }), b.$on("$destroy", function() {
-c.unwatchAll(v), window.clearTimeout(L), n.removeResourceChangedCallback(F), angular.forEach(u, function(a) {
+c.unwatchAll(v), window.clearTimeout(M), n.removeResourceChangedCallback(F), angular.forEach(u, function(a) {
 q.cancel(a);
 });
 });
@@ -7303,7 +7305,76 @@ b.input.args = null;
 };
 }
 };
-} ]), angular.module("openshiftConsole").filter("dateRelative", function() {
+} ]), angular.module("openshiftConsole").directive("buildPipeline", function() {
+return {
+restrict:"E",
+scope:{
+build:"=",
+showConfigName:"="
+},
+templateUrl:"views/directives/build-pipeline.html",
+link:function(a) {
+a.jenkinsStatus = {
+_links:{
+self:{
+href:"/jenkins/job/Test%20Workflow/16/wfapi/describe"
+},
+pendingInputActions:{
+href:"/jenkins/job/Test%20Workflow/16/wfapi/pendingInputActions"
+}
+},
+id:"2014-10-16_13-07-52",
+name:"#16",
+status:"PAUSED_PENDING_INPUT",
+startTimeMillis:1413461275770,
+endTimeMillis:1413461285999,
+durationMillis:10229,
+stages:[ {
+_links:{
+self:{
+href:"/jenkins/job/Test%20Workflow/16/execution/node/5/wfapi/describe"
+}
+},
+id:"5",
+name:"Build",
+status:"SUCCESS",
+startTimeMillis:1413461275770,
+durationMillis:5228
+}, {
+_links:{
+self:{
+href:"/jenkins/job/Test%20Workflow/16/execution/node/8/wfapi/describe"
+}
+},
+id:"8",
+name:"Test",
+status:"SUCCESS",
+startTimeMillis:1413461280998,
+durationMillis:4994
+}, {
+_links:{
+self:{
+href:"/jenkins/job/Test%20Workflow/16/execution/node/10/wfapi/describe"
+}
+},
+id:"10",
+name:"Deploy",
+status:"PAUSED_PENDING_INPUT",
+startTimeMillis:1413461285992,
+durationMillis:7
+} ]
+};
+}
+};
+}).directive("pipelineStatus", function() {
+return {
+restrict:"E",
+scope:{
+status:"="
+},
+templateUrl:"views/directives/pipeline-status.html"
+};
+}), angular.module("openshiftConsole").filter("dateRelative", function() {
 return function(a, b) {
 return a ? moment(a).fromNow(b) :a;
 };
@@ -7351,13 +7422,15 @@ displayName:[ "openshift.io/display-name" ],
 description:[ "openshift.io/description" ],
 buildNumber:[ "openshift.io/build.number" ],
 buildPod:[ "openshift.io/build.pod-name" ],
-jenkinsLogURL:[ "openshift.io/jenkins-log-url" ]
+jenkinsLogURL:[ "openshift.io/jenkins-log-url" ],
+jenkinsStatus:[ "openshift.io/jenkins-status-json" ]
 };
 return function(b) {
 return a[b] || null;
 };
 }).filter("labelName", function() {
 var a = {
+buildConfig:[ "openshift.io/build-config.name" ],
 deploymentConfig:[ "openshift.io/deployment-config.name" ]
 };
 return function(b) {
@@ -7429,7 +7502,12 @@ d.isAfter(c) && (c = d, b = a.items[0].created);
 return function(a, b) {
 return a && a.metadata && a.metadata.labels ? a.metadata.labels[b] :null;
 };
-}).filter("icon", [ "annotationFilter", function(a) {
+}).filter("buildConfigForBuild", [ "labelNameFilter", "labelFilter", function(a, b) {
+var c = a("buildConfig");
+return function(a) {
+return b(a, c);
+};
+} ]).filter("icon", [ "annotationFilter", function(a) {
 return function(b) {
 var c = a(b, "icon");
 return c ? c :"";
