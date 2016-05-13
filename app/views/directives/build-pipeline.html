@@ -4,7 +4,7 @@
     <div flex></div>
 
     <div>
-      <a ng-if="showConfigName" ng-href="{{(build | buildConfigForBuild) | navigateResourceURL : build.metadata.name">{{build | buildConfigForBuild}}</a>
+      <a ng-if="showConfigName" ng-href="{{(build | buildConfigForBuild) | navigateResourceURL : 'BuildConfig' : build.metadata.namespace}}">{{build | buildConfigForBuild}}</a>
       <a ng-href="{{build | navigateResourceURL}}"><span ng-if="!showConfigName">Build </span>#{{build | annotation : 'buildNumber'}}</a>
     </div>
     <div class="status-icon" ng-class="build.status.phase">
