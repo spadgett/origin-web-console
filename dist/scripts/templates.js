@@ -289,6 +289,58 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
   );
 
 
+  $templateCache.put('views/_overview-service.html',
+    "<div class=\"overview-service\">\n" +
+    "<div class=\"service-heading\">\n" +
+    "<div ng-if=\"route = routes[0]\">\n" +
+    "<small class=\"text-muted text-uppercase\">\n" +
+    "Service:\n" +
+    "<a ng-href=\"{{service | navigateResourceURL}}\" class=\"subtle-link\">{{service.metadata.name}}</a>\n" +
+    "</small>\n" +
+    "<h2 class=\"service-title\">\n" +
+    "<a ng-if=\"route | isWebRoute\" ng-href=\"{{route | routeWebURL}}\">{{route | routeLabel}}</a>\n" +
+    "<span ng-if=\"!(route | isWebRoute)\">{{route | routeLabel}}</span>\n" +
+    "</h2>\n" +
+    "</div>\n" +
+    "<div ng-if=\"!route\">\n" +
+    "<small class=\"text-muted text-uppercase\">Service</small>\n" +
+    "<h2 class=\"service-title\">\n" +
+    "<a ng-href=\"{{service | navigateResourceURL}}\">{{service.metadata.name}}</a>\n" +
+    "</h2>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "<div class=\"service-body\">\n" +
+    "<div ng-repeat=\"dc in deploymentConfigs\">\n" +
+    "<div row table=\"column\" ng-repeat=\"pipeline in runningPipelines[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)\">\n" +
+    "<div column grow=\"4\">\n" +
+    "<build-pipeline flex build=\"pipeline\"></build-pipeline>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "<div ng-if=\"!(deployments | hashSize)\" class=\"mar-md\">\n" +
+    "There are no deployments for this service.\n" +
+    "</div>\n" +
+    "\n" +
+    "<div ng-repeat=\"deployment in deployments | orderObjectsByDate : true track by (deployment | uid)\" ng-if=\"deployment.status.replicas\">\n" +
+    "<div row table=\"column\">\n" +
+    "<div column ng-if=\"pipelinesByDeployment[deployment.metadata.name]\" ng-attr-grow=\"{{(pipelinesByDeployment[deployment.metadata.name] | isIncompleteBuild) ? 3 : undefined}}\">\n" +
+    "<build-pipeline flex build=\"pipelinesByDeployment[deployment.metadata.name]\" collapse-stages=\"!(pipelinesByDeployment[deployment.metadata.name] | isIncompleteBuild)\">\n" +
+    "</build-pipeline>\n" +
+    "</div>\n" +
+    "<div column grow=\"3\" ng-if=\"!(pipelinesByDeployment[deployment.metadata.name] | isIncompleteBuild)\">\n" +
+    "<deployment-pipeline-details flex deployment=\"deployment\">\n" +
+    "</deployment-pipeline-details>\n" +
+    "</div>\n" +
+    "<div column class=\"deployment-donut\">\n" +
+    "<pod-status-chart pods=\"podsByDeployment[deployment.metadata.name]\"></pod-status-chart>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>"
+  );
+
+
   $templateCache.put('views/_parse-error.html',
     "<div ng-show=\"error\" class=\"alert alert-danger\">\n" +
     "<button ng-click=\"error = null\" type=\"button\" class=\"close\" aria-hidden=\"true\">\n" +
@@ -1064,7 +1116,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
   $templateCache.put('views/browse/_build-details.html',
     "<div class=\"resource-details\">\n" +
     "<div class=\"row\">\n" +
-    "<div class=\"col-lg-6\">\n" +
+    "<div class=\"col-sm-12\">\n" +
     "<h3>Status</h3>\n" +
     "<dl class=\"dl-horizontal left\">\n" +
     "<dt>Status:</dt>\n" +
@@ -1073,7 +1125,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "{{build.status.phase}}\n" +
     "<span ng-if=\"build | jenkinsLogURL\">\n" +
     "<span class=\"text-muted\">&ndash;</span>\n" +
-    "<a ng-href=\"{{build | jenkinsLogURL}}\">View Log</a>\n" +
+    "<a ng-href=\"{{build | jenkinsLogURL}}\" target=\"_blank\">View Log</a>\n" +
     "</span>\n" +
     "</dd>\n" +
     "<dt>Started:</dt>\n" +
@@ -1460,7 +1512,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div class=\"table-filter-wrapper\">\n" +
     "<project-filter></project-filter>\n" +
     "</div>\n" +
-    "<table class=\"table table-bordered table-hover table-mobile\">\n" +
+    "<table ng-if=\"!(buildConfig | isJenkinsPipelineStrategy)\" class=\"table table-bordered table-hover table-mobile\">\n" +
     "<thead>\n" +
     "<tr>\n" +
     "<th>Build</th>\n" +
@@ -1511,6 +1563,14 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</tr>\n" +
     "</tbody>\n" +
     "</table>\n" +
+    "<div ng-if=\"buildConfig | isJenkinsPipelineStrategy\">\n" +
+    "<build-pipeline build=\"build\" ng-repeat=\"build in orderedBuilds\"></build-pipeline>\n" +
+    "<table ng-if=\"(builds | hashSize) === 0\" class=\"table table-bordered table-hover table-mobile\">\n" +
+    "<tbody ng-if=\"(builds | hashSize) == 0\">\n" +
+    "<tr><td><em>{{emptyMessage}}</em></td></tr>\n" +
+    "</tbody>\n" +
+    "</table>\n" +
+    "</div>\n" +
     "</div>\n" +
     "</uib-tab>\n" +
     "<uib-tab ng-if=\"buildConfig\">\n" +
@@ -1770,6 +1830,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<uib-tabset>\n" +
     "<uib-tab active=\"selectedTab.details\">\n" +
     "<uib-tab-heading>Details</uib-tab-heading>\n" +
+    "<build-pipeline build=\"build\" ng-if=\"build | isJenkinsPipelineStrategy\"></build-pipeline>\n" +
     "<ng-include src=\" 'views/browse/_build-details.html' \"></ng-include>\n" +
     "</uib-tab>\n" +
     "<uib-tab heading=\"Environment\" active=\"selectedTab.environment\" ng-if=\"!(build | isJenkinsPipelineStrategy)\">\n" +
@@ -4314,6 +4375,61 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
   );
 
 
+  $templateCache.put('views/directives/build-pipeline.html',
+    "<div row mobile=\"column\" class=\"build-pipeline\">\n" +
+    "<div column grow=\"1\" class=\"build-summary\">\n" +
+    "\n" +
+    "<div flex></div>\n" +
+    "<div>\n" +
+    "<a ng-if=\"showConfigName\" ng-href=\"{{(build | buildConfigForBuild) | navigateResourceURL : build.metadata.name\">{{build | buildConfigForBuild}}</a>\n" +
+    "<a ng-href=\"{{build | navigateResourceURL}}\"><span ng-if=\"!showConfigName\">Build </span>#{{build | annotation : 'buildNumber'}}</a>\n" +
+    "</div>\n" +
+    "<div class=\"status-icon\" ng-class=\"build.status.phase\">\n" +
+    "<span ng-switch=\"build.status.phase\" class=\"hide-ng-leave\">\n" +
+    "<span ng-switch-when=\"Complete\" class=\"inverse fa-stack\" aria-hidden=\"true\">\n" +
+    "<i class=\"fa fa-circle fa-stack-2x\"></i>\n" +
+    "<i class=\"fa fa-check fa-stack-1x fa-inverse\"></i>\n" +
+    "</span>\n" +
+    "<span ng-switch-when=\"Failed\" class=\"inverse fa-stack\" aria-hidden=\"true\">\n" +
+    "<i class=\"fa fa-circle fa-stack-2x\"></i>\n" +
+    "<i class=\"fa fa-times fa-stack-1x fa-inverse\"></i>\n" +
+    "</span>\n" +
+    "<span ng-switch-default>\n" +
+    "<status-icon status=\"build.status.phase\"></status-icon>\n" +
+    "</span>\n" +
+    "</span>\n" +
+    "</div>\n" +
+    "<div class=\"small text-muted\">\n" +
+    "Started <relative-timestamp timestamp=\"build.metadata.creationTimestamp\"></relative-timestamp>\n" +
+    "</div>\n" +
+    "<div ng-if=\"build | buildLogURL\" class=\"small\"><a ng-href=\"{{build | buildLogURL}}\" target=\"_blank\">View Log</a></div>\n" +
+    "\n" +
+    "<div flex></div>\n" +
+    "</div>\n" +
+    "<div ng-if=\"!collapseStages\" column grow=\"4\" class=\"stages-block\">\n" +
+    "<div row class=\"pipeline-label\" ng-class=\"build.status.phase\">\n" +
+    "{{build.status.phase}}\n" +
+    "</div>\n" +
+    "<div row flex mobile=\"column\" class=\"stages\">\n" +
+    "<div column grow=\"1\" ng-if=\"!jenkinsStatus.stages.length\" class=\"stage\">\n" +
+    "<div grow=\"1\" class=\"stage-name\">Build has no Jenkins stages</div>\n" +
+    "</div>\n" +
+    "<div column grow=\"1\" ng-repeat=\"stage in jenkinsStatus.stages\" class=\"stage\">\n" +
+    "\n" +
+    "<div flex></div>\n" +
+    "<div class=\"stage-name\">{{stage.name}}</div>\n" +
+    "<pipeline-status ng-if=\"stage.status\" status=\"stage.status\"></pipeline-status>\n" +
+    "<div ng-if=\"stage.durationMillis\" class=\"stage-duration\">{{stage.durationMillis | humanizeDurationValue}}</div>\n" +
+    "<div ng-if=\"!stage.durationMillis\" class=\"stage-duration\">not started</div>\n" +
+    "\n" +
+    "<div flex></div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>"
+  );
+
+
   $templateCache.put('views/directives/delete-button.html',
     "<div class=\"actions\">\n" +
     "\n" +
@@ -4324,6 +4440,25 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
 
   $templateCache.put('views/directives/delete-link.html',
     "<a href=\"javascript:void(0)\" ng-click=\"openDeleteModal()\" role=\"button\" ng-attr-aria-disabled=\"{{disableDelete ? 'true' : undefined}}\" ng-class=\"{ 'disabled-link': disableDelete }\">{{label || 'Delete'}}</a>"
+  );
+
+
+  $templateCache.put('views/directives/deployment-pipeline-details.html',
+    "<div row mobile=\"column\" class=\"deployment-pipeline-details\">\n" +
+    "<div column grow=\"1\" class=\"deployment-pipeline-details-block\" ng-init=\"dcName = (deployment | annotation : 'deploymentConfig')\">\n" +
+    "<div class=\"text-muted\">\n" +
+    "<h3 ng-if=\"dcName\">\n" +
+    "Deployment {{dcName}},\n" +
+    "<a ng-href=\"{{deployment | navigateResourceURL}}\" class=\"subtle-link\">#{{deployment | annotation: 'deploymentVersion'}}</a>\n" +
+    "</h3>\n" +
+    "<h3 ng-if=\"!dcName\" class=\"component-label\">\n" +
+    "Replication Controller {{deployment.metadata.name}}\n" +
+    "</h3>\n" +
+    "</div>\n" +
+    "<pod-template pod-template=\"deployment.spec.template\">\n" +
+    "</pod-template>\n" +
+    "</div>\n" +
+    "</div>"
   );
 
 
@@ -5184,6 +5319,44 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<li ng-repeat=\"tab in tabs\" ng-class=\"{ active: tab.isSelected() }\">\n" +
     "<a ng-href=\"{{tab.href()}}\" ng-click=\"tab.click($event);\">{{tab.title()}}</a>\n" +
     "</li>"
+  );
+
+
+  $templateCache.put('views/directives/pipeline-status.html',
+    "<span class=\"pipeline-status\" ng-class=\"status\">\n" +
+    "<span ng-switch=\"status\" class=\"hide-ng-leave\">\n" +
+    "\n" +
+    "<span ng-switch-when=\"ABORTED\" title=\"Aborted\">\n" +
+    "<i class=\"fa fa-ban text-muted\" aria-hidden=\"true\"></i>\n" +
+    "<span class=\"sr-only\">Aborted</span>\n" +
+    "</span>\n" +
+    "<span ng-switch-when=\"FAILED\" title=\"Failed\">\n" +
+    "<span class=\"fa-stack\">\n" +
+    "<i class=\"fa fa-circle fa-stack-2x\"></i>\n" +
+    "<i class=\"fa fa-times fa-stack-1x fa-inverse\"></i>\n" +
+    "</span>\n" +
+    "<span class=\"sr-only\">Failed</span>\n" +
+    "</span>\n" +
+    "<span ng-switch-when=\"IN_PROGRESS\" title=\"In Progress\">\n" +
+    "<i class=\"fa fa-refresh fa-spin\" aria-hidden=\"true\"></i>\n" +
+    "<span class=\"sr-only\">In Progress</span>\n" +
+    "</span>\n" +
+    "<span ng-switch-when=\"NOT_EXECUTED\" title=\"Not Executed\">\n" +
+    "\n" +
+    "</span>\n" +
+    "<span ng-switch-when=\"PAUSED_PENDING_INPUT\" title=\"Paused (Pending Input)\">\n" +
+    "<i class=\"fa fa-pause\" aria-hidden=\"true\"></i>\n" +
+    "<span class=\"sr-only\">Paused Pending Input</span>\n" +
+    "</span>\n" +
+    "<span ng-switch-when=\"SUCCESS\" title=\"Success\">\n" +
+    "<span class=\"fa-stack\" aria-hidden=\"true\">\n" +
+    "<i class=\"fa fa-circle fa-stack-2x\"></i>\n" +
+    "<i class=\"fa fa-check fa-stack-1x fa-inverse\"></i>\n" +
+    "</span>\n" +
+    "<span class=\"sr-only\">Success</span>\n" +
+    "</span>\n" +
+    "</span>\n" +
+    "</span>"
   );
 
 
@@ -6361,6 +6534,79 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
   );
 
 
+  $templateCache.put('views/overview.html',
+    "<project-header class=\"top-header\"></project-header>\n" +
+    "<project-page class=\"overview\">\n" +
+    "\n" +
+    "<div class=\"middle-section\">\n" +
+    "<div class=\"middle-container\">\n" +
+    "<div class=\"middle-header header-light\">\n" +
+    "<div class=\"container-fluid\">\n" +
+    "<tasks></tasks>\n" +
+    "<div ng-if=\"renderOptions.showToolbar\" class=\"page-header page-header-bleed-right page-header-bleed-left\">\n" +
+    "<h1 title=\"Overview\">Overview</h1>\n" +
+    "</div>\n" +
+    "\n" +
+    "<alerts alerts=\"alerts\"></alerts>\n" +
+    "<div ng-if=\"renderOptions.showToolbar\" class=\"data-toolbar\">\n" +
+    "<div class=\"data-toolbar-filter\">\n" +
+    "<project-filter></project-filter>\n" +
+    "</div>\n" +
+    "<div class=\"data-toolbar-views\">\n" +
+    "<div class=\"actions\">\n" +
+    "<div class=\"btn-group\">\n" +
+    "<label class=\"btn btn-default\" ng-model=\"$parent.overviewMode\" uib-btn-radio=\"'tiles'\" title=\"Tile View\">\n" +
+    "<i class=\"fa fa-list\"></i>\n" +
+    "</label>\n" +
+    "<label class=\"btn btn-default\" ng-model=\"$parent.overviewMode\" uib-btn-radio=\"'topology'\" title=\"Topology View\">\n" +
+    "<i class=\"pficon pficon-topology\"></i>\n" +
+    "</label>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "<div class=\"middle-content has-scroll surface-shaded\">\n" +
+    "<div class=\"container-fluid surface-shaded\">\n" +
+    "<div class=\"row\">\n" +
+    "<div class=\"col-md-12 gutter-top\">\n" +
+    "\n" +
+    "<div ng-if=\"showGetStarted\">\n" +
+    "\n" +
+    "<div ng-if=\"renderOptions.showGetStarted\" class=\"empty-project text-center\">\n" +
+    "<h2>Get started with your project.</h2>\n" +
+    "<p class=\"gutter-top\">\n" +
+    "Use your source or an example repository to build an application image, or add components like databases and message queues.\n" +
+    "</p>\n" +
+    "<p class=\"gutter-top\">\n" +
+    "<a ng-href=\"project/{{projectName}}/create\" class=\"btn btn-lg btn-primary\">\n" +
+    "Add to Project\n" +
+    "</a>\n" +
+    "</p>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "<div ng-repeat=\"service in services\" ng-if=\"!isChildService(service)\">\n" +
+    "<overview-service service=\"service\" routes=\"routesByService[service.metadata.name]\" deployment-configs=\"deploymentConfigsByService[service.metadata.name]\" deployments=\"deploymentsByService[service.metadata.name]\" running-pipelines=\"runningPipelinesByDC\" pipelines-by-deployment=\"pipelinesByDeployment\" pods-by-deployment=\"podsByDeployment\">\n" +
+    "</overview-service>\n" +
+    "<div ng-repeat=\"child in childServicesByParent[service.metadata.name]\" row>\n" +
+    "<div column class=\"child-border\"></div>\n" +
+    "<div column grow=\"1\">\n" +
+    "<overview-service service=\"child\" routes=\"routesByService[child.metadata.name]\" deployment-configs=\"deploymentConfigsByService[child.metadata.name]\" deployments=\"deploymentsByService[child.metadata.name]\" running-pipelines=\"runningPipelinesByDC\" pipelines-by-deployment=\"pipelinesByDeployment\" pods-by-deployment=\"podsByDeployment\" class=\"child-service\">\n" +
+    "</overview-service>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "</project-page>"
+  );
+
+
   $templateCache.put('views/pods.html',
     "<project-header class=\"top-header\"></project-header>\n" +
     "<project-page>\n" +
@@ -6517,6 +6763,10 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "<div ng-if=\"overviewMode == 'tiles'\">\n" +
     "\n" +
+    "<section ng-if=\"recentPipelineBuilds | hashSize\" class=\"mar-bottom-lg overview-pipelines\">\n" +
+    "<build-pipeline ng-repeat=\"pipelineBuild in recentPipelineBuilds\" build=\"pipelineBuild\" show-config-name=\"true\">\n" +
+    "</build-pipeline>\n" +
+    "</section>\n" +
     "<section ng-repeat=\"(serviceId, service) in services\" class=\"components components-group\" ng-attr-id=\"service-{{serviceId}}\">\n" +
     "<div class=\"osc-object components-panel service\" ng-init=\"numPorts = service.spec.ports.length\" kind=\"Service\" resource=\"service\">\n" +
     "<div class=\"component-block\">\n" +
