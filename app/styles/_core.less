@@ -610,6 +610,17 @@ label.checkbox {
   }
 }
 
+a.subtle-link {
+  color: @gray-light;
+  border-bottom: 1px dotted #BBB;
+
+  &:hover, &:active, &:focus {
+    color: @link-hover-color;
+    border-bottom: 1px dotted @link-hover-color;
+    text-decoration: none;
+  }
+}
+
 .project-summary {
   .flex(@columns: 1 0 90%);
   max-width: 90%; // enable truncation without offsetting delete icon

@@ -30,6 +30,22 @@ angular.module('openshiftConsole')
       templateUrl: 'views/_pod-template.html'
     };
   })
+  .directive('overviewService', function() {
+    return {
+      restrict: 'E',
+      scope: {
+        service: '=',
+        routes: '=',
+        deploymentConfigs: '=',
+        deployments: '=',
+        replicationControllers: '=',
+        runningPipelines: '=',
+        pipelinesByDeployment: '=',
+        podsByDeployment: '='
+      },
+      templateUrl: '/views/_overview-service.html'
+    };
+  })
 
   /*
    * This directive is not currently used since we've switched to a donut chart on the overview.

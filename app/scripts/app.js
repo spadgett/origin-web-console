@@ -55,12 +55,21 @@ angular
      .id(builder.join(pluginName, "overview"))
      .title(function () { return "Overview"; })
      .template(template)
-     .href(projectHref("overview"))
-     .page(function () { return builder.join(templatePath, 'project.html'); })
+     .href(projectHref("status"))
+     .page(function () { return builder.join(templatePath, 'pipeline-overview.html'); })
      .build();
     tab.icon = "dashboard";
     tabs.push(tab);
 
+    tab = builder.create()
+     .id(builder.join(pluginName, "topology"))
+     .title(function () { return "Topology"; })
+     .template(template)
+     .href(projectHref("overview"))
+     .page(function () { return builder.join(templatePath, 'project.html'); })
+     .build();
+    tab.icon = "map-o";
+    tabs.push(tab);
 
     tab = builder.create()
       .id(builder.join(pluginName, "browse"))
@@ -107,9 +116,13 @@ angular
           return '/project/' + encodeURIComponent(params.project) + "/overview";
         }
       })
+      .when('/project/:project/status', {
+        templateUrl: 'views/overview.html',
+        controller: 'OverviewController'
+      })
       .when('/project/:project/overview', {
         templateUrl: 'views/project.html',
-        controller: 'OverviewController'
+        controller: 'TopologyController'
       })
       .when('/project/:project/settings', {
         templateUrl: 'views/settings.html',
