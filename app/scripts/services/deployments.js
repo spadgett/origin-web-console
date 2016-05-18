@@ -296,5 +296,27 @@ angular.module("openshiftConsole")
       });
     };
 
+    var getLabels = function(deployment) {
+      return _.get(deployment, 'spec.template.metadata.labels', {});
+    };
+
+    DeploymentsService.prototype.groupByService = function(/* deployments or deployment configs */ resources, services) {
+      var byService = {};
+
+      _.each(resources, function(resource) {
+        var selector = new LabelSelector(getLabels(resource));
+        _.each(services, function(service) {
+          var serviceSelector = new LabelSelector(service.spec.selector);
+          if (serviceSelector.covers(selector)) {
+            _.set(byService,
+                  [service.metadata.name, resource.metadata.name],
+                  resource);
+          }
+        });
+      });
+
+      return byService;
+    };
+
     return new DeploymentsService();
   });
