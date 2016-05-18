@@ -32,8 +32,7 @@
     </div>
     <!-- FIXME: ng-if is not exactly right, need to understand how to show dep status -->
     <div ng-repeat="deployment in deployments | orderObjectsByDate : true track by (deployment | uid)"
-         ng-if="deployment.status.replicas"
-         ng-init="dcName = (deployment | annotation : 'deploymentConfig')">
+         ng-if="deployment.status.replicas">
 
       <div row table="column">
         <div column
@@ -46,19 +45,16 @@
           </build-pipeline>
         </div>
 
-        <div column grow="3" ng-if="!(pipelinesByDeployment[deployment.metadata.name] | isIncompleteBuild)">
-          <h2 class="text-muted mar-left-lg">Deployment details here...</h2>
+        <div column
+            grow="3"
+            ng-if="!(pipelinesByDeployment[deployment.metadata.name] | isIncompleteBuild)">
+          <deployment-pipeline-details
+              flex
+              deployment="deployment">
+          </deployment-pipeline-details>
         </div>
 
         <div column class="deployment-donut">
-          <div ng-if="dcName" class="component-label">
-            Deployment {{dcName}},
-            <a ng-href="{{deployment | navigateResourceURL}}" class="subtle-link">#{{deployment | annotation: 'deploymentVersion'}}</a>
-          </div>
-          <div ng-if="!dcName" class="component-label">
-            Replication Controller {{deployment.metadata.name}}
-          </div>
-
           <pod-status-chart pods="podsByDeployment[deployment.metadata.name]"></pod-status-chart>
         </div>
       </div>
