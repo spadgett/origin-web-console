@@ -90,6 +90,13 @@
 
               <div ng-if="overviewMode == 'tiles'">
                 <!-- TODO handle multiple services mapping to the same deploymentConfig/deployment/pod -->
+                <section ng-if="recentPipelineBuilds | hashSize" class="mar-bottom-lg overview-pipelines">
+                  <build-pipeline
+                      ng-repeat="pipelineBuild in recentPipelineBuilds"
+                      build="pipelineBuild"
+                      show-config-name="true">
+                  </build-pipeline>
+                </section>
                 <section ng-repeat="(serviceId, service) in services" class="components components-group" ng-attr-id="service-{{serviceId}}">
                   <div class="osc-object components-panel service" ng-init="numPorts = service.spec.ports.length" kind="Service" resource="service">
                     <div class="component-block">
