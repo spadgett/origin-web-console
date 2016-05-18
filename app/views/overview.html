@@ -1,0 +1,90 @@
+<project-header class="top-header"></project-header>
+<project-page class="overview">
+
+  <!-- Middle section -->
+  <div class="middle-section">
+    <div class="middle-container">
+      <div class="middle-header header-light">
+        <div class="container-fluid">
+          <tasks></tasks>
+
+          <div ng-if="renderOptions.showToolbar" class="page-header page-header-bleed-right page-header-bleed-left">
+            <h1 title="Overview">Overview</h1>
+          </div>
+          <!-- TODO handle things that don't live under services -->
+          <alerts alerts="alerts"></alerts>
+          <div ng-if="renderOptions.showToolbar" class="data-toolbar">
+            <div class="data-toolbar-filter">
+              <project-filter></project-filter>
+            </div>
+            <div class="data-toolbar-views">
+              <div class="actions">
+                <div class="btn-group">
+                  <label class="btn btn-default" ng-model="$parent.overviewMode" uib-btn-radio="'tiles'" title="Tile View">
+                    <i class="fa fa-list"></i>
+                  </label>
+                  <label class="btn btn-default" ng-model="$parent.overviewMode" uib-btn-radio="'topology'" title="Topology View">
+                    <i class="pficon pficon-topology"></i>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /middle-header-->
+      <div class="middle-content  has-scroll surface-shaded">
+        <div class="container-fluid surface-shaded">
+          <div class="row">
+            <div class="col-md-12 gutter-top">
+
+              <!-- Empty states -->
+              <div ng-if="showGetStarted">
+                <!-- Getting started -->
+                <div ng-if="renderOptions.showGetStarted" class="empty-project text-center">
+                  <h2>Get started with your project.</h2>
+                  <p class="gutter-top">
+                    Use your source or an example repository to build an application
+                    image, or add components like databases and message queues.
+                  </p>
+                  <p class="gutter-top">
+                    <a ng-href="project/{{projectName}}/create" class="btn btn-lg btn-primary">
+                      Add to Project
+                    </a>
+                  </p>
+                </div>
+              </div>
+
+              <div ng-repeat="service in services" ng-if="!isChildService(service)">
+                <overview-service
+                    service="service"
+                    routes="routesByService[service.metadata.name]"
+                    deployment-configs="deploymentConfigsByService[service.metadata.name]"
+                    deployments="deploymentsByService[service.metadata.name]"
+                    running-pipelines="runningPipelinesByDC"
+                    pipelines-by-deployment="pipelinesByDeployment"
+                    pods-by-deployment="podsByDeployment">
+                </overview-service>
+
+                <div ng-repeat="child in childServicesByParent[service.metadata.name]" row>
+                  <div column class="child-border"></div>
+                  <div column grow="1">
+                    <overview-service
+                        service="child"
+                        routes="routesByService[child.metadata.name]"
+                        deployment-configs="deploymentConfigsByService[child.metadata.name]"
+                        deployments="deploymentsByService[child.metadata.name]"
+                        running-pipelines="runningPipelinesByDC"
+                        pipelines-by-deployment="pipelinesByDeployment"
+                        pods-by-deployment="podsByDeployment"
+                        class="child-service">
+                    </overview-service>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</project-page>
