@@ -119,6 +119,14 @@ angular.module('openshiftConsole')
         // substring(1) to remove leading slash
         jenkinsBuildURI = URI(jenkinsBuildURI).path().substring(1);
         $scope.pipelinesByDeployment[rc.metadata.name] = pipelinesByJenkinsURI[jenkinsBuildURI];
+
+        // FIXME: Handle this more cleanly. Just remove the item from the
+        // running array for now since we show it in the view with the
+        // deployment.
+        var runningPipelines = $scope.runningPipelinesByDC[annotation(rc, 'deploymentConfig')];
+        _.remove(runningPipelines, function(pipeline) {
+          return annotation(pipeline, 'openshift.io/jenkins-build-uri') === jenkinsBuildURI;
+        });
       });
     };
 
