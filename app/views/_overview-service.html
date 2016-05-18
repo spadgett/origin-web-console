@@ -1,0 +1,65 @@
+<div class="overview-service">
+  <div class="service-heading">
+    <div ng-if="route = routes[0]">
+      <small class="text-muted text-uppercase">
+        Service:
+        <a ng-href="{{service | navigateResourceURL}}" class="subtle-link">{{service.metadata.name}}</a>
+      </small>
+      <h2 class="service-title">
+        <a ng-if="route | isWebRoute"
+           ng-href="{{route | routeWebURL}}">{{route | routeLabel}}</a>
+        <span ng-if="!(route | isWebRoute)">{{route | routeLabel}}</span>
+      </h2>
+    </div>
+    <div ng-if="!route">
+      <small class="text-muted text-uppercase">Service</small>
+      <h2 class="service-title">
+        <a ng-href="{{service | navigateResourceURL}}">{{service.metadata.name}}</a>
+      </h2>
+    </div>
+  </div>
+  <div class="service-body">
+    <div ng-repeat="(dcName, dc) in deploymentConfigs">
+      <div row table="column" ng-repeat="pipeline in runningPipelines[dcName]">
+        <div column grow="4">
+          <build-pipeline flex build="pipeline"></build-pipeline>
+        </div>
+
+      </div>
+    </div>
+    <div ng-if="!(deployments | hashSize)" class="mar-md">
+      There are no deployments for this service.
+    </div>
+    <!-- FIXME: ng-if is not exactly right, need to understand how to show dep status -->
+    <div ng-repeat="(rcName, rc) in deployments"
+         ng-if="rc.status.replicas"
+         ng-init="dcName = (rc | annotation : 'deploymentConfig')">
+
+      <div row table="column">
+        <div column ng-if="pipelinesByDeployment[rcName]">
+          <build-pipeline
+              flex
+              build="pipelinesByDeployment[rcName]"
+              collapse-stages="!(pipelinesByDeployment[rcName] | isIncompleteBuild)">
+          </build-pipeline>
+        </div>
+
+        <div column grow="3" ng-if="!(pipelinesByDeployment[rcName] | isIncompleteBuild)">
+          <h2 class="text-muted mar-left-lg">Deployment details here...</h2>
+        </div>
+
+        <div column class="deployment-donut">
+          <div ng-if="deploymentConfigs[dcName]" class="component-label">
+            Deployment {{deploymentConfigs[dcName].metadata.name}},
+            <a ng-href="{{rc | navigateResourceURL}}" class="subtle-link">#{{rc | annotation: 'deploymentVersion'}}</a>
+          </div>
+          <div ng-if="!deploymentConfigs[dcName]" class="component-label">
+            Replication Controller {{rc.metadata.name}}
+          </div>
+
+          <pod-status-chart pods="podsByDeployment[rc.metadata.name]"></pod-status-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

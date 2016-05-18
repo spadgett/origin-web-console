@@ -6,8 +6,11 @@ angular.module('openshiftConsole')
       restrict: 'E',
       scope: {
         build: '=',
-        showConfigName: '='
+        showConfigName: '=',
+        collapseStages: '=?'
       },
+      // To fill height as flexbox item.
+      replace: true,
       templateUrl: 'views/directives/build-pipeline.html',
       link: function($scope) {
         // Example JSON:

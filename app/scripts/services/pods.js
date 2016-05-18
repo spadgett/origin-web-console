@@ -44,6 +44,21 @@ angular.module("openshiftConsole")
         debugPod.spec.containers = [container];
 
         return debugPod;
+      },
+
+      groupByReplicationController: function(pods, replicationControllers) {
+        var podsByRC = {};
+        _.each(pods, function(pod) {
+          var rc = _.find(replicationControllers, function(rc) {
+            var rcSelector = new LabelSelector(rc.spec.selector);
+            return rcSelector.matches(pod);
+          });
+
+          var rcName = _.get(rc, 'metadata.name', '');
+          _.set(podsByRC, [rcName, pod.metadata.name], pod);
+        });
+
+        return podsByRC;
       }
     };
   });
