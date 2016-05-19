@@ -49,6 +49,7 @@
           <div row mobile="column" class="deployment-block">
             <div
                  column
+                 grow="3"
                  ng-if="!(pipelinesByDeployment[deployment.metadata.name] | isIncompleteBuild)"
                  class="deployment-details">
               <deployment-pipeline-details

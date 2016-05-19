@@ -15,7 +15,7 @@
         </select>
       </div>
     </div>
-    <div class="form-group">
+    <div class="form-group" ng-if="!hideTimeRangeSelect">
       <label for="timeRange">Time Range:</label>
       <select id="timeRange"
               ng-model="options.timeRange"
@@ -46,7 +46,7 @@
   </div>
 
   <div ng-repeat="metric in metrics" ng-if="anyUsageByMetric(metric) && !metricsError">
-    <h3>
+    <h3 ng-if="!hideLabels">
       {{metric.label}}
       <small ng-if="pod.spec.containers.length > 1">
         <span ng-if="metric.containerMetric">Container Metrics</span>
