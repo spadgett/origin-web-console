@@ -13,7 +13,12 @@ angular.module('openshiftConsole')
       scope: {
         // Either pod or deployment must be set
         pod: '=?',
-        deployment: '=?'
+        deployment: '=?',
+        hideTimeRangeSelect: '=?',
+        hideLabels: '=?',
+        hideAxis: '=?',
+        sparklineWidth: '=?',
+        sparklineHeight: '=?'
       },
       templateUrl: 'views/directives/metrics.html',
       link: function(scope) {
@@ -145,7 +150,7 @@ angular.module('openshiftConsole')
             bindto: '#' + metric.chartPrefix + scope.uniqueID + '-sparkline',
             axis: {
               x: {
-                show: true,
+                show: !scope.hideAxis,
                 type: 'timeseries',
                 // With default padding you can have negative axis tick values.
                 padding: {
@@ -158,6 +163,7 @@ angular.module('openshiftConsole')
                 }
               },
               y: {
+                show: !scope.hideAxis,
                 label: metric.units,
                 min: 0,
                 // With default padding you can have negative axis tick values.
@@ -166,7 +172,6 @@ angular.module('openshiftConsole')
                   top: 0,
                   bottom: 0
                 },
-                show: true,
                 tick: {
                   format: function(value) {
                     return d3.round(value, 2);
@@ -175,13 +180,14 @@ angular.module('openshiftConsole')
               }
             },
             legend: {
-              show: metric.datasets.length > 1
+              show: metric.datasets.length > 1 && !scope.hideLabels
             },
             point: {
               show: false
             },
             size: {
-              height: 160
+              height: scope.sparklineHeight || 160,
+              width: scope.sparklineWidth || undefined,
             }
           };
         };
