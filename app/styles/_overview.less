@@ -2,6 +2,7 @@
   .overview-service {
     .mar-bottom-lg();
     border-left: 3px solid #cccccc;
+    overflow: hidden;
   }
   .service-heading, .service-body {
     background-color: #ffffff;
@@ -15,7 +16,7 @@
     }
   }
   .service-body {
-    margin: 10px 0;
+    border-top-width: 0;
     padding: 0;
   }
   .component-label {
@@ -26,15 +27,8 @@
   }
   .build-pipeline {
     flex: 1;
-    // // Avoid double borders inside the panel.
-    // .build-summary {
-    //   border-width: 0;
-    //   border-right-width: 1;
-    // }
-    // .stages-block {
-    //   border-top-width: 0;
-    //   border-bottom-width: 0;
-    // }
+    // Avoid double borders inside the panel.
+    margin: -1px;
     .build-summary {
       flex-grow: 1;
       @media (min-width: @screen-md-min) {
@@ -51,6 +45,9 @@
   }
   .deployment-block {
     justify-content: space-between;
+    .deployment-details {
+      .mar-left-lg();
+    }
     .deployment-donut {
       margin: 5px;
     }
