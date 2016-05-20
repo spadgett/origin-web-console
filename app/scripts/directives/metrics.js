@@ -14,9 +14,8 @@ angular.module('openshiftConsole')
         // Either pod or deployment must be set
         pod: '=?',
         deployment: '=?',
-        hideTimeRangeSelect: '=?',
-        hideLabels: '=?',
-        hideAxis: '=?',
+        // Visual profile, currently either 'compact' or 'full' (default)
+        profile: '@?',
         sparklineWidth: '=?',
         sparklineHeight: '=?'
       },
@@ -26,6 +25,14 @@ angular.module('openshiftConsole')
         var intervalPromise;
         var getMemoryLimit = $parse('resources.limits.memory');
         var getCPULimit = $parse('resources.limits.cpu');
+
+        scope.profile = scope.profile || 'full';
+        scope.showFull = function() {
+          return scope.profile === 'full';
+        };
+        scope.showCompact = function() {
+          return scope.profile === 'compact';
+        };
 
         function bytesToMiB(value) {
           if (!value) {
@@ -152,7 +159,7 @@ angular.module('openshiftConsole')
             bindto: '#' + metric.chartPrefix + scope.uniqueID + '-sparkline',
             axis: {
               x: {
-                show: !scope.hideAxis,
+                show: scope.showFull(),
                 type: 'timeseries',
                 // With default padding you can have negative axis tick values.
                 padding: {
@@ -165,7 +172,7 @@ angular.module('openshiftConsole')
                 }
               },
               y: {
-                show: !scope.hideAxis,
+                show: scope.showFull(),
                 label: metric.units,
                 min: 0,
                 // With default padding you can have negative axis tick values.
@@ -182,14 +189,14 @@ angular.module('openshiftConsole')
               }
             },
             legend: {
-              show: metric.datasets.length > 1 && !scope.hideLabels
+              show: metric.datasets.length > 1 && scope.showFull()
             },
             point: {
               show: false
             },
             size: {
-              height: scope.sparklineHeight || 160,
-              width: scope.sparklineWidth || undefined,
+              height: scope.sparklineHeight || (scope.showCompact() ? 50 : 160),
+              width: scope.sparklineWidth || (scope.showCompact() ? 200 : undefined),
             },
             tooltip: {
               format: {

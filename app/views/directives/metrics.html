@@ -1,5 +1,5 @@
 <div class="metrics" ng-if="pod || deployment">
-  <div class="metrics-options">
+  <div class="metrics-options" ng-if="showFull()">
     <!-- Let the user select the container if we're showing pod metrics. -->
     <div ng-if="pod.spec.containers.length" class="form-group">
       <label for="selectContainer">Container:</label>
@@ -15,7 +15,7 @@
         </select>
       </div>
     </div>
-    <div class="form-group" ng-if="!hideTimeRangeSelect">
+    <div class="form-group">
       <label for="timeRange">Time Range:</label>
       <select id="timeRange"
               ng-model="options.timeRange"
@@ -45,8 +45,8 @@
     </p>
   </div>
 
-  <div ng-repeat="metric in metrics" ng-if="anyUsageByMetric(metric) && !metricsError">
-    <h3 ng-if="!hideLabels">
+  <div ng-repeat="metric in metrics" ng-if="anyUsageByMetric(metric) && !metricsError" class="metric-{{profile}}">
+    <h3 class="metric-label">
       {{metric.label}}
       <small ng-if="pod.spec.containers.length > 1">
         <span ng-if="metric.containerMetric">Container Metrics</span>
@@ -59,7 +59,7 @@
 
     <!-- Show a summary of usage above the charts like the patternfly utilization card. -->
     <!-- Reuse the utilization card styles, but only here. -->
-    <div ng-if="usageByMetric[metric.datasets[0].id].total" class="utilization-trend-chart-pf">
+    <div ng-if="showFull() && usageByMetric[metric.datasets[0].id].total" class="utilization-trend-chart-pf">
       <div ng-if="usageByMetric[metric.datasets[0].id].total" class="current-values">
         <h1 class="available-count pull-left">
           {{usageByMetric[metric.datasets[0].id].available}}
@@ -72,10 +72,10 @@
     </div>
 
     <!-- Clear floats so top margin works on the charts below. -->
-    <div style="clear: both;"></div>
+    <div ng-if="showFull()" style="clear: both;"></div>
 
     <!-- Donut -->
-    <div ng-if="usageByMetric[metric.datasets[0].id].total"
+    <div ng-if="showFull() && usageByMetric[metric.datasets[0].id].total"
         ng-attr-id="{{metric.chartPrefix + uniqueID}}-donut"
         class="metrics-donut">
     </div>
@@ -84,5 +84,8 @@
     <div ng-attr-id="{{metric.chartPrefix + uniqueID}}-sparkline"
          class="metrics-sparkline">
     </div>
+
+    <!-- Clear floats so top margin works on the charts below. -->
+    <div ng-if="showCompact()" style="clear: both;"></div>
   </div>
 </div>
