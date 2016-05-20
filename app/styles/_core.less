@@ -254,9 +254,31 @@
       }
     }
   }
-  .metrics-donut,
-  .metrics-sparkline {
-    margin-top: 20px;
+  .metric-full {
+    .metrics-donut,
+    .metrics-sparkline {
+      margin-top: 20px;
+    }
+  }
+  .metric-compact {
+    .metric-label{
+      float: left;
+      text-align: right;
+      margin: 16px 0 18px;
+      padding-right: 7px;
+      small {
+        display: block;
+      }
+    }
+    .metrics-sparkline {
+      margin-top: 7px;
+    }
+    .c3 {
+      svg {
+        border-left: 1px solid @border-color-light-grey;
+        border-bottom: 1px solid @border-color-light-grey;
+      }
+    }
   }
 
   // Avoid overlapping tick text at mobile.

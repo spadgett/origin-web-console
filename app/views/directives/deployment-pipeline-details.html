@@ -10,12 +10,10 @@
           Replication Controller {{deployment.metadata.name}}
         </h3>
       </div>
-
-      <metrics deployment="deployment"
-          hide-time-range-select="true"
-          hide-labels="true"
-          hide-axis="true"
-          sparkline-width="200"
-          sparkline-height="50"></metrics>
+  </div>
+  <div column grow="2">
+    <metrics deployment="deployment"
+        profile="compact">
+    </metrics>
   </div>
 </div>

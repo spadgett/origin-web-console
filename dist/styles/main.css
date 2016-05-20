@@ -3253,6 +3253,7 @@ to{transform:rotate(359deg)}
 .builds-block{margin-left:5px}
 .builds-block .builds{margin:0;overflow:hidden}
 .builds-block .builds .build{border:1px solid transparent;border-radius:5px;padding:5px;position:relative;margin:10px 0 6px;text-align:left}
+.empty-project .fa,.service-table,.service-table thead tr th{text-align:center}
 @media (min-width:768px){.builds-block .builds .build.osc-object.osc-object-hover{cursor:pointer;border-color:rgba(0,168,225,.5)}
 .builds-block .builds .build.osc-object.osc-object-active{border-color:#00a8e1}
 }
@@ -3323,14 +3324,13 @@ body{padding-right:0px!important}
 .nav-tabs>li>a:before{left:0!important}
 .nav-tabs,.tab-content{margin-bottom:20px;margin-top:20px}
 .empty-project{margin:10px auto;max-width:500px;padding:30px}
-.empty-project .fa{width:16px;text-align:center}
+.empty-project .fa{width:16px}
 .empty-project dd{margin-left:20px;margin-bottom:10px}
 .empty-state-message{margin:60px auto;max-width:600px;padding:0 20px}
 .empty-state-message .btn{margin:10px 0 20px}
 @media (min-height:500px){.empty-state-message.empty-state-full-page{margin-top:150px}
 }
-.service-table{text-align:center;max-width:650px}
-.service-table thead tr th{text-align:center}
+.service-table{max-width:650px}
 .build-config-summary .latest-build-status{margin-right:5px}
 .build-config-summary .latest-build-status .status-icon{width:20px}
 .build-config-summary .latest-build-timestamp{margin-left:25px}
@@ -3348,7 +3348,11 @@ body{padding-right:0px!important}
 @media (min-width:768px){.metrics .metrics-options .form-group{display:inline-block}
 .metrics .metrics-options .select-container{margin-right:10px}
 }
-.metrics .metrics-donut,.metrics .metrics-sparkline{margin-top:20px}
+.metrics .metric-full .metrics-donut,.metrics .metric-full .metrics-sparkline{margin-top:20px}
+.metrics .metric-compact .metric-label{float:left;text-align:right;margin:16px 0 18px;padding-right:7px}
+.metrics .metric-compact .metric-label small{display:block}
+.metrics .metric-compact .metrics-sparkline{margin-top:7px}
+.metrics .metric-compact .c3 svg{border-left:1px solid #ddd;border-bottom:1px solid #ddd}
 @media (max-width:500px){.metrics .metrics-sparkline .c3-axis-x .tick{display:none}
 }
 .quota-chart{margin:0 20px}
@@ -3789,16 +3793,24 @@ ul.messenger-theme-flat .messenger-message.alert-info .messenger-message-inner:b
 .icon-wildfly:before{content:"\f135"}
 .icon-load-balancer:before{content:"\f136"}
 .icon-laravel:before{content:"\f137"}
-.overview .overview-service{margin-bottom:15px;border-left:3px solid #ccc}
+.overview .overview-service{margin-bottom:15px;border-left:3px solid #ccc;overflow:hidden}
 .overview .service-body,.overview .service-heading{background-color:#fff;border:1px solid #ddd;border-left-width:0}
 .overview .service-heading{padding:7px 10px}
 .overview .service-heading .service-title{margin:0 0 5px}
-.overview .service-body{margin:10px 0;padding:0}
+.overview .service-body{border-top-width:0;padding:0}
 .overview .component-label{color:#999;font-size:11px;padding:0 10px 4px 0;text-transform:uppercase}
-.overview .build-pipeline{flex:1}
-.overview .deployment-donut{text-align:center;margin-top:3px;min-width:200px;max-width:200px}
+.overview .build-pipeline{flex:1;margin:-1px}
+.overview .child-service .overview-service,.overview .deployment-block .deployment-details{margin-left:15px}
+.overview .build-pipeline .build-summary{flex-grow:1}
+@media (min-width:992px){.overview .build-pipeline .build-summary{flex-grow:0}
+}
 .overview .child-border{margin-bottom:15px;border-left:2px dotted #bbb}
-.overview .child-service .overview-service{margin-left:15px}
+.overview .deployment-block{justify-content:space-between}
+.overview .deployment-block .deployment-donut{margin:5px}
+@media (max-width:480px){.overview .deployment-block{flex-grow:1}
+.overview .deployment-block .deployment-donut{text-align:center;order:2}
+.overview .deployment-block .deployment-details{order:3}
+}
 .build-pipeline{border-right:1px solid #d1d1d1;margin-bottom:15px;min-width:200px}
 .build-pipeline .build-summary,.build-pipeline .stage{text-align:center;min-width:150px}
 .build-pipeline .build-summary,.build-pipeline .stages-block{border:1px solid #d1d1d1}

@@ -311,7 +311,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "<div class=\"service-body\">\n" +
     "<div ng-repeat=\"dc in deploymentConfigs\">\n" +
-    "<div row table=\"column\" ng-repeat=\"pipeline in runningPipelines[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)\">\n" +
+    "<div row mobile=\"column\" ng-repeat=\"pipeline in runningPipelines[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)\">\n" +
     "<div column grow=\"4\">\n" +
     "<build-pipeline flex build=\"pipeline\"></build-pipeline>\n" +
     "</div>\n" +
@@ -322,17 +322,21 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "\n" +
     "<div ng-repeat=\"deployment in deployments | orderObjectsByDate : true track by (deployment | uid)\" ng-if=\"deployment.status.replicas\">\n" +
-    "<div row table=\"column\">\n" +
-    "<div column ng-if=\"pipelinesByDeployment[deployment.metadata.name]\" ng-attr-grow=\"{{(pipelinesByDeployment[deployment.metadata.name] | isIncompleteBuild) ? 3 : undefined}}\">\n" +
+    "<div row tablet=\"column\">\n" +
+    "<div column tablet=\"row\" ng-if=\"pipelinesByDeployment[deployment.metadata.name]\" ng-attr-grow=\"{{(pipelinesByDeployment[deployment.metadata.name] | isIncompleteBuild) ? 3 : undefined}}\">\n" +
     "<build-pipeline flex build=\"pipelinesByDeployment[deployment.metadata.name]\" collapse-stages=\"!(pipelinesByDeployment[deployment.metadata.name] | isIncompleteBuild)\">\n" +
     "</build-pipeline>\n" +
     "</div>\n" +
-    "<div column grow=\"3\" ng-if=\"!(pipelinesByDeployment[deployment.metadata.name] | isIncompleteBuild)\">\n" +
-    "<deployment-pipeline-details flex deployment=\"deployment\">\n" +
+    "<div column mobile=\"row\" grow=\"1\">\n" +
+    "<div row mobile=\"column\" class=\"deployment-block\">\n" +
+    "<div column grow=\"3\" ng-if=\"!(pipelinesByDeployment[deployment.metadata.name] | isIncompleteBuild)\" class=\"deployment-details\">\n" +
+    "<deployment-pipeline-details ng-if=\"!(pipelinesByDeployment[deployment.metadata.name] | isIncompleteBuild)\" flex deployment=\"deployment\">\n" +
     "</deployment-pipeline-details>\n" +
     "</div>\n" +
     "<div column class=\"deployment-donut\">\n" +
     "<pod-status-chart pods=\"podsByDeployment[deployment.metadata.name]\"></pod-status-chart>\n" +
+    "</div>\n" +
+    "</div>\n" +
     "</div>\n" +
     "</div>\n" +
     "</div>\n" +
@@ -4382,8 +4386,10 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "Replication Controller {{deployment.metadata.name}}\n" +
     "</h3>\n" +
     "</div>\n" +
-    "<pod-template pod-template=\"deployment.spec.template\">\n" +
-    "</pod-template>\n" +
+    "</div>\n" +
+    "<div column grow=\"2\">\n" +
+    "<metrics deployment=\"deployment\" profile=\"compact\">\n" +
+    "</metrics>\n" +
     "</div>\n" +
     "</div>"
   );
@@ -4794,7 +4800,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
 
   $templateCache.put('views/directives/metrics.html',
     "<div class=\"metrics\" ng-if=\"pod || deployment\">\n" +
-    "<div class=\"metrics-options\">\n" +
+    "<div class=\"metrics-options\" ng-if=\"showFull()\">\n" +
     "\n" +
     "<div ng-if=\"pod.spec.containers.length\" class=\"form-group\">\n" +
     "<label for=\"selectContainer\">Container:</label>\n" +
@@ -4828,8 +4834,8 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "{{metricsError.details}}\n" +
     "</p>\n" +
     "</div>\n" +
-    "<div ng-repeat=\"metric in metrics\" ng-if=\"anyUsageByMetric(metric) && !metricsError\">\n" +
-    "<h3>\n" +
+    "<div ng-repeat=\"metric in metrics\" ng-if=\"anyUsageByMetric(metric) && !metricsError\" class=\"metric-{{profile}}\">\n" +
+    "<h3 class=\"metric-label\">\n" +
     "{{metric.label}}\n" +
     "<small ng-if=\"pod.spec.containers.length > 1\">\n" +
     "<span ng-if=\"metric.containerMetric\">Container Metrics</span>\n" +
@@ -4841,7 +4847,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</h3>\n" +
     "\n" +
     "\n" +
-    "<div ng-if=\"usageByMetric[metric.datasets[0].id].total\" class=\"utilization-trend-chart-pf\">\n" +
+    "<div ng-if=\"showFull() && usageByMetric[metric.datasets[0].id].total\" class=\"utilization-trend-chart-pf\">\n" +
     "<div ng-if=\"usageByMetric[metric.datasets[0].id].total\" class=\"current-values\">\n" +
     "<h1 class=\"available-count pull-left\">\n" +
     "{{usageByMetric[metric.datasets[0].id].available}}\n" +
@@ -4853,13 +4859,15 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "</div>\n" +
     "\n" +
-    "<div style=\"clear: both\"></div>\n" +
+    "<div ng-if=\"showFull()\" style=\"clear: both\"></div>\n" +
     "\n" +
-    "<div ng-if=\"usageByMetric[metric.datasets[0].id].total\" ng-attr-id=\"{{metric.chartPrefix + uniqueID}}-donut\" class=\"metrics-donut\">\n" +
+    "<div ng-if=\"showFull() && usageByMetric[metric.datasets[0].id].total\" ng-attr-id=\"{{metric.chartPrefix + uniqueID}}-donut\" class=\"metrics-donut\">\n" +
     "</div>\n" +
     "\n" +
     "<div ng-attr-id=\"{{metric.chartPrefix + uniqueID}}-sparkline\" class=\"metrics-sparkline\">\n" +
     "</div>\n" +
+    "\n" +
+    "<div ng-if=\"showCompact()\" style=\"clear: both\"></div>\n" +
     "</div>\n" +
     "</div>"
   );

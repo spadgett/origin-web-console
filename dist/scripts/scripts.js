@@ -6533,7 +6533,10 @@ return {
 restrict:"E",
 scope:{
 pod:"=?",
-deployment:"=?"
+deployment:"=?",
+profile:"@?",
+sparklineWidth:"=?",
+sparklineHeight:"=?"
 },
 templateUrl:"views/directives/metrics.html",
 link:function(h) {
@@ -6644,7 +6647,11 @@ h.loaded = !0;
 }
 }
 var o, p = {}, q = {}, r = b("resources.limits.memory"), s = b("resources.limits.cpu");
-h.uniqueID = _.uniqueId("metrics-chart-"), h.metrics = [ {
+h.profile = h.profile || "full", h.showFull = function() {
+return "full" === h.profile;
+}, h.showCompact = function() {
+return "compact" === h.profile;
+}, h.uniqueID = _.uniqueId("metrics-chart-"), h.metrics = [ {
 label:"Memory",
 units:"MiB",
 chartPrefix:"memory-",
@@ -6729,7 +6736,7 @@ return {
 bindto:"#" + a.chartPrefix + h.uniqueID + "-sparkline",
 axis:{
 x:{
-show:!0,
+show:h.showFull(),
 type:"timeseries",
 padding:{
 left:0,
@@ -6741,6 +6748,7 @@ format:"%a %H:%M"
 }
 },
 y:{
+show:h.showFull(),
 label:a.units,
 min:0,
 padding:{
@@ -6748,7 +6756,6 @@ left:0,
 top:0,
 bottom:0
 },
-show:!0,
 tick:{
 format:function(a) {
 return d3.round(a, 2);
@@ -6757,13 +6764,14 @@ return d3.round(a, 2);
 }
 },
 legend:{
-show:a.datasets.length > 1
+show:a.datasets.length > 1 && h.showFull()
 },
 point:{
 show:!1
 },
 size:{
-height:160
+height:h.sparklineHeight || (h.showCompact() ? 50 :160),
+width:h.sparklineWidth || (h.showCompact() ? 200 :void 0)
 }
 };
 };
