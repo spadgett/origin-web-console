@@ -17,7 +17,8 @@ angular.module('openshiftConsole')
                         Logger,
                         PodsService,
                         ProjectsService,
-                        RoutesService) {
+                        RoutesService,
+                        ServicesService) {
     $scope.projectName = $routeParams.project;
     var watches = [];
     var services, deploymentConfigs, deployments, pods, buildConfigs, builds;
@@ -66,23 +67,7 @@ angular.module('openshiftConsole')
       childServices = {};
       $scope.childServicesByParent = {};
       _.each(services, function(service, serviceName) {
-        var dependencies, dependentServices;
-        try {
-          // Find dependent services in this project. Example annotation:
-          //   "service.alpha.openshift.io/dependencies": "[{\"name\": \"database\", \"namespace\": \"\", \"kind\": \"service\"}]"
-          // Default kind if missing is Service and default namespace is this namespace.
-          dependencies = JSON.parse(annotation(service, 'service.alpha.openshift.io/dependencies'));
-        } catch(e) {
-          Logger.warn('Could not pase "service.alpha.openshift.io/dependencies" annotation', e);
-          return;
-        }
-
-        dependentServices = _.filter(dependencies, function(dependency) {
-          var kind = _.get(dependency, 'metadata.kind') || 'Service',
-              namespace = _.get(dependency, 'metadata.namespace') || $scope.projectName;
-          return _.has(dependency, 'metadata.name') && kind === 'Service' && namespace === $scope.projectName;
-        });
-
+        var dependentServices = ServicesService.getDependentServices(service);
         // Add each child service to our dependency map.
         _.each(dependentServices, function(dependency) {
           addChildService(serviceName, dependency.metadata.name);
