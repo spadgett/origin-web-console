@@ -60,7 +60,7 @@
                     routes="routesByService[service.metadata.name]"
                     deployment-configs="deploymentConfigsByService[service.metadata.name]"
                     deployments="deploymentsByService[service.metadata.name]"
-                    running-pipelines="runningPipelinesByDC"
+                    recent-pipelines="recentPipelinesByDC"
                     pipelines-by-deployment="pipelinesByDeployment"
                     pods-by-deployment="podsByDeployment">
                 </overview-service>
@@ -73,7 +73,7 @@
                         routes="routesByService[child.metadata.name]"
                         deployment-configs="deploymentConfigsByService[child.metadata.name]"
                         deployments="deploymentsByService[child.metadata.name]"
-                        running-pipelines="runningPipelinesByDC"
+                        recent-pipelines="recentPipelinesByDC"
                         pipelines-by-deployment="pipelinesByDeployment"
                         pods-by-deployment="podsByDeployment"
                         class="child-service">

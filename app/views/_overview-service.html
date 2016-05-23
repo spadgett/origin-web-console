@@ -20,7 +20,7 @@
   </div>
   <div class="service-body">
     <div ng-repeat="dc in deploymentConfigs">
-      <div row mobile="column" ng-repeat="pipeline in runningPipelines[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)">
+      <div row mobile="column" ng-repeat="pipeline in recentPipelines[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)">
         <div column grow="4">
           <build-pipeline flex build="pipeline"></build-pipeline>
         </div>
