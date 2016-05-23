@@ -34,7 +34,7 @@ angular.module('openshiftConsole')
       $scope.deploymentConfigsByService = DeploymentsService.groupByService(deploymentConfigs, services);
     };
 
-    var groupReplicationControllers = function() {
+    var groupDeployments = function() {
       if (!services || !deployments) {
         return;
       }
@@ -144,6 +144,8 @@ angular.module('openshiftConsole')
         watches.push(DataService.watch("services", context, function(serviceData) {
           $scope.services = services = serviceData.by("metadata.name");
           groupServices();
+          groupDeploymentConfigs();
+          groupDeployments();
           Logger.log("services (list)", services);
         }));
 
@@ -168,7 +170,7 @@ angular.module('openshiftConsole')
         // Sets up subscription for deployments
         watches.push(DataService.watch("replicationcontrollers", context, function(rcData) {
           deployments = rcData.by("metadata.name");
-          groupReplicationControllers();
+          groupDeployments();
           groupPods();
           groupPipelines();
           Logger.log("replicationcontrollers (subscribe)", deployments);
