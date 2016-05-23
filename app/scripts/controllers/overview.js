@@ -66,12 +66,27 @@ angular.module('openshiftConsole')
       childServices = {};
       $scope.childServicesByParent = {};
       _.each(services, function(service, serviceName) {
-        // TODO: Replace with real service linking implementation.
-        // TODO: Support multiple children.
-        var uses = annotation(service, 'openshift.io/uses-service');
-        if (uses) {
-          addChildService(serviceName, uses);
+        var dependencies, dependentServices;
+        try {
+          // Find dependent services in this project. Example annotation:
+          //   "service.alpha.openshift.io/dependencies": "[{\"name\": \"database\", \"namespace\": \"\", \"kind\": \"service\"}]"
+          // Default kind if missing is Service and default namespace is this namespace.
+          dependencies = JSON.parse(annotation(service, 'service.alpha.openshift.io/dependencies'));
+        } catch(e) {
+          Logger.warn('Could not pase "service.alpha.openshift.io/dependencies" annotation', e);
+          return;
         }
+
+        dependentServices = _.filter(dependencies, function(dependency) {
+          var kind = _.get(dependency, 'metadata.kind') || 'Service',
+              namespace = _.get(dependency, 'metadata.namespace') || $scope.projectName;
+          return _.has(dependency, 'metadata.name') && kind === 'Service' && namespace === $scope.projectName;
+        });
+
+        // Add each child service to our dependency map.
+        _.each(dependentServices, function(dependency) {
+          addChildService(serviceName, dependency.metadata.name);
+        });
       });
     };
 
