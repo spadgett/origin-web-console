@@ -39,7 +39,7 @@ angular.module('openshiftConsole')
         deploymentConfigs: '=',
         deployments: '=',
         replicationControllers: '=',
-        runningPipelines: '=',
+        recentPipelines: '=',
         pipelinesByDeployment: '=',
         podsByDeployment: '='
       },
