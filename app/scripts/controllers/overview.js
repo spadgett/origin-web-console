@@ -70,12 +70,12 @@ angular.module('openshiftConsole')
         var dependentServices = ServicesService.getDependentServices(service);
         // Add each child service to our dependency map.
         _.each(dependentServices, function(dependency) {
-          addChildService(serviceName, dependency.metadata.name);
+          addChildService(serviceName, dependency);
         });
       });
     };
 
-    var isIncompleteBuild = $filter('isIncompleteBuild');
+    var isRecentBuild = $filter('isRecentBuild');
     var buildConfigForBuild = $filter('buildConfigForBuild');
     var groupPipelines = function() {
       if (!builds) {
@@ -84,7 +84,7 @@ angular.module('openshiftConsole')
 
       var pipelinesByJenkinsURI = {};
       $scope.pipelinesByDeployment = {};
-      $scope.runningPipelinesByDC = {};
+      $scope.recentPipelinesByDC = {};
 
       _.each(builds, function(build) {
         var jenkinsURI, bc, dc;
@@ -99,11 +99,11 @@ angular.module('openshiftConsole')
         }
 
         // Index running pipelines by DC so that we can show them before a deployment has started.
-        if (buildConfigs && isIncompleteBuild(build)) {
+        if (buildConfigs && isRecentBuild(build)) {
           bc = buildConfigs[buildConfigForBuild(build)];
           dc = annotation(bc, 'openshift.io/deployment-config') || '';
-          $scope.runningPipelinesByDC[dc] = $scope.runningPipelinesByDC[dc] || [];
-          $scope.runningPipelinesByDC[dc].push(build);
+          $scope.recentPipelinesByDC[dc] = $scope.recentPipelinesByDC[dc] || [];
+          $scope.recentPipelinesByDC[dc].push(build);
         }
       });
 
@@ -121,10 +121,10 @@ angular.module('openshiftConsole')
         $scope.pipelinesByDeployment[rc.metadata.name] = pipelinesByJenkinsURI[jenkinsBuildURI];
 
         // FIXME: Handle this more cleanly. Just remove the item from the
-        // running array for now since we show it in the view with the
+        // recent array for now since we show it in the view with the
         // deployment.
-        var runningPipelines = $scope.runningPipelinesByDC[annotation(rc, 'deploymentConfig')];
-        _.remove(runningPipelines, function(pipeline) {
+        var recentPipelines = $scope.recentPipelinesByDC[annotation(rc, 'deploymentConfig')];
+        _.remove(recentPipelines, function(pipeline) {
           return annotation(pipeline, 'openshift.io/jenkins-build-uri') === jenkinsBuildURI;
         });
       });
