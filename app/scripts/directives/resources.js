@@ -36,6 +36,7 @@ angular.module('openshiftConsole')
       scope: {
         service: '=',
         routes: '=',
+        routeWarnings: '=',
         deploymentConfigs: '=',
         deployments: '=',
         replicationControllers: '=',
