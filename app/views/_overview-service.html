@@ -66,9 +66,11 @@
                   deployment="deployment">
               </deployment-pipeline-details>
             </div>
-            <div column class="deployment-donut">
-              <pod-status-chart pods="podsByDeployment[deployment.metadata.name]"></pod-status-chart>
-            </div>
+            <a href="" role="button" ng-click="viewPodsForDeployment(deployment)">
+              <div column class="deployment-donut">
+                <pod-status-chart pods="podsByDeployment[deployment.metadata.name]"></pod-status-chart>
+              </div>
+            </a>
           </div>
         </div>
       </div>

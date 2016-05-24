@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('openshiftConsole')
-  .directive('overviewService', function($filter, RoutesService) {
+  .directive('overviewService', function($filter, Navigate, RoutesService) {
     return {
       restrict: 'E',
       scope: {
@@ -59,6 +59,14 @@ angular.module('openshiftConsole')
           }
 
           return isRecentDeployment(deployment, dc);
+        };
+
+        $scope.viewPodsForDeployment = function(deployment) {
+          if (_.isEmpty($scope.podsByDeployment[deployment.metadata.name])) {
+            return;
+          }
+
+          Navigate.toPodsForDeployment(deployment);
         };
       }
     };
