@@ -1,14 +1,14 @@
 <div class="overview-service">
   <div class="service-heading">
-    <div ng-if="route = routes[0]">
+    <div ng-if="displayRoute">
       <small class="text-muted text-uppercase">
         Service:
         <a ng-href="{{service | navigateResourceURL}}" class="subtle-link">{{service.metadata.name}}</a>
       </small>
-      <h2 class="service-title">
-        <a ng-if="route | isWebRoute"
-           ng-href="{{route | routeWebURL}}">{{route | routeLabel}}</a>
-        <span ng-if="!(route | isWebRoute)">{{route | routeLabel}}</span>
+      <h2 class="service-title truncate">
+        <a ng-if="displayRoute | isWebRoute"
+           ng-href="{{displayRoute | routeWebURL}}">{{displayRoute | routeLabel}}</a>
+        <span ng-if="!(displayRoute | isWebRoute)">{{displayRoute | routeLabel}}</span>
           <span ng-if="routeWarnings && routes.length === 1">
             <route-warnings warnings="routeWarnings"></route-warnings>
           </span>
@@ -19,9 +19,9 @@
         This service has <a ng-href="project/{{service.metadata.namespace}}/browse/routes">routes</a> with warnings.
       </div>
     </div>
-    <div ng-if="!route">
+    <div ng-if="!displayRoute">
       <small class="text-muted text-uppercase">Service</small>
-      <h2 class="service-title">
+      <h2 class="service-title truncate">
         <a ng-href="{{service | navigateResourceURL}}">{{service.metadata.name}}</a>
       </h2>
     </div>
