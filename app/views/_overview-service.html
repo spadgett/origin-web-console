@@ -9,7 +9,15 @@
         <a ng-if="route | isWebRoute"
            ng-href="{{route | routeWebURL}}">{{route | routeLabel}}</a>
         <span ng-if="!(route | isWebRoute)">{{route | routeLabel}}</span>
+          <span ng-if="routeWarnings && routes.length === 1">
+            <route-warnings warnings="routeWarnings"></route-warnings>
+          </span>
+        </span>
       </h2>
+      <div ng-if="routeWarnings && routes.length > 1" class="small text-muted">
+        <span class="pficon pficon-warning-triangle-o" aria-hidden="true"></span>
+        This service has <a ng-href="project/{{service.metadata.namespace}}/browse/routes">routes</a> with warnings.
+      </div>
     </div>
     <div ng-if="!route">
       <small class="text-muted text-uppercase">Service</small>

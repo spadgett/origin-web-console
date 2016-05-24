@@ -21,10 +21,14 @@ angular.module('openshiftConsole')
                         ServicesService) {
     $scope.projectName = $routeParams.project;
     var watches = [];
-    var services, deploymentConfigs, deployments, pods, buildConfigs, builds;
+    var routes, services, deploymentConfigs, deployments, pods, buildConfigs, builds;
 
     var isJenkinsPipelineStrategy = $filter('isJenkinsPipelineStrategy');
     var annotation = $filter('annotation');
+
+    var groupRoutes = function() {
+      $scope.routesByService = RoutesService.groupByService(routes);
+    };
 
     var groupDeploymentConfigs = function() {
       if (!services || !deploymentConfigs) {
@@ -71,6 +75,20 @@ angular.module('openshiftConsole')
         // Add each child service to our dependency map.
         _.each(dependentServices, function(dependency) {
           addChildService(serviceName, dependency);
+        });
+      });
+    };
+
+    var updateRouteWarnings = function() {
+      if (!services || !routes) {
+        return;
+      }
+
+      $scope.routeWarningsByService = {};
+      _.each(services, function(service) {
+        _.each($scope.routesByService[service.metadata.name], function(route) {
+          var warnings = RoutesService.getRouteWarnings(route, service);
+          _.set($scope, ['routeWarningsByService', service.metadata.name, route.metadata.name], warnings);
         });
       });
     };
@@ -146,6 +164,7 @@ angular.module('openshiftConsole')
           groupServices();
           groupDeploymentConfigs();
           groupDeployments();
+          updateRouteWarnings();
           Logger.log("services (list)", services);
         }));
 
@@ -162,8 +181,9 @@ angular.module('openshiftConsole')
         }));
 
         watches.push(DataService.watch("routes", context, function(routesData) {
-          var routes = routesData.by("metadata.name");
-          $scope.routesByService = RoutesService.groupByService(routes);
+          routes = routesData.by("metadata.name");
+          groupRoutes();
+          updateRouteWarnings();
           Logger.log("routes (subscribe)", $scope.routesByService);
         }));
 

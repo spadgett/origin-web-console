@@ -36,7 +36,6 @@
         <div class="container-fluid surface-shaded">
           <div class="row">
             <div class="col-md-12 gutter-top">
-
               <!-- Empty states -->
               <div ng-if="showGetStarted">
                 <!-- Getting started -->
@@ -58,6 +57,7 @@
                 <overview-service
                     service="service"
                     routes="routesByService[service.metadata.name]"
+                    route-warnings="routeWarningsByService[service.metadata.name]"
                     deployment-configs="deploymentConfigsByService[service.metadata.name]"
                     deployments="deploymentsByService[service.metadata.name]"
                     recent-pipelines="recentPipelinesByDC"
@@ -71,6 +71,7 @@
                     <overview-service
                         service="child"
                         routes="routesByService[child.metadata.name]"
+                        route-warnings="routeWarningsByService[child.metadata.name]"
                         deployment-configs="deploymentConfigsByService[child.metadata.name]"
                         deployments="deploymentsByService[child.metadata.name]"
                         recent-pipelines="recentPipelinesByDC"
