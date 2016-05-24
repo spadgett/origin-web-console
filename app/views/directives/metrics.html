@@ -1,4 +1,4 @@
-<div class="metrics" ng-if="pod || deployment">
+<div class="metrics" ng-if="pod || deployment" ng-cl>
   <div class="metrics-options" ng-if="showFull()">
     <!-- Let the user select the container if we're showing pod metrics. -->
     <div ng-if="pod.spec.containers.length" class="form-group">
@@ -52,8 +52,11 @@
         <span ng-if="metric.containerMetric">Container Metrics</span>
         <span ng-if="!metric.containerMetric">Pod Metrics</span>
       </small>
-      <small ng-if="deployment">
+      <small ng-if="deployment && !showCompact()">
         Total for All Pods
+      </small>
+      <small ng-if="showCompact() && metric.datasets.length === 1">
+        {{usageByMetric[metric.datasets[0].id].used}} {{metric.units}}
       </small>
      </h3>
 

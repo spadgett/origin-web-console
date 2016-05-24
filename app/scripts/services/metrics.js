@@ -174,7 +174,7 @@ angular.module("openshiftConsole")
       get: function(config) {
         return getRequestURL(config).then(function(url) {
           var params = {
-            buckets: 60,
+            buckets: config.buckets || 60,
             start: config.start
           };
 
