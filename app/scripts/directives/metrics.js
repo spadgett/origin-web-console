@@ -417,7 +417,16 @@ angular.module('openshiftConsole')
             return;
           }
 
-          var start = Date.now() - getTimeRangeMillis();
+          // Leave the end time off to use the server's current time as the end
+          // time. This prevents an issue where the donut chart shows 0 for
+          // current usage if the client clock is ahead of the server clock.
+          var start, buckets;
+          if (scope.showCompact()) {
+            start = Date.now() - 30 * 60 * 1000;
+            buckets = 15;
+          } else {
+            start = Date.now() - scope.options.timeRange.value * 60 * 1000;
+          }
 
           angular.forEach(scope.metrics, function(metric) {
             var promises = [];

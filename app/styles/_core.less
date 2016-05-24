@@ -262,15 +262,18 @@
   }
   .metric-compact {
     .metric-label{
-      float: left;
-      text-align: right;
-      margin: 16px 0 18px;
+      .text-right();
+      display: inline-block;
+      min-width: 100px;
       padding-right: 7px;
+      vertical-align: top;
       small {
         display: block;
+        padding-top: 3px;
       }
     }
     .metrics-sparkline {
+      display: inline-block;
       margin-top: 7px;
     }
     .c3 {
