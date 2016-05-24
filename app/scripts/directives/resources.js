@@ -30,7 +30,7 @@ angular.module('openshiftConsole')
       templateUrl: 'views/_pod-template.html'
     };
   })
-  .directive('overviewService', function() {
+  .directive('overviewService', function($filter) {
     return {
       restrict: 'E',
       scope: {
@@ -43,7 +43,37 @@ angular.module('openshiftConsole')
         pipelinesByDeployment: '=',
         podsByDeployment: '='
       },
-      templateUrl: '/views/_overview-service.html'
+      templateUrl: '/views/_overview-service.html',
+      link: function($scope) {
+        var annotation = $filter('annotation');
+        var isRecentDeployment = $filter('isRecentDeployment');
+
+        // FIXME: Too much common code with topology.js
+        $scope.isDeploymentVisible = function(deployment) {
+          if (_.get(deployment, 'status.replicas')) {
+            return true;
+          }
+
+          var dcName = annotation(deployment, 'deploymentConfig');
+          if (!dcName) {
+            return true;
+          }
+
+          // Wait for deployment configs to load.
+          if (!$scope.deploymentConfigs) {
+            return false;
+          }
+
+          // If the deployment config has been deleted and the deployment has no replicas, hide it.
+          // Otherwise all old deployments for a deleted deployment config will be visible.
+          var dc = $scope.deploymentConfigs[dcName];
+          if (!dc) {
+            return false;
+          }
+
+          return isRecentDeployment(deployment, dc);
+        };
+      }
     };
   })
 
