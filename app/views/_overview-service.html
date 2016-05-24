@@ -31,7 +31,7 @@
     </div>
     <!-- FIXME: ng-if is not exactly right, need to understand how to show dep status -->
     <div ng-repeat="deployment in deployments | orderObjectsByDate : true track by (deployment | uid)"
-         ng-if="deployment.status.replicas">
+         ng-if="isDeploymentVisible(deployment)">
 
       <div row tablet="column">
         <div column
