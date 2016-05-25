@@ -20,21 +20,20 @@ angular.module('openshiftConsole')
         sparklineHeight: '=?',
         includedMetrics: '=?' // defaults to ["cpu", "memory", "network"]
       },
-      templateUrl: 'views/directives/metrics.html',
+      templateUrl: function(elem, attrs) {
+        if (attrs.profile === 'compact') {
+          return 'views/directives/metrics-compact.html';
+        }
+        return 'views/directives/metrics.html';
+      },
       link: function(scope) {
         scope.includedMetrics = scope.includedMetrics || ["cpu", "memory", "network"];
         var donutByMetric = {}, sparklineByMetric = {};
         var intervalPromise;
         var getMemoryLimit = $parse('resources.limits.memory');
         var getCPULimit = $parse('resources.limits.cpu');
-
-        scope.profile = scope.profile || 'full';
-        scope.showFull = function() {
-          return scope.profile === 'full';
-        };
-        scope.showCompact = function() {
-          return scope.profile === 'compact';
-        };
+        var compact = scope.profile === 'compact';
+        console.log(scope.profile, compact);
 
         function bytesToMiB(value) {
           if (!value) {
@@ -175,7 +174,7 @@ angular.module('openshiftConsole')
             bindto: '#' + metric.chartPrefix + scope.uniqueID + '-sparkline',
             axis: {
               x: {
-                show: scope.showFull(),
+                show: !compact,
                 type: 'timeseries',
                 // With default padding you can have negative axis tick values.
                 padding: {
@@ -188,7 +187,7 @@ angular.module('openshiftConsole')
                 }
               },
               y: {
-                show: scope.showFull(),
+                show: !compact,
                 label: metric.units,
                 min: 0,
                 // With default padding you can have negative axis tick values.
@@ -205,14 +204,14 @@ angular.module('openshiftConsole')
               }
             },
             legend: {
-              show: metric.datasets.length > 1 && scope.showFull()
+              show: metric.datasets.length > 1 && !compact
             },
             point: {
               show: false
             },
             size: {
-              height: scope.sparklineHeight || (scope.showCompact() ? 50 : 160),
-              width: scope.sparklineWidth || (scope.showCompact() ? 200 : undefined),
+              height: scope.sparklineHeight || (compact ? 35 : 160),
+              width: scope.sparklineWidth || (compact ? 150 : undefined),
             },
             tooltip: {
               format: {
@@ -271,7 +270,7 @@ angular.module('openshiftConsole')
             }
 
             // Round to the closest whole number for the utilization chart.
-            usage.used = d3.round(lastValue);
+            usage.used = d3.format(".1r")(lastValue);
             if (usage.total) {
               usage.available = Math.max(usage.total - usage.used, 0);
             }
@@ -428,7 +427,7 @@ angular.module('openshiftConsole')
           // time. This prevents an issue where the donut chart shows 0 for
           // current usage if the client clock is ahead of the server clock.
           var start, buckets;
-          if (scope.showCompact()) {
+          if (compact) {
             start = Date.now() - 30 * 60 * 1000;
             buckets = 15;
           } else {

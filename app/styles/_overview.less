@@ -45,11 +45,19 @@
   }
   .deployment-block {
     justify-content: space-between;
-    .deployment-details {
-      .mar-left-lg();
-    }
-    .deployment-donut {
-      margin: 5px;
+    .deployment-pipeline-details {
+      align-items: stretch;
+      margin: 10px 5px;
+      h3 {
+        margin: 0;
+      }
+      .deployment-summary {
+        margin-right: 10px;
+      }
+      .metrics-col {
+        align-items: center;
+        flex-grow: 1;
+      }
     }
     @media (max-width: 480px) {
       flex-grow: 1;

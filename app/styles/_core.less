@@ -254,32 +254,10 @@
       }
     }
   }
-  .metric-full {
+  .metrics-full {
     .metrics-donut,
     .metrics-sparkline {
       margin-top: 20px;
-    }
-  }
-  .metric-compact {
-    .metric-label{
-      display: inline-block;
-      min-width: 100px;
-      padding-left: 7px;
-      vertical-align: text-bottom;
-      small {
-        display: block;
-        padding-top: 3px;
-      }
-    }
-    .metrics-sparkline {
-      display: inline-block;
-      margin-top: 7px;
-    }
-    .c3 {
-      svg {
-        border-left: 1px solid @border-color-light-grey;
-        border-bottom: 1px solid @border-color-light-grey;
-      }
     }
   }
 
@@ -287,6 +265,39 @@
   @media (max-width: 500px) {
     .metrics-sparkline .c3-axis-x .tick {
       display: none;
+    }
+  }
+}
+
+.metrics-compact {
+  flex: 0 0 auto;
+  max-height: 35px;
+  white-space : nowrap;
+  .metric-label, .metric-usage {
+    justify-content: flex-end;
+    margin: 0 5px 5px;
+  }
+  .metric-label {
+    .text-muted();
+    .text-right();
+    min-width: 50px;
+  }
+  .metric-usage {
+    h2 {
+      margin: 0;
+      small {
+        display: inline-block;
+      }
+    }
+  }
+  .c3 {
+    &:after {
+      content: "";
+      border-bottom: 1px solid @border-color-light-grey;
+      margin: -8px 2px 0;
+    }
+    .c3-line {
+      stroke-width: 1px;
     }
   }
 }

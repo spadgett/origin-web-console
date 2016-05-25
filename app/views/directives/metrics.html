@@ -1,5 +1,5 @@
-<div class="metrics" ng-if="pod || deployment" ng-cl>
-  <div class="metrics-options" ng-if="showFull()">
+<div class="metrics" ng-if="pod || deployment">
+  <div class="metrics-options">
     <!-- Let the user select the container if we're showing pod metrics. -->
     <div ng-if="pod.spec.containers.length" class="form-group">
       <label for="selectContainer">Container:</label>
@@ -45,18 +45,15 @@
     </p>
   </div>
 
-  <div ng-repeat="metric in metrics" ng-if="showFull() && anyUsageByMetric(metric) && !metricsError" class="metric-{{profile}}">
+  <div ng-repeat="metric in metrics" ng-if="anyUsageByMetric(metric) && !metricsError" class="metrics-full">
     <h3 class="metric-label">
       {{metric.label}}
       <small ng-if="pod.spec.containers.length > 1">
         <span ng-if="metric.containerMetric">Container Metrics</span>
         <span ng-if="!metric.containerMetric">Pod Metrics</span>
       </small>
-      <small ng-if="deployment && !showCompact()">
+      <small ng-if="deployment">
         Total for All Pods
-      </small>
-      <small ng-if="showCompact() && metric.datasets.length === 1">
-        {{usageByMetric[metric.datasets[0].id].used}} {{metric.units}}
       </small>
      </h3>
 
@@ -88,17 +85,4 @@
          class="metrics-sparkline">
     </div>
   </div>
-  
-  <div ng-repeat="metric in metrics" ng-if="showCompact() && anyUsageByMetric(metric) && !metricsError" class="metric-{{profile}}">
-    <!-- Sparkline -->
-    <div ng-attr-id="{{metric.chartPrefix + uniqueID}}-sparkline"
-         class="metrics-sparkline">
-    </div>
-      <h2 class="metric-label">
-        {{usageByMetric[metric.datasets[0].id].used}} <small style="display: inline;" >{{metric.units}}</small>
-        <small >{{metric.label}}</small>
-      </h2>
-    <!-- Clear floats so top margin works on the charts below. -->
-    <div style="clear: both;"></div>
-  </div>  
 </div>
