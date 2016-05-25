@@ -20,6 +20,9 @@
       </div>
     </div>
     <div ng-if="!displayRoute">
+      <div ng-if="!displayRouteByService[serviceId]" class="pull-right small">
+        <a ng-href="project/{{service.metadata.namespace}}/create-route?service={{service.metadata.name}}">Create Route</a>
+      </div>
       <small class="text-muted text-uppercase">Service</small>
       <h2 class="service-title truncate">
         <a ng-href="{{service | navigateResourceURL}}">{{service.metadata.name}}</a>
