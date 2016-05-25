@@ -45,7 +45,7 @@
     </p>
   </div>
 
-  <div ng-repeat="metric in metrics" ng-if="anyUsageByMetric(metric) && !metricsError" class="metric-{{profile}}">
+  <div ng-repeat="metric in metrics" ng-if="showFull() && anyUsageByMetric(metric) && !metricsError" class="metric-{{profile}}">
     <h3 class="metric-label">
       {{metric.label}}
       <small ng-if="pod.spec.containers.length > 1">
@@ -62,7 +62,7 @@
 
     <!-- Show a summary of usage above the charts like the patternfly utilization card. -->
     <!-- Reuse the utilization card styles, but only here. -->
-    <div ng-if="showFull() && usageByMetric[metric.datasets[0].id].total" class="utilization-trend-chart-pf">
+    <div ng-if="usageByMetric[metric.datasets[0].id].total" class="utilization-trend-chart-pf">
       <div ng-if="usageByMetric[metric.datasets[0].id].total" class="current-values">
         <h1 class="available-count pull-left">
           {{usageByMetric[metric.datasets[0].id].available}}
@@ -75,10 +75,10 @@
     </div>
 
     <!-- Clear floats so top margin works on the charts below. -->
-    <div ng-if="showFull()" style="clear: both;"></div>
+    <div style="clear: both;"></div>
 
     <!-- Donut -->
-    <div ng-if="showFull() && usageByMetric[metric.datasets[0].id].total"
+    <div ng-if="usageByMetric[metric.datasets[0].id].total"
         ng-attr-id="{{metric.chartPrefix + uniqueID}}-donut"
         class="metrics-donut">
     </div>
@@ -87,8 +87,18 @@
     <div ng-attr-id="{{metric.chartPrefix + uniqueID}}-sparkline"
          class="metrics-sparkline">
     </div>
-
-    <!-- Clear floats so top margin works on the charts below. -->
-    <div ng-if="showCompact()" style="clear: both;"></div>
   </div>
+  
+  <div ng-repeat="metric in metrics" ng-if="showCompact() && anyUsageByMetric(metric) && !metricsError" class="metric-{{profile}}">
+    <!-- Sparkline -->
+    <div ng-attr-id="{{metric.chartPrefix + uniqueID}}-sparkline"
+         class="metrics-sparkline">
+    </div>
+      <h2 class="metric-label">
+        {{usageByMetric[metric.datasets[0].id].used}} <small style="display: inline;" >{{metric.units}}</small>
+        <small >{{metric.label}}</small>
+      </h2>
+    <!-- Clear floats so top margin works on the charts below. -->
+    <div style="clear: both;"></div>
+  </div>  
 </div>

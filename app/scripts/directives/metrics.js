@@ -17,10 +17,12 @@ angular.module('openshiftConsole')
         // Visual profile, currently either 'compact' or 'full' (default)
         profile: '@?',
         sparklineWidth: '=?',
-        sparklineHeight: '=?'
+        sparklineHeight: '=?',
+        includedMetrics: '=?' // defaults to ["cpu", "memory", "network"]
       },
       templateUrl: 'views/directives/metrics.html',
       link: function(scope) {
+        scope.includedMetrics = scope.includedMetrics || ["cpu", "memory", "network"];
         var donutByMetric = {}, sparklineByMetric = {};
         var intervalPromise;
         var getMemoryLimit = $parse('resources.limits.memory');
@@ -54,8 +56,9 @@ angular.module('openshiftConsole')
         scope.uniqueID = _.uniqueId('metrics-chart-');
 
         // Metrics to display.
-        scope.metrics = [
-          {
+        scope.metrics = [];
+        if (_.includes(scope.includedMetrics, "memory")) {
+          scope.metrics.push({
             label: "Memory",
             units: "MiB",
             chartPrefix: "memory-",
@@ -68,8 +71,10 @@ angular.module('openshiftConsole')
                 data: []
               }
             ]
-          },
-          {
+          });
+        }
+        if (_.includes(scope.includedMetrics, "cpu")) {
+          scope.metrics.push({
             label: "CPU",
             units: "millicores",
             chartPrefix: "cpu-",
@@ -81,8 +86,10 @@ angular.module('openshiftConsole')
                 data: []
               }
             ]
-          },
-          {
+          });
+        }
+        if (_.includes(scope.includedMetrics, "network")) {
+          scope.metrics.push({
             label: "Network",
             units: "KiB/s",
             chartPrefix: "network-",
@@ -100,8 +107,8 @@ angular.module('openshiftConsole')
                 data: []
               }
             ]
-          }
-        ];
+          });
+        }
 
         // Set to true when any data has been loaded (or failed to load).
         scope.loaded = false;
