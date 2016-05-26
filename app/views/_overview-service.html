@@ -69,11 +69,17 @@
                   deployment="deployment">
               </deployment-pipeline-details>
             </div>
-            <a href="" role="button" ng-click="viewPodsForDeployment(deployment)">
-              <div column class="deployment-donut">
-                <pod-donut pods="podsByDeployment[deployment.metadata.name]"></pod-donut>
-              </div>
-            </a>
+            <div column class="deployment-donut">
+              <deployment-donut
+                  rc="deployment"
+                  deployment-config="deploymentConfigs[(deployment | annotation : 'deploymentConfig')]"
+                  pods="podsByDeployment[deployment.metadata.name]"
+                  hpa="getHPA(deployment.metadata.name, (deployment | annotation : 'deploymentConfig'))"
+                  limit-ranges="limitRanges"
+                  scalable="isScalableDeployment(deployment, deploymentConfigs, hpaByDc, hpaByRc, scalableDeploymentByConfig)"
+                  alerts="alerts">
+              </deployment-donut>
+            </div>
           </div>
         </div>
       </div>

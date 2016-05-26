@@ -21,7 +21,7 @@ angular.module('openshiftConsole')
                         ServicesService) {
     $scope.projectName = $routeParams.project;
     var watches = [];
-    var routes, services, deploymentConfigs, deployments, pods, buildConfigs, builds;
+    var routes, services, deploymentConfigs, deployments, pods, buildConfigs, builds, horizontalPodAutoscalers, hpaByDC, hpaByRC;
 
     var isJenkinsPipelineStrategy = $filter('isJenkinsPipelineStrategy');
     var annotation = $filter('annotation');
@@ -38,12 +38,56 @@ angular.module('openshiftConsole')
       $scope.deploymentConfigsByService = DeploymentsService.groupByService(deploymentConfigs, services);
     };
 
+    var groupDeploymentsByDC = function() {
+      if (!deployments) {
+        return;
+      }
+      
+      $scope.deploymentsByDeploymentConfig = DeploymentsService.groupByDeploymentConfig(deployments);
+      console.log($scope.deploymentsByDeploymentConfig);
+    };
+
     var groupDeployments = function() {
       if (!services || !deployments) {
         return;
       }
 
       $scope.deploymentsByService = DeploymentsService.groupByService(deployments, services);
+      groupDeploymentsByDC();
+      // Only the most recent in progress or complete deployment for a given
+      // deployment config is scalable in the overview.
+      var scalableDeploymentByConfig = {};
+      _.each($scope.deploymentsByDeploymentConfig, function(deployments, dcName) {
+        scalableDeploymentByConfig[dcName] = DeploymentsService.getActiveDeployment(deployments);
+      });
+      $scope.scalableDeploymentByConfig = scalableDeploymentByConfig;
+      console.log($scope.scalableDeploymentByConfig);
+    };
+
+    var groupHPAs = function() {
+      hpaByDC = {};
+      hpaByRC = {};
+      angular.forEach(horizontalPodAutoscalers, function(hpa) {
+        var name = hpa.spec.scaleRef.name, kind = hpa.spec.scaleRef.kind;
+        if (!name || !kind) {
+          return;
+        }
+
+        switch (kind) {
+        case "DeploymentConfig":
+          hpaByDC[name] = hpaByDC[name] || [];
+          hpaByDC[name].push(hpa);
+          break;
+        case "ReplicationController":
+          hpaByRC[name] = hpaByRC[name] || [];
+          hpaByRC[name].push(hpa);
+          break;
+        default:
+          Logger.warn("Unexpected HPA scaleRef kind", kind);
+        }
+      });
+      $scope.hpaByDC = hpaByDC;
+      $scope.hpaByRC = hpaByRC;
     };
 
     var groupPods = function() {
@@ -147,7 +191,7 @@ angular.module('openshiftConsole')
         });
       });
     };
-
+       
     ProjectsService
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
@@ -202,6 +246,20 @@ angular.module('openshiftConsole')
           groupDeploymentConfigs();
           Logger.log("deploymentconfigs (subscribe)", $scope.deploymentConfigs);
         }));
+
+        watches.push(DataService.watch({
+          group: "extensions",
+          resource: "horizontalpodautoscalers"
+        }, context, function(hpaData) {
+          horizontalPodAutoscalers = hpaData.by("metadata.name"); 
+          groupHPAs();
+        }));
+
+        // List limit ranges in this project to determine if there is a default
+        // CPU request for autoscaling.
+        DataService.list("limitranges", context, function(response) {
+          $scope.limitRanges = response.by("metadata.name");
+        });
 
         $scope.$on('$destroy', function(){
           DataService.unwatchAll(watches);
