@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('openshiftConsole')
-  .directive('overviewService', function($filter, Navigate, RoutesService) {
+  .directive('overviewService', function($filter, Navigate, RoutesService, DeploymentsService) {
     return {
       restrict: 'E',
       scope: {
@@ -13,7 +13,10 @@ angular.module('openshiftConsole')
         replicationControllers: '=',
         recentPipelines: '=',
         pipelinesByDeployment: '=',
-        podsByDeployment: '='
+        podsByDeployment: '=',
+        hpaByDc: '=',
+        hpaByRc: '=',
+        scalableDeploymentByConfig: '='
       },
       templateUrl: '/views/_overview-service.html',
       link: function($scope) {
@@ -68,6 +71,29 @@ angular.module('openshiftConsole')
 
           Navigate.toPodsForDeployment(deployment);
         };
+        
+
+        $scope.getHPA = function(rcName, dcName) {
+          var hpaByDC = $scope.hpaByDc;
+          var hpaByRC = $scope.hpaByRc;
+          // Return `null` if the HPAs haven't been loaded.
+          if (!hpaByDC || !hpaByRC) {
+            return null;
+          }
+
+          // Set missing values to an empty array if the HPAs have loaded. We
+          // want to use the same empty array for subsequent requests to avoid
+          // triggering watch callbacks in overview-deployment.
+          if (dcName) {
+            hpaByDC[dcName] = hpaByDC[dcName] || [];
+            return hpaByDC[dcName];
+          }
+
+          hpaByRC[rcName] = hpaByRC[rcName] || [];
+          return hpaByRC[rcName];
+        };        
+        
+        $scope.isScalableDeployment = DeploymentsService.isScalable;
       }
     };
   });

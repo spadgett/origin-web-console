@@ -62,7 +62,10 @@
                     deployments="deploymentsByService[service.metadata.name]"
                     recent-pipelines="recentPipelinesByDC"
                     pipelines-by-deployment="pipelinesByDeployment"
-                    pods-by-deployment="podsByDeployment">
+                    pods-by-deployment="podsByDeployment",
+                    hpa-by-dc="hpaByDC"
+                    hpa-by-rc="hpaByRC"
+                    scalable-deployment-by-config="scalableDeploymentByConfig">
                 </overview-service>
 
                 <div ng-repeat="child in childServicesByParent[service.metadata.name]" row>
@@ -77,7 +80,10 @@
                         recent-pipelines="recentPipelinesByDC"
                         pipelines-by-deployment="pipelinesByDeployment"
                         pods-by-deployment="podsByDeployment"
-                        class="child-service">
+                        class="child-service"
+                        hpa-by-dc="hpaByDC"
+                        hpa-by-rc="hpaByRC"
+                        scalable-deployment-by-config="scalableDeploymentByConfig">
                     </overview-service>
                   </div>
                 </div>
