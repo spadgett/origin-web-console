@@ -1,8 +1,10 @@
 .overview {
+  h2 {
+    line-height: 1.4;
+  }
   .overview-service {
-    .mar-bottom-lg();
     border-left: 3px solid #cccccc;
-    overflow: hidden;
+    margin-bottom: 10px;
   }
   .service-heading, .service-body {
     background-color: #ffffff;
@@ -43,31 +45,22 @@
   .child-service .overview-service {
     .mar-left-lg();
   }
-  .deployment-block {
-    justify-content: space-between;
-    .deployment-pipeline-details {
-      align-items: stretch;
-      margin: 10px 5px;
-      h3 {
-        margin: 0;
-      }
-      .deployment-summary {
-        margin-right: 10px;
-      }
-      .metrics-col {
-        align-items: center;
-        flex-grow: 1;
-      }
+  .deployment-tile {
+    max-width: 400px;
+    padding: 10px;
+    .deployment-header {
+      justify-content: space-between;
     }
-    @media (max-width: 480px) {
-      flex-grow: 1;
-      .deployment-donut {
-        .text-center();
-        order: 2;
-      }
-      .deployment-details {
-        order: 3;
-      }
+    .donut-row, .metrics-row {
+      justify-content: center;
+    }
+  }
+  .overview-notifications {
+    border-top: 1px solid #dddddd;
+    padding: 10px;
+    @media (min-width: 480px) {
+      border-top: 0;
+      border-left: 1px solid #dddddd;
     }
   }
 }
