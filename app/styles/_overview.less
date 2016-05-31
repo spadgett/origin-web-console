@@ -6,12 +6,12 @@
     border-left: 3px solid #cccccc;
     margin-bottom: 10px;
   }
-  .service-heading, .service-body {
+  .service-header, .service-body {
     background-color: #ffffff;
     border: 1px solid #dddddd;
     border-left-width: 0;
   }
-  .service-heading {
+  .service-header {
     padding: 7px 10px;
     .service-title {
       margin: 0 0 5px;
@@ -46,19 +46,32 @@
     .mar-left-lg();
   }
   .deployment-tile {
-    max-width: 400px;
     padding: 10px;
     .deployment-header {
       justify-content: space-between;
     }
-    .donut-row, .metrics-row {
-      justify-content: center;
+    .deployment-body {
+      justify-content: space-around;
+    }
+    .deployment-body, .overview-donut, .overview-metrics {
+      align-items: center;
+    }
+    @media (min-width: 480px) {
+      .overview-metrics {
+        order: 1;
+      }
+      .overview-donut {
+        order: 2;
+      }
+    }
+    @media (min-width: @screen-sm-min) {
+      max-width: 500px;
     }
   }
   .overview-notifications {
     border-top: 1px solid #dddddd;
     padding: 10px;
-    @media (min-width: 480px) {
+    @media (min-width: @screen-sm-min) {
       border-top: 0;
       border-left: 1px solid #dddddd;
     }

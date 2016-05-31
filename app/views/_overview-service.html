@@ -1,5 +1,5 @@
 <div class="overview-service">
-  <div class="service-heading">
+  <div class="service-header">
     <div ng-if="displayRoute">
       <small class="text-muted text-uppercase">
         Service:
@@ -44,8 +44,7 @@
     <div ng-repeat="deployment in deployments | orderObjectsByDate : true track by (deployment | uid)"
          ng-if="isDeploymentVisible(deployment)"
          ng-init="dcName = (deployment | annotation : 'deploymentConfig')"
-         class="deployment-block"
-         row mobile="column">
+         row tablet="column">
       <div column grow="1" class="deployment-tile">
         <div row class="deployment-header">
           <div column>
@@ -56,23 +55,26 @@
             <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp>
           </div>
         </div>
-        <div row class="donut-row">
-          <deployment-donut
-              rc="deployment"
-              deployment-config="deploymentConfigs[(deployment | annotation : 'deploymentConfig')]"
-              pods="podsByDeployment[deployment.metadata.name]"
-              hpa="getHPA(deployment.metadata.name, (deployment | annotation : 'deploymentConfig'))"
-              limit-ranges="limitRanges"
-              scalable="isScalableDeployment(deployment, deploymentConfigs, hpaByDc, hpaByRc, scalableDeploymentByConfig)"
-              alerts="alerts">
-          </deployment-donut>
-        </div>
-        <div row class="metrics-row">
-          <metrics deployment="deployment" profile="compact"></metrics>
+        <div row mobile="column" class="deployment-body">
+          <div column class="overview-donut">
+            <deployment-donut
+                rc="deployment"
+                deployment-config="deploymentConfigs[(deployment | annotation : 'deploymentConfig')]"
+                pods="podsByDeployment[deployment.metadata.name]"
+                hpa="getHPA(deployment.metadata.name, (deployment | annotation : 'deploymentConfig'))"
+                limit-ranges="limitRanges"
+                scalable="isScalableDeployment(deployment, deploymentConfigs, hpaByDc, hpaByRc, scalableDeploymentByConfig)"
+                alerts="alerts">
+            </deployment-donut>
+          </div>
+          <div column class="overview-metrics">
+            <metrics deployment="deployment" profile="compact"></metrics>
+          </div>
         </div>
       </div>
       <div grow="1" class="overview-notifications">
         <i class="fa fa-flag text-muted mar-right-sm" aria-hidden="true"></i> Notifications and alerts here.
       </div>
+    </div>
   </div>
 </div>
