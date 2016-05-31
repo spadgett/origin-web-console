@@ -1,13 +1,11 @@
 'use strict';
 
 angular.module('openshiftConsole')
-  .directive('overviewService', function($filter, Navigate, RoutesService, DeploymentsService) {
+  .directive('overviewService', function($filter, Navigate, DeploymentsService) {
     return {
       restrict: 'E',
       scope: {
         service: '=',
-        routes: '=',
-        routeWarnings: '=',
         deploymentConfigs: '=',
         deployments: '=',
         replicationControllers: '=',
@@ -22,21 +20,6 @@ angular.module('openshiftConsole')
       link: function($scope) {
         var annotation = $filter('annotation');
         var isRecentDeployment = $filter('isRecentDeployment');
-
-        $scope.$watch('routes', function() {
-          var displayRoute;
-          _.each($scope.routes, function(candidate) {
-            if (!displayRoute) {
-              displayRoute = candidate;
-              return;
-            }
-
-            // Is candidate better than the current display route?
-            displayRoute = RoutesService.getPreferredDisplayRoute(displayRoute, candidate);
-          });
-
-          $scope.displayRoute = displayRoute;
-        });
 
         // FIXME: Too much common code with topology.js
         $scope.isDeploymentVisible = function(deployment) {

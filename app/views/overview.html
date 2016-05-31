@@ -54,39 +54,20 @@
               </div>
 
               <div ng-repeat="service in services" ng-if="!isChildService(service)">
-                <overview-service
+                <service-group
                     service="service"
+                    child-services="childServicesByParent[service.metadata.name]"
                     routes="routesByService[service.metadata.name]"
                     route-warnings="routeWarningsByService[service.metadata.name]"
-                    deployment-configs="deploymentConfigsByService[service.metadata.name]"
-                    deployments="deploymentsByService[service.metadata.name]"
+                    deployment-configs-by-service="deploymentConfigsByService"
+                    deployments-by-service="deploymentsByService"
                     recent-pipelines="recentPipelinesByDC"
                     pipelines-by-deployment="pipelinesByDeployment"
                     pods-by-deployment="podsByDeployment",
                     hpa-by-dc="hpaByDC"
                     hpa-by-rc="hpaByRC"
                     scalable-deployment-by-config="scalableDeploymentByConfig">
-                </overview-service>
-
-                <div ng-repeat="child in childServicesByParent[service.metadata.name]" row>
-                  <div column class="child-border"></div>
-                  <div column grow="1">
-                    <overview-service
-                        service="child"
-                        routes="routesByService[child.metadata.name]"
-                        route-warnings="routeWarningsByService[child.metadata.name]"
-                        deployment-configs="deploymentConfigsByService[child.metadata.name]"
-                        deployments="deploymentsByService[child.metadata.name]"
-                        recent-pipelines="recentPipelinesByDC"
-                        pipelines-by-deployment="pipelinesByDeployment"
-                        pods-by-deployment="podsByDeployment"
-                        class="child-service"
-                        hpa-by-dc="hpaByDC"
-                        hpa-by-rc="hpaByRC"
-                        scalable-deployment-by-config="scalableDeploymentByConfig">
-                    </overview-service>
-                  </div>
-                </div>
+                </service-group>
               </div>
             </div>
           </div>

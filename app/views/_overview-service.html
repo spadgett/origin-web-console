@@ -1,80 +1,40 @@
-<div class="overview-service">
-  <div class="service-header">
-    <div ng-if="displayRoute">
-      <small class="text-muted text-uppercase">
-        Service:
-        <a ng-href="{{service | navigateResourceURL}}" class="subtle-link">{{service.metadata.name}}</a>
-      </small>
-      <h2 class="service-title truncate">
-        <a ng-if="displayRoute | isWebRoute"
-           ng-href="{{displayRoute | routeWebURL}}">{{displayRoute | routeLabel}}</a>
-        <span ng-if="!(displayRoute | isWebRoute)">{{displayRoute | routeLabel}}</span>
-          <span ng-if="routeWarnings && routes.length === 1">
-            <route-warnings warnings="routeWarnings"></route-warnings>
-          </span>
-        </span>
-      </h2>
-      <div ng-if="routeWarnings && routes.length > 1" class="small text-muted">
-        <span class="pficon pficon-warning-triangle-o" aria-hidden="true"></span>
-        This service has <a ng-href="project/{{service.metadata.namespace}}/browse/routes">routes</a> with warnings.
-      </div>
+<div ng-if="!(deployments | hashSize)" class="pad-md">
+  There are no deployments for this service.
+</div>
+<!-- FIXME: ng-if is not exactly right, need to understand how to show dep status -->
+<div ng-repeat="deployment in deployments | orderObjectsByDate : true track by (deployment | uid)"
+     ng-if="isDeploymentVisible(deployment)"
+     ng-init="dcName = (deployment | annotation : 'deploymentConfig')"
+     class="deployment-tile">
+  <div row class="service-title">
+    <small class="text-muted text-uppercase">
+      Service:
+      <a ng-href="{{service | navigateResourceURL}}" class="subtle-link">{{service.metadata.name}}</a>
+    </small>
+  </div>
+  <div row class="deployment-header">
+    <div column>
+      <a ng-if="dcName" ng-href="{{deployment | navigateResourceURL}}" class="subtle-link">#{{deployment | annotation: 'deploymentVersion'}}</a>
+      <a ng-if="!dcName" ng-href="{{deployment | navigateResourceURL}}" class="subtle-link">{{deployment.metadata.name}}</a>
     </div>
-    <div ng-if="!displayRoute">
-      <div ng-if="!displayRouteByService[serviceId]" class="pull-right small">
-        <a ng-href="project/{{service.metadata.namespace}}/create-route?service={{service.metadata.name}}">Create Route</a>
-      </div>
-      <small class="text-muted text-uppercase">Service</small>
-      <h2 class="service-title truncate">
-        <a ng-href="{{service | navigateResourceURL}}">{{service.metadata.name}}</a>
-      </h2>
+    <div column class="text-muted small">
+      <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp>
     </div>
   </div>
-  <div class="service-body">
-    <div ng-repeat="dc in deploymentConfigs">
-      <div row mobile="column" ng-repeat="pipeline in recentPipelines[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)">
-        <div column grow="4">
-          <build-pipeline flex build="pipeline"></build-pipeline>
-        </div>
-      </div>
+  <div row mobile="column" class="deployment-body">
+    <div column class="overview-donut">
+      <deployment-donut
+          rc="deployment"
+          deployment-config="deploymentConfigs[(deployment | annotation : 'deploymentConfig')]"
+          pods="podsByDeployment[deployment.metadata.name]"
+          hpa="getHPA(deployment.metadata.name, (deployment | annotation : 'deploymentConfig'))"
+          limit-ranges="limitRanges"
+          scalable="isScalableDeployment(deployment, deploymentConfigs, hpaByDc, hpaByRc, scalableDeploymentByConfig)"
+          alerts="alerts">
+      </deployment-donut>
     </div>
-    <div ng-if="!(deployments | hashSize)" class="pad-md">
-      There are no deployments for this service.
-    </div>
-    <!-- FIXME: ng-if is not exactly right, need to understand how to show dep status -->
-    <div ng-repeat="deployment in deployments | orderObjectsByDate : true track by (deployment | uid)"
-         ng-if="isDeploymentVisible(deployment)"
-         ng-init="dcName = (deployment | annotation : 'deploymentConfig')"
-         row tablet="column">
-      <div column grow="1" class="deployment-tile">
-        <div row class="deployment-header">
-          <div column>
-            <a ng-if="dcName" ng-href="{{deployment | navigateResourceURL}}" class="subtle-link">#{{deployment | annotation: 'deploymentVersion'}}</a>
-            <a ng-if="!dcName" ng-href="{{deployment | navigateResourceURL}}" class="subtle-link">{{deployment.metadata.name}}</a>
-          </div>
-          <div column class="text-muted">
-            <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp>
-          </div>
-        </div>
-        <div row mobile="column" class="deployment-body">
-          <div column class="overview-donut">
-            <deployment-donut
-                rc="deployment"
-                deployment-config="deploymentConfigs[(deployment | annotation : 'deploymentConfig')]"
-                pods="podsByDeployment[deployment.metadata.name]"
-                hpa="getHPA(deployment.metadata.name, (deployment | annotation : 'deploymentConfig'))"
-                limit-ranges="limitRanges"
-                scalable="isScalableDeployment(deployment, deploymentConfigs, hpaByDc, hpaByRc, scalableDeploymentByConfig)"
-                alerts="alerts">
-            </deployment-donut>
-          </div>
-          <div column class="overview-metrics">
-            <metrics deployment="deployment" profile="compact"></metrics>
-          </div>
-        </div>
-      </div>
-      <div grow="1" class="overview-notifications">
-        <i class="fa fa-flag text-muted mar-right-sm" aria-hidden="true"></i> Notifications and alerts here.
-      </div>
+    <div column class="overview-metrics">
+      <metrics deployment="deployment" profile="compact"></metrics>
     </div>
   </div>
 </div>

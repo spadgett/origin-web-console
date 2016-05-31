@@ -2,24 +2,28 @@
   h2 {
     line-height: 1.4;
   }
-  .overview-service {
+  .service-group {
     border-left: 3px solid #cccccc;
     margin-bottom: 10px;
   }
-  .service-header, .service-body {
+  .service-group-header, .service-group-body {
     background-color: #ffffff;
     border: 1px solid #dddddd;
     border-left-width: 0;
   }
-  .service-header {
-    padding: 7px 10px;
-    .service-title {
-      margin: 0 0 5px;
+  .service-group-header {
+    border-bottom: 0;
+    padding: 10px;
+    .route-title {
+      margin: 0;
     }
   }
-  .service-body {
+  .service-group-body {
     border-top-width: 0;
     padding: 0;
+    .overview-services {
+      flex-wrap: wrap;
+    }
   }
   .component-label {
     .text-muted();
@@ -38,42 +42,44 @@
       }
     }
   }
-  .child-border {
-    .mar-bottom-lg();
-    border-left: 2px dotted #bbbbbb;
-  }
-  .child-service .overview-service {
-    .mar-left-lg();
+  .service-title {
+    padding: 10px;
+    border-top: 2px solid #dddddd;
+    border-bottom: 1px solid #dddddd;
   }
   .deployment-tile {
-    padding: 10px;
+    border-left: 1px solid #dddddd;
+    margin-left: -1px;
     .deployment-header {
+      padding: 10px;
       justify-content: space-between;
     }
     .deployment-body {
+      padding: 10px;
       justify-content: space-around;
+      .deployment-donut {
+        align-items: center;
+      }
     }
     .deployment-body, .overview-donut, .overview-metrics {
       align-items: center;
     }
-    @media (min-width: 480px) {
-      .overview-metrics {
-        order: 1;
-      }
-      .overview-donut {
-        order: 2;
-      }
-    }
+    // @media (min-width: 480px) {
+    //   .overview-metrics {
+    //     order: 1;
+    //   }
+    //   .overview-donut {
+    //     order: 2;
+    //   }
+    // }
     @media (min-width: @screen-sm-min) {
-      max-width: 500px;
+      .deployment-body {
+        max-width: 500px;
+      }
     }
   }
   .overview-notifications {
     border-top: 1px solid #dddddd;
     padding: 10px;
-    @media (min-width: @screen-sm-min) {
-      border-top: 0;
-      border-left: 1px solid #dddddd;
-    }
   }
 }

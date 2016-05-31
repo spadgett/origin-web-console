@@ -1,0 +1,67 @@
+<div class="service-group">
+  <div ng-if="displayRoute" class="service-group-header">
+    <small class="pull-right text-muted text-uppercase">
+      Route:
+      <a ng-href="{{displayRoute | navigateResourceURL}}" class="subtle-link">{{displayRoute.metadata.name}}</a>
+    </small>
+    <h2 class="route-title truncate">
+      <a ng-if="displayRoute | isWebRoute"
+         ng-href="{{displayRoute | routeWebURL}}">{{displayRoute | routeLabel}}</a>
+      <span ng-if="!(displayRoute | isWebRoute)">{{displayRoute | routeLabel}}</span>
+        <span ng-if="routeWarnings && routes.length === 1">
+          <route-warnings warnings="routeWarnings"></route-warnings>
+        </span>
+      </span>
+    </h2>
+    <div ng-if="routeWarnings && routes.length > 1" class="small text-muted">
+      <span class="pficon pficon-warning-triangle-o" aria-hidden="true"></span>
+      This service has <a ng-href="project/{{service.metadata.namespace}}/browse/routes">routes</a> with warnings.
+    </div>
+  </div>
+  <div ng-repeat="dc in deploymentConfigs">
+    <div row mobile="column" ng-repeat="pipeline in recentPipelines[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)">
+      <div column grow="4">
+        <build-pipeline flex build="pipeline"></build-pipeline>
+      </div>
+    </div>
+  </div>
+  <div class="service-group-body">
+    <div row tablet="column" class="overview-services">
+      <overview-service
+          column
+          grow="1"
+          service="service"
+          deployment-configs="deploymentConfigsByService[service.metadata.name]"
+          deployments="deploymentsByService[service.metadata.name]"
+          recent-pipelines="recentPipelines"
+          pipelines-by-deployment="pipelinesByDeployment"
+          pods-by-deployment="podsByDeployment",
+          hpa-by-dc="hpaByDc"
+          hpa-by-rc="hpaByRc"
+          scalable-deployment-by-config="scalableDeploymentByConfig">
+      </overview-service>
+      <overview-service
+          ng-repeat="child in childServices"
+          column
+          grow="1"
+          service="child"
+          deployment-configs="deploymentConfigsByService[child.metadata.name]"
+          deployments="deploymentsByService[child.metadata.name]"
+          recent-pipelines="recentPipelines"
+          pipelines-by-deployment="pipelinesByDeployment"
+          pods-by-deployment="podsByDeployment"
+          class="child-service"
+          hpa-by-dc="hpaByDc"
+          hpa-by-rc="hpaByRc"
+          scalable-deployment-by-config="scalableDeploymentByConfig">
+      </overview-service>
+    </div>
+    <!-- hide for now... ->
+    <div class="mar-md hidden">
+      <div class="alert alert-info">
+        <span class="pficon pficon-info" aria-hidden="true"></span>
+        Important information about your application appears here.
+      </div>
+    </div>
+  </div>
+</div>
