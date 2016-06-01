@@ -8,30 +8,28 @@
      class="deployment-tile">
   <div row class="service-title">
     <div>
-      <small class="text-muted text-uppercase">
+      <div class="text-muted">
         Service:
-        <a ng-href="{{service | navigateResourceURL}}" class="subtle-link">{{service.metadata.name}}</a>
-      </small>
+        <a ng-href="{{service | navigateResourceURL}}">{{service.metadata.name}}</a>
+      </div>
     </div>
-    <div class="text-muted small">
-      <span data-icon="" aria-hidden="true" style="font-size:16px; vertical-align: middle;"></span>
-      <span ng-if="service.spec.ports.length === 1">
-        {{service.spec.ports[0].port}}
-      </span>
-      <span ng-if="service.spec.ports.length > 1">
-        {{service.spec.ports.length}} ports
-      </span>
-    </div>
-  </div>
-  <div row class="deployment-header">
-    <div column>
-      <a ng-if="dcName" ng-href="{{deployment | navigateResourceURL}}" class="subtle-link">#{{deployment | annotation: 'deploymentVersion'}}</a>
-      <a ng-if="!dcName" ng-href="{{deployment | navigateResourceURL}}" class="subtle-link">{{deployment.metadata.name}}</a>
-    </div>
-    <div column class="text-muted small">
+    <!-- <div class="text-muted"> -->
+    <!--   <span data-icon="" aria-hidden="true" style="font-size:16px; vertical-align: middle;"></span> -->
+    <!--   <span ng-if="service.spec.ports.length === 1"> -->
+    <!--     {{service.spec.ports[0].port}} -->
+    <!--   </span> -->
+    <!--   <span ng-if="service.spec.ports.length > 1"> -->
+    <!--     {{service.spec.ports.length}} ports -->
+    <!--   </span> -->
+    <!-- </div> -->
+    <div class="text-muted">
       <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp>
     </div>
   </div>
+  <h4 class="deployment-header pull-right mar-none">
+    <a ng-if="dcName" ng-href="{{deployment | navigateResourceURL}}">#{{deployment | annotation: 'deploymentVersion'}}</a>
+    <a ng-if="!dcName" ng-href="{{deployment | navigateResourceURL}}">{{deployment.metadata.name}}</a>
+  </h4>
   <div row mobile="column" class="deployment-body">
     <div column class="overview-donut">
       <deployment-donut

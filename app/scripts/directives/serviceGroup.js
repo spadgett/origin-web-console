@@ -20,6 +20,11 @@ angular.module('openshiftConsole')
       },
       templateUrl: '/views/service-group.html',
       link: function($scope) {
+        $scope.collapse = false;
+        $scope.toggleCollapse = function() {
+          $scope.collapse = !$scope.collapse;
+        };
+
         $scope.$watch('routes', function() {
           var displayRoute;
           _.each($scope.routes, function(candidate) {

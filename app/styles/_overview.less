@@ -3,26 +3,40 @@
     line-height: 1.4;
   }
   .service-group {
-    border-left: 3px solid #cccccc;
+    border-left: 3px solid #00b9e4;
     margin-bottom: 10px;
   }
-  .service-group-header, .service-group-body {
+  .service-group-header, .deployment-tile {
     background-color: #ffffff;
     border: 1px solid #dddddd;
     border-left-width: 0;
+    cursor: pointer;
   }
   .service-group-header {
-    border-bottom: 0;
+    justify-content: space-between;
     padding: 10px;
     .route-title {
       margin: 0;
     }
+    .app-name {
+      .h3();
+      font-weight: 300;
+      margin: 0;
+      // text-transform: uppercase;
+    }
   }
   .service-group-body {
     border-top-width: 0;
+    margin-top: 10px;
     padding: 0;
     .overview-services {
       flex-wrap: wrap;
+      // Put margins between the services, but make them flush with the left
+      // border even when they wrap.
+      margin-left: -10px;
+      .deployment-tile {
+        margin-left: 10px;
+      }
     }
   }
   .component-label {
@@ -44,13 +58,11 @@
   }
   .service-title {
     padding: 10px;
-    border-top: 2px solid #dddddd;
     border-bottom: 1px solid #dddddd;
     justify-content: space-between;
   }
   .deployment-tile {
     border-left: 1px solid #dddddd;
-    margin-left: -1px;
     .deployment-header {
       padding: 10px;
       justify-content: space-between;
@@ -65,14 +77,14 @@
     .deployment-body, .overview-donut, .overview-metrics {
       align-items: center;
     }
-    // @media (min-width: 480px) {
-    //   .overview-metrics {
-    //     order: 1;
-    //   }
-    //   .overview-donut {
-    //     order: 2;
-    //   }
-    // }
+    @media (min-width: 480px) {
+      .overview-metrics {
+        order: 1;
+      }
+      .overview-donut {
+        order: 2;
+      }
+    }
     @media (min-width: @screen-sm-min) {
       .deployment-body {
         max-width: 500px;
