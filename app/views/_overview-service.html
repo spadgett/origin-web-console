@@ -7,10 +7,21 @@
      ng-init="dcName = (deployment | annotation : 'deploymentConfig')"
      class="deployment-tile">
   <div row class="service-title">
-    <small class="text-muted text-uppercase">
-      Service:
-      <a ng-href="{{service | navigateResourceURL}}" class="subtle-link">{{service.metadata.name}}</a>
-    </small>
+    <div>
+      <small class="text-muted text-uppercase">
+        Service:
+        <a ng-href="{{service | navigateResourceURL}}" class="subtle-link">{{service.metadata.name}}</a>
+      </small>
+    </div>
+    <div class="text-muted small">
+      <span data-icon="" aria-hidden="true" style="font-size:16px; vertical-align: middle;"></span>
+      <span ng-if="service.spec.ports.length === 1">
+        {{service.spec.ports[0].port}}
+      </span>
+      <span ng-if="service.spec.ports.length > 1">
+        {{service.spec.ports.length}} ports
+      </span>
+    </div>
   </div>
   <div row class="deployment-header">
     <div column>
