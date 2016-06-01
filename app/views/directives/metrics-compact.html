@@ -6,6 +6,11 @@
       <span ng-repeat="dataset in metric.datasets">
         <span ng-if="!$first">/</span>
         {{usageByMetric[dataset.id].used}}
+        <span ng-if="dataset.iconClass"
+              ng-class="dataset.iconClass"
+              class="small text-muted"
+              aria-hidden="true">
+        </span>
       </span>
       <small>{{metric.units}}</small>
     </h2>

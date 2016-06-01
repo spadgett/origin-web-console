@@ -98,11 +98,13 @@ angular.module('openshiftConsole')
               {
                 id: "network/tx",
                 label: "Sent",
+                iconClass: 'fa fa-long-arrow-up',
                 data: []
               },
               {
                 id: "network/rx",
                 label: "Received",
+                iconClass: 'fa fa-long-arrow-down',
                 data: []
               }
             ]
