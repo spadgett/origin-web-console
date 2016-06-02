@@ -25,10 +25,12 @@
     </div>
   </div>
   <div class="deployment-header">
-    <div class="shield">
+    <div class="shield" ng-if="dcName">
       <a ng-if="dcName" ng-href="{{deployment | navigateResourceURL}}">#{{deployment | annotation: 'deploymentVersion'}}</a>
-      <a ng-if="!dcName" ng-href="{{deployment | navigateResourceURL}}">{{deployment.metadata.name}}</a>
     </div>
+  </div>
+  <div row ng-if="!dcName" class="rc-name">
+    <a ng-href="{{deployment | navigateResourceURL}}">{{deployment.metadata.name}}</a>
   </div>
   <div row class="deployment-body">
     <div column class="overview-donut">
