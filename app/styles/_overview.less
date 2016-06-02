@@ -11,6 +11,7 @@
     margin-bottom: 10px;
     .alert-wrapper {
       .alert {
+        width: 100%;
         border-color: @overview-border-gray;
         margin-bottom: 0;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -23,11 +24,16 @@
         }
       }
       @media (min-width: @screen-sm-min) {
-        max-width: 50%;
-        .odd-alert {
-          margin-right: 5px;
-        }
+        width: 50%; 
       }
+    }
+    @media (min-width: @screen-sm-min) {     
+      .odd-alert {
+        padding-right: 10px;
+      }
+      .even-alert {
+        padding-right: 5px;
+      }        
     }
   }
   .service-group-header, .deployment-tile {
