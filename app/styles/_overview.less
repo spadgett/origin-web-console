@@ -16,10 +16,14 @@
     justify-content: space-between;
     padding: 10px;
     .route-title {
-      margin: 0;
+      margin: 10px 0 0;
+      @media (min-width: @screen-sm-min) {
+        margin: 0;
+      }
     }
     .app-name {
       .h3();
+      .truncate();
       font-weight: 300;
       margin: 0;
       // text-transform: uppercase;
