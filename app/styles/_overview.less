@@ -108,7 +108,6 @@
     .deployment-body {
       flex-direction: column;
       padding: 10px;
-      justify-content: space-around;
       .deployment-donut {
         align-items: center;
       }
@@ -119,17 +118,23 @@
     .deployment-body, .overview-donut, .overview-metrics {
       align-items: center;
     }
+    .overview-metrics {
+      overflow: hidden;
+      max-width: 100%;
+    }
     @media (min-width: @screen-lg-min) {
       .overview-metrics {
         order: 1;
+        flex-basis: 60%;
       }
       .overview-donut {
         order: 2;
+        flex-basis: 40%;
       }
     }
     @media (min-width: @screen-sm-min) {
       .deployment-body {
-        max-width: 500px;
+        max-width: 650px;
       }
     }
   }
