@@ -1,3 +1,6 @@
+@overview-border-light-gray: #ededed;
+@overview-border-gray: #dddddd;
+
 .overview {
   font-weight: 300;
   h2 {
@@ -6,20 +9,33 @@
   .service-group {
     border-left: 3px solid #00b9e4;
     margin-bottom: 10px;
-    
     .alert-wrapper {
-      max-width: 50%;
-      
       .alert {
+        border-color: @overview-border-gray;
         margin-bottom: 0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        .pficon {
+          box-shadow: none;
+          //box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        .close {
+          color: #8b8d8f;
+        }
+      }
+      @media (min-width: @screen-sm-min) {
+        max-width: 50%;
+        .odd-alert {
+          margin-right: 5px;
+        }
       }
     }
   }
   .service-group-header, .deployment-tile {
     background-color: #ffffff;
-    border: 1px solid #dddddd;
+    border: 1px solid @overview-border-gray;
     border-left-width: 0;
     cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   }
   .service-group-header {
     justify-content: space-between;
@@ -72,12 +88,12 @@
   .service-title {
     .text-muted();
     align-items: flex-end;
-    border-bottom: 1px solid #dddddd;
+    border-bottom: 1px solid @overview-border-gray;
     justify-content: space-between;
     padding: 5px 10px;
   }
   .deployment-tile {
-    border-left: 1px solid #dddddd;
+    border-left: 1px solid @overview-border-gray;
     .deployment-header {
       position: relative;
       .shield {
@@ -118,7 +134,7 @@
     }
   }
   .shield {
-    background: #ededed;
+    background: @overview-border-gray;
     display: inline-block;
     font-weight: 400;
     height: 25px;
@@ -129,7 +145,7 @@
     width: 34px;
   }
   .shield:after {
-    border-top: 12px solid #ededed;
+    border-top: 12px solid @overview-border-gray;
     border-left: 17px solid transparent;
     border-right: 17px solid transparent;
     content: "";
