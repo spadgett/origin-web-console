@@ -4,8 +4,8 @@
        ng-click="toggleCollapse()">
     <div ng-if="service.metadata.labels.app" class="app-name">
       <span class="mar-right-sm">
-        <i class="fa fa-angle-down" aria-hidden="true" ng-if="!collapse"></i>
-        <i class="fa fa-angle-right" aria-hidden="true" ng-if="collapse"></i>
+        <i class="fa fa-angle-down fa-fw" aria-hidden="true" ng-if="!collapse"></i>
+        <i class="fa fa-angle-right fa-fw" aria-hidden="true" ng-if="collapse"></i>
       </span>
       {{service.metadata.labels.app | startCase}}
     </div>
