@@ -69,19 +69,23 @@
     border-left: 1px solid #dddddd;
     .deployment-header {
       padding: 10px;
-      justify-content: space-between;
+      justify-content: flex-end;
     }
     .deployment-body {
+      flex-direction: column;
       padding: 10px;
       justify-content: space-around;
       .deployment-donut {
         align-items: center;
       }
+      @media (min-width: @screen-lg-min) {
+        flex-direction: row;
+      }
     }
     .deployment-body, .overview-donut, .overview-metrics {
       align-items: center;
     }
-    @media (min-width: 480px) {
+    @media (min-width: @screen-lg-min) {
       .overview-metrics {
         order: 1;
       }

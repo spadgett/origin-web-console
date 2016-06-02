@@ -26,11 +26,13 @@
       <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp>
     </div>
   </div>
-  <h4 class="deployment-header pull-right mar-none">
-    <a ng-if="dcName" ng-href="{{deployment | navigateResourceURL}}">#{{deployment | annotation: 'deploymentVersion'}}</a>
-    <a ng-if="!dcName" ng-href="{{deployment | navigateResourceURL}}">{{deployment.metadata.name}}</a>
-  </h4>
-  <div row mobile="column" class="deployment-body">
+  <div row class="deployment-header">
+    <h4 class="mar-none">
+      <a ng-if="dcName" ng-href="{{deployment | navigateResourceURL}}">#{{deployment | annotation: 'deploymentVersion'}}</a>
+      <a ng-if="!dcName" ng-href="{{deployment | navigateResourceURL}}">{{deployment.metadata.name}}</a>
+    </h4>
+  </div>
+  <div row class="deployment-body">
     <div column class="overview-donut">
       <deployment-donut
           rc="deployment"
