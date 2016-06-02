@@ -33,7 +33,6 @@ angular.module('openshiftConsole')
         var getMemoryLimit = $parse('resources.limits.memory');
         var getCPULimit = $parse('resources.limits.cpu');
         var compact = scope.profile === 'compact';
-        console.log(scope.profile, compact);
 
         function bytesToMiB(value) {
           if (!value) {

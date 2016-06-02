@@ -472,11 +472,11 @@ angular.module('openshiftConsole')
 
       if (pod.status.phase === 'Unknown') {
         // We always show Unknown pods in a warning state
-        warnings.push({reason: 'Unknown', message: 'The state of this pod could not be obtained. This is typically due to an error communicating with the host of the pod.'});
+        warnings.push({reason: 'Unknown', pod: pod.metadata.name, message: 'The state of the pod could not be obtained. This is typically due to an error communicating with the host of the pod.'});
       }
 
       if (isPodStuckFilter(pod)) {
-        warnings.push({reason: "Stuck", message: "This pod has been stuck in the pending state for more than five minutes."});
+        warnings.push({reason: "Stuck", pod: pod.metadata.name, message: "The pod has been stuck in the pending state for more than five minutes."});
       }
 
       if (pod.status.phase === 'Running' && pod.status.containerStatuses) {
@@ -488,18 +488,33 @@ angular.module('openshiftConsole')
             continue;
           }
           if (isContainerFailedFilter(containerStatus)) {
-            warnings.push({reason: "Failed", message: "The container " + containerStatus.name + " failed with a non-zero exit code " + containerStatus.state.terminated.exitCode + "."});
+            warnings.push({reason: "Failed", pod: pod.metadata.name, container: containerStatus.name, message: "The container " + containerStatus.name + " failed with a non-zero exit code " + containerStatus.state.terminated.exitCode + "."});
           }
           if (isContainerLoopingFilter(containerStatus)) {
-            warnings.push({reason: "Looping", message: "The container " + containerStatus.name + " is crashing frequently. It must wait before it will be restarted again."});
+            warnings.push({reason: "Looping", pod: pod.metadata.name, container: containerStatus.name, message: "The container " + containerStatus.name + " is crashing frequently. It must wait before it will be restarted again."});
           }
           if (isContainerUnpreparedFilter(containerStatus)) {
-            warnings.push({reason: "Unprepared", message: "The container " + containerStatus.name + " has been running for more than five minutes and has not passed its readiness check."});
+            warnings.push({reason: "Unprepared", pod: pod.metadata.name, container: containerStatus.name, message: "The container " + containerStatus.name + " has been running for more than five minutes and has not passed its readiness check."});
           }
         }
       }
 
       return warnings.length > 0 ? warnings : null;
+    };
+  })
+  // Groups pod warnings by reason + container name, all messages in a group are expected to be the same
+  .filter('groupedPodWarnings', function(podWarningsFilter) {
+    return function(pods) {
+      var groupedPodWarnings = {};
+      _.each(pods, function(pod) {
+        var podWarnings = podWarningsFilter(pod);
+        _.each(podWarnings, function(warning) {
+          var key = warning.reason + (warning.container || '');
+          groupedPodWarnings[key] = groupedPodWarnings[key] || [];
+          groupedPodWarnings[key].push(warning);
+        });
+      });
+      return groupedPodWarnings;
     };
   })
   .filter('troubledPods', function(isTroubledPodFilter) {

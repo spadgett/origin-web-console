@@ -44,7 +44,6 @@ angular.module('openshiftConsole')
       }
       
       $scope.deploymentsByDeploymentConfig = DeploymentsService.groupByDeploymentConfig(deployments);
-      console.log($scope.deploymentsByDeploymentConfig);
     };
 
     var groupDeployments = function() {
@@ -61,7 +60,6 @@ angular.module('openshiftConsole')
         scalableDeploymentByConfig[dcName] = DeploymentsService.getActiveDeployment(deployments);
       });
       $scope.scalableDeploymentByConfig = scalableDeploymentByConfig;
-      console.log($scope.scalableDeploymentByConfig);
     };
 
     var groupHPAs = function() {
