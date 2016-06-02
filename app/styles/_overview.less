@@ -71,8 +71,12 @@
   .deployment-tile {
     border-left: 1px solid #dddddd;
     .deployment-header {
-      padding: 0 10px 10px;
-      justify-content: flex-end;
+      position: relative;
+      .shield {
+        position: absolute;
+        right: 10px;
+        top: 0;
+      }
     }
     .deployment-body {
       flex-direction: column;

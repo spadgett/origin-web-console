@@ -24,7 +24,7 @@
       <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp>
     </div>
   </div>
-  <div row class="deployment-header">
+  <div class="deployment-header">
     <div class="shield">
       <a ng-if="dcName" ng-href="{{deployment | navigateResourceURL}}">#{{deployment | annotation: 'deploymentVersion'}}</a>
       <a ng-if="!dcName" ng-href="{{deployment | navigateResourceURL}}">{{deployment.metadata.name}}</a>
