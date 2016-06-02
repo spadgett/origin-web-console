@@ -76,13 +76,14 @@
             scalable-deployment-by-config="scalableDeploymentByConfig">
         </overview-service>
       </div>
-      <!-- hide for now... ->
-      <div class="mar-md hidden">
-        <div class="alert alert-info">
-          <span class="pficon pficon-info" aria-hidden="true"></span>
-          Important information about your application appears here.
-        </div>
-      </div>
+      <service-group-notifications
+          deployment-configs-by-service="deploymentConfigsByService"
+          deployments-by-service="deploymentsByService"
+          child-services="childServices"
+          service="service"
+          pods-by-deployment="podsByDeployment">
+      </service-group-notifications>
+
     </div>
   </div>
 </div>

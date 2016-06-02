@@ -6,7 +6,8 @@ angular.module('openshiftConsole')
       restrict: 'E',
       scope: {
         alerts: '=',
-        hideCloseButton: '=?'
+        hideCloseButton: '=?',
+        toast: '=?'
       },
       templateUrl: 'views/_alerts.html'
     };
