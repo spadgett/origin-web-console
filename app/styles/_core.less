@@ -270,28 +270,30 @@
 }
 
 .metrics-compact {
+  align-items: flex-end;
   flex: 0 0 auto;
-  max-height: 50px;
+  margin-bottom: 10px;
   white-space : nowrap;
-  .metric-label, .metric-usage {
-    justify-content: flex-end;
-    margin: 0 5px 5px;
+  .metrics-usage {
+    margin-left: 10px;
   }
-  .metric-label {
-    .text-muted();
-    .text-right();
-    min-width: 50px;
-  }
-  .metric-usage {
-    h2 {
-      margin: 0;
-      small {
-        display: inline-block;
-      }
-    }
+  .usage-value {
+    font-size: (@font-size-base * 2);
+    font-weight: 300;
+    line-height: 1;
+    margin: 3px 0;
     .fa {
+      .text-muted();
+      font-size: @font-size-base;
       vertical-align: 2px;
     }
+  }
+  .usage-label {
+    .small();
+    .text-muted();
+    // Make sure the labels align with the bottom of the chart.
+    line-height: 1;
+    margin-bottom: -1px;
   }
   .c3 {
     &:after {

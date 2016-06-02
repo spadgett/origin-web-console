@@ -1,8 +1,7 @@
 <div row ng-repeat="metric in metrics" ng-if="anyUsageByMetric(metric) && !metricsError" class="metrics-compact">
   <div column ng-attr-id="{{metric.chartPrefix + uniqueID}}-sparkline" class="metrics-sparkline"></div>
-  <div column class="metric-usage">
-    <small class="text-muted">{{metric.label}}</small>
-    <h2 class="metric-usage">
+  <div column class="metrics-usage">
+    <div class="usage-value">
       <span ng-repeat="dataset in metric.datasets">
         <span ng-if="!$first">/</span>
         {{usageByMetric[dataset.id].used}}
@@ -12,7 +11,9 @@
               aria-hidden="true">
         </span>
       </span>
-      <small>{{metric.units}}</small>
-    </h2>
+    </div>
+    <div class="usage-label">
+      {{metric.units | capitalize}} {{metric.label}}
+    </div>
   </div>
 </div>

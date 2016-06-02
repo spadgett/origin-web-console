@@ -212,8 +212,8 @@ angular.module('openshiftConsole')
               show: false
             },
             size: {
-              height: scope.sparklineHeight || (compact ? 50 : 160),
-              width: scope.sparklineWidth || (compact ? 150 : undefined),
+              height: scope.sparklineHeight || (compact ? 40 : 160),
+              width: scope.sparklineWidth || (compact ? 175 : undefined),
             },
             tooltip: {
               format: {
