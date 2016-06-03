@@ -43,13 +43,13 @@
   <!--     This service has <a ng-href="project/{{service.metadata.namespace}}/browse/routes">routes</a> with warnings. -->
   <!--   </div> -->
   <!-- </div> -->
-  <div class="collapse" uib-collapse="collapse">
+  <div>
     <div ng-repeat="dc in deploymentConfigsByService[service.metadata.name]">
       <div row ng-repeat="pipeline in recentPipelinesByDc[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)">
         <build-pipeline flex build="pipeline" overview="true"></build-pipeline>
       </div>
     </div>
-    <div class="service-group-body">
+    <div uib-collapse="collapse" class="service-group-body">
       <div row mobile="column" class="overview-services">
         <overview-service
             column
