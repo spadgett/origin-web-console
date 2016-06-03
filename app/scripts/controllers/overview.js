@@ -94,6 +94,7 @@ angular.module('openshiftConsole')
       }
 
       $scope.podsByDeployment = PodsService.groupByReplicationController(pods, deployments);
+      $scope.monopodsByService = PodsService.groupByService($scope.podsByDeployment[''], services);
     };
 
     // Set of child services in this project.
@@ -204,6 +205,7 @@ angular.module('openshiftConsole')
         watches.push(DataService.watch("services", context, function(serviceData) {
           $scope.services = services = serviceData.by("metadata.name");
           groupServices();
+          groupPods();
           groupDeploymentConfigs();
           groupDeployments();
           updateRouteWarnings();

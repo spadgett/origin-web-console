@@ -373,7 +373,8 @@ angular.module('openshiftConsole')
             return _.assign(config, {
               namespace: scope.pod.metadata.namespace,
               pod: scope.pod,
-              containerName: metric.containerMetric ? scope.options.selectedContainer.name : "pod"
+              containerName: metric.containerMetric ? !compact && scope.options.selectedContainer.name : "pod",
+              stacked: true
             });
           }
 
@@ -397,7 +398,7 @@ angular.module('openshiftConsole')
             return true;
           }
 
-          return scope.pod && _.get(scope, 'options.selectedContainer');
+          return scope.pod && (compact || _.get(scope, 'options.selectedContainer'));
         }
 
         function updateData(start, dataset, response) {
