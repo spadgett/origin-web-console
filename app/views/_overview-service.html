@@ -25,8 +25,10 @@
     </div>
   </div>
   <div class="deployment-header">
-    <div class="shield" ng-if="dcName">
-      <a ng-if="dcName" ng-href="{{deployment | navigateResourceURL}}">#{{deployment | annotation: 'deploymentVersion'}}</a>
+    <div column flex class="shield" ng-if="dcName">
+      <div row class="shield-number">
+        <a ng-if="dcName" ng-href="{{deployment | navigateResourceURL}}">#{{deployment | annotation: 'deploymentVersion'}}</a>
+      </div>
     </div>
   </div>
   <div row ng-if="!dcName" class="rc-name">

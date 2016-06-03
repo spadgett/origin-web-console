@@ -1,5 +1,8 @@
 @overview-border-light-gray: #ededed;
-@overview-border-gray: #dddddd;
+@overview-border-gray: #d6d6d6;
+@shield-bgcolor:       #ebebeb;
+@shield-border-color:  @overview-border-gray;
+@shield-width:         36px;
 
 .overview {
   font-weight: 300;
@@ -102,11 +105,6 @@
     border-left: 1px solid @overview-border-gray;
     .deployment-header {
       position: relative;
-      .shield {
-        position: absolute;
-        right: 10px;
-        top: 0;
-      }
     }
     .rc-name {
       padding: 5px 10px;
@@ -144,26 +142,44 @@
       }
     }
   }
+  
   .shield {
-    background: @overview-border-gray;
-    display: inline-block;
-    font-weight: 400;
-    height: 25px;
-    margin: 0;
-    padding-top: 3px;
-    position: relative;
-    text-align: center;
-    width: 34px;
-  }
-  .shield:after {
-    border-top: 12px solid @overview-border-gray;
-    border-left: 17px solid transparent;
-    border-right: 17px solid transparent;
-    content: "";
-    height: 0;
-    left: 0;
-    position: absolute;
-    top: 25px;
-    width: 0;
-  }
+		background: @shield-bgcolor;
+		border: 1px solid @shield-border-color;
+		border-bottom: 0;
+		width: @shield-width;
+		position: absolute;
+		align-items: center;
+		right: 15px;
+		top: -1px;
+		.shield-number {
+			height: 30px;
+			position: relative;
+			width: @shield-width;
+			align-items: center;
+			justify-content: center;
+		}
+		.shield-number:before {
+			border-left: (@shield-width / 2) solid transparent;
+			border-right: (@shield-width / 2) solid transparent;
+			border-top: 10px solid @shield-border-color;
+			content: "";
+			height: 0;
+			left: 0;
+			position: absolute;
+			bottom: -10px;
+			width: 0;
+		}
+		.shield-number:after {
+			border-left: (@shield-width / 2) solid transparent;
+			border-right: (@shield-width / 2) solid transparent;
+			border-top: 10px solid @shield-bgcolor;
+			content: "";
+			height: 0;
+			left: 0;
+			position: absolute;
+			bottom: -9px;
+			width: 0;
+		}
+	}
 }
