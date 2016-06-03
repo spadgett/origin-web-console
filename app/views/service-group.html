@@ -2,13 +2,19 @@
   <div row tablet="column" class="service-group-header"
        ng-if="service.metadata.labels.app || displayRoute"
        ng-click="toggleCollapse()">
-    <div ng-if="service.metadata.labels.app" class="app-name">
+    <div ng-if="appName" class="app-name">
       <i class="fa fa-angle-down fa-fw" aria-hidden="true" ng-if="!collapse"></i>
       <i class="fa fa-angle-right fa-fw" aria-hidden="true" ng-if="collapse"></i>
-      {{service.metadata.labels.app | startCase}}
+      {{appName | startCase}}
     </div>
     <h4 class="route-title truncate">
-      <i class="fa fa-external-link mar-right-sm small" aria-hidden="true"></i>
+      <span ng-if="appName">
+        <i class="fa fa-external-link mar-right-sm small" aria-hidden="true"></i>
+      </span>
+      <span ng-if="!appName">
+        <i class="fa fa-angle-down fa-fw" aria-hidden="true" ng-if="!collapse"></i>
+        <i class="fa fa-angle-right fa-fw" aria-hidden="true" ng-if="collapse"></i>
+      </span>
       <a ng-if="displayRoute | isWebRoute"
          ng-href="{{displayRoute | routeWebURL}}">{{displayRoute | routeLabel}}</a>
       <span ng-if="!(displayRoute | isWebRoute)">{{displayRoute | routeLabel}}</span>

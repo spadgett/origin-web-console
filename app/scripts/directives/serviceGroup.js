@@ -25,9 +25,13 @@ angular.module('openshiftConsole')
           $scope.collapse = !$scope.collapse;
         };
 
-        $scope.$watch('routes', function() {
+        $scope.$watch('service.metadata.labels.app', function(appName) {
+          $scope.appName = appName;
+        });
+
+        $scope.$watch('routes', function(routes) {
           var displayRoute;
-          _.each($scope.routes, function(candidate) {
+          _.each(routes, function(candidate) {
             if (!displayRoute) {
               displayRoute = candidate;
               return;
