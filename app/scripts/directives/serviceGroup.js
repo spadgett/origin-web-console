@@ -11,7 +11,7 @@ angular.module('openshiftConsole')
         routeWarnings: '=',
         deploymentConfigsByService: '=',
         deploymentsByService: '=',
-        recentPipelines: '=',
+        recentPipelinesByDc: '=',
         pipelinesByDeployment: '=',
         podsByDeployment: '=',
         hpaByDc: '=',

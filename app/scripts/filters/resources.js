@@ -882,6 +882,15 @@ angular.module('openshiftConsole')
       return new URI(navURL).addSearch('tab', 'logs').toString();
     };
   })
+  .filter('pipelineStageComplete', function () {
+    return function(stage) {
+      if (!stage) {
+        return false;
+      }
+
+      return _.indexOf(['ABORTED', 'FAILED', 'SUCCESS'], stage.status) !== -1;
+    };
+  })
   .filter('humanizeKind', function (startCaseFilter) {
     // Changes "ReplicationController" to "replication controller".
     // If useTitleCase, returns "Replication Controller".
@@ -1024,6 +1033,10 @@ angular.module('openshiftConsole')
     return function (route) {
       if (!_.get(route, 'status.ingress')) {
         return _.get(route, 'spec.host');
+      }
+
+      if (!route.status.ingress) {
+        return route.spec.host;
       }
       var oldestAdmittedIngress = null;
       angular.forEach(route.status.ingress, function(ingress) {

@@ -1,31 +1,29 @@
-<div row mobile="column" class="overview-pipeline">
-  <div flex class="build-name">
-    <a ng-href="{{build | navigateResourceURL}}">Build #{{build | annotation : 'buildNumber'}}</a>
-  </div>
-  <div flex class="build-phase">
-    {{build.status.phase}}
-  </div>
-  <div flex grow="4">
-    <div ng-if="!jenkinsStatus.stages.length">
-      <div growclass="stage-name">No stages have started.</div>
-    </div>
-    <div ng-repeat="stage in jenkinsStatus.stages" class="stage mar-left-sm">
-      <span ng-if="stage | pipelineStageComplete" class="complete-stage">
-        <pipeline-status ng-if="stage.status" status="stage.status"></pipeline-status>
-        {{stage.name}}
-      </span>
-      <span ng-if="!(stage | pipelineStageComplete)">
-        {{stage.name}}
-        {{stage.status | startCase}}
-        <span ng-if="stage.durationMillis" class="stage-duration">{{stage.durationMillis | humanizeDurationValue}}</span>
-      </span>
-    </div>
-  </div>
-  <div flex ng-if="build | buildLogURL" class="small"><a ng-href="{{build | buildLogURL}}" target="_blank">View Log</a></div>
-
-  <div flex></div>
-
-  <div flex class="text-muted text-right">
+<div class="overview-pipeline">
+  <div class="timestamp">
     <relative-timestamp timestamp="build.metadata.creationTimestamp"></relative-timestamp>
+  </div>
+  <div row class="overview-pipeline-details">
+    <div class="build-name">
+      <a ng-href="{{build | navigateResourceURL}}">Build #{{build | annotation : 'buildNumber'}}</a>
+    </div>
+    <div class="build-phase">
+      {{build.status.phase}}
+    </div>
+    <div class="stages">
+      <div ng-if="!jenkinsStatus.stages.length">
+        <div growclass="stage-name">No stages have started.</div>
+      </div>
+      <div ng-repeat="stage in jenkinsStatus.stages" class="stage">
+        <span ng-if="stage | pipelineStageComplete" class="complete-stage">
+          <pipeline-status ng-if="stage.status" status="stage.status"></pipeline-status>
+        </span>
+        <span ng-if="!(stage | pipelineStageComplete)">
+          {{stage.name}}
+          {{stage.status | startCase}}
+          <span ng-if="stage.durationMillis" class="stage-duration">{{stage.durationMillis | humanizeDurationValue}}</span>
+        </span>
+      </div>
+    </div>
+    <div ng-if="build | buildLogURL" class="log-link"><a ng-href="{{build | buildLogURL}}" target="_blank">View Log</a></div>
   </div>
 </div>

@@ -2,7 +2,6 @@
   There are no deployments or pods for service
   <a ng-href="{{service | navigateResourceURL}}">{{service.metadata.name}}</a>.
 </div>
-<!-- FIXME: ng-if is not exactly right, need to understand how to show dep status -->
 <div ng-repeat="deployment in deployments | orderObjectsByDate : true track by (deployment | uid)"
      ng-if="isDeploymentVisible(deployment)"
      ng-init="dcName = (deployment | annotation : 'deploymentConfig')"
@@ -32,7 +31,7 @@
       </div>
     </div>
   </div>
-  <div row ng-if="!dcName" class="rc-name">
+  <div row ng-if="!dcName" class="rc-header">
     <a ng-href="{{deployment | navigateResourceURL}}">{{deployment.metadata.name}}</a>
   </div>
   <div row class="deployment-body">

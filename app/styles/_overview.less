@@ -39,7 +39,7 @@
       }        
     }
   }
-  .service-group-header, .deployment-tile {
+  .service-group-header, .deployment-tile, .overview-pipeline {
     background-color: #ffffff;
     border: 1px solid @overview-border-gray;
     border-left-width: 0;
@@ -61,6 +61,36 @@
       font-weight: 300;
       margin: 0;
       text-transform: uppercase;
+    }
+  }
+  .overview-pipeline {
+    border-top-width: 0;
+    .overview-pipeline-details {
+      flex-wrap: wrap;
+    }
+    .build-name, .build-phase {
+      padding: 5px 10px;
+      border-right: 1px solid @overview-border-gray;
+    }
+    .stage {
+      display: inline-block;
+      .pipeline-status {
+        vertical-align: 2px;
+      }
+    }
+    .stage + .stage {
+      margin-left: 10px;
+    }
+    .log-link, .stages {
+      padding: 5px 10px;
+    }
+    .timestamp {
+      .text-muted();
+      .pull-right();
+      padding: 3px 5px 0;
+    }
+    .log-link {
+      border-left: 1px solid @overview-border-gray;
     }
   }
   .service-group-body {
@@ -106,7 +136,7 @@
     .deployment-header {
       position: relative;
     }
-    .rc-name {
+    .rc-header {
       padding: 5px 10px;
     }
     .deployment-body {

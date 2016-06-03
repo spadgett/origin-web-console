@@ -44,11 +44,9 @@
   <!--   </div> -->
   <!-- </div> -->
   <div class="collapse" uib-collapse="collapse">
-    <div ng-repeat="dc in deploymentConfigs">
-      <div row mobile="column" ng-repeat="pipeline in recentPipelines[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)">
-        <div column grow="4">
-          <build-pipeline flex build="pipeline"></build-pipeline>
-        </div>
+    <div ng-repeat="dc in deploymentConfigsByService[service.metadata.name]">
+      <div row ng-repeat="pipeline in recentPipelinesByDc[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)">
+        <build-pipeline flex build="pipeline" overview="true"></build-pipeline>
       </div>
     </div>
     <div class="service-group-body">

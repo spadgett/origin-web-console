@@ -49,7 +49,6 @@
     display: block;
     margin: 3px 0;
     overflow: hidden;
-    text-align: center;
     &:before,
     &:after {
       background-color: #d1d1d1;
@@ -70,32 +69,21 @@
       margin-right: -50%;
     }
     &.ABORTED {
-      .fa {
-        font-size: 14px;
-        vertical-align: middle;
-      }
       &:before, &:after {
         background-color: @build-pipeline-aborted-color;
       }
     }
     &.IN_PROGRESS {
-      .fa {
-        font-size: 13px;
-      }
       &:before, &:after {
         background-color: @build-pipeline-in-progress-color;
       }
     }
     &.SUCCESS {
-      color: @build-pipeline-success-color;
-      font-size: 8px;
       &:before, &:after {
         background-color: @build-pipeline-success-color;
       }
     }
     &.FAILED {
-      color: @build-pipeline-failed-color;
-      font-size: 8px;
       &:before, &:after {
         background-color: @build-pipeline-failed-color;
       }
@@ -113,7 +101,6 @@
       margin: 0 -7px;
     }
   }
-
   .pipeline-label {
     font-size: @component-label;
     margin: 0;
@@ -170,6 +157,27 @@
   }
 }
 
-.deployment-pipeline-details {
-  padding: 0 10px;
+// Shared by both the build pipeline and overview pipeline.
+.pipeline-status {
+  text-align: center;
+  &.ABORTED {
+    .fa {
+      font-size: 14px;
+      vertical-align: middle;
+    }
+  }
+  &.IN_PROGRESS {
+    .fa {
+      font-size: 13px;
+    }
+  }
+  &.SUCCESS {
+    color: @build-pipeline-success-color;
+    font-size: 8px;
+  }
+  &.FAILED {
+    color: @build-pipeline-failed-color;
+    font-size: 8px;
+  }
 }
+

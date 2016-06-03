@@ -168,27 +168,18 @@ angular.module('openshiftConsole')
         }
       });
 
-      // TODO: Update with real property when available, rather than temp annotation.
       // Find matching pipeline builds for each deployment.
-      _.each(deployments, function(rc) {
-        var jenkinsBuildURI = annotation(rc, 'openshift.io/jenkins-build-uri');
-        if (!jenkinsBuildURI) {
-          return;
-        }
+      // _.each(deployments, function(rc) {
+      //   var jenkinsBuildURI = annotation(rc, 'openshift.io/jenkins-build-uri');
+      //   if (!jenkinsBuildURI) {
+      //     return;
+      //   }
 
-        // Normalize the URI to match the annotation from the Jenkins sync plugin.
-        // substring(1) to remove leading slash
-        jenkinsBuildURI = URI(jenkinsBuildURI).path().substring(1);
-        $scope.pipelinesByDeployment[rc.metadata.name] = pipelinesByJenkinsURI[jenkinsBuildURI];
-
-        // FIXME: Handle this more cleanly. Just remove the item from the
-        // recent array for now since we show it in the view with the
-        // deployment.
-        var recentPipelines = $scope.recentPipelinesByDC[annotation(rc, 'deploymentConfig')];
-        _.remove(recentPipelines, function(pipeline) {
-          return annotation(pipeline, 'openshift.io/jenkins-build-uri') === jenkinsBuildURI;
-        });
-      });
+      //   // Normalize the URI to match the annotation from the Jenkins sync plugin.
+      //   // substring(1) to remove leading slash
+      //   jenkinsBuildURI = URI(jenkinsBuildURI).path().substring(1);
+      //   $scope.pipelinesByDeployment[rc.metadata.name] = pipelinesByJenkinsURI[jenkinsBuildURI];
+      // });
     };
        
     ProjectsService
