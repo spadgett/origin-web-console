@@ -59,6 +59,21 @@ angular.module("openshiftConsole")
         });
 
         return podsByRC;
+      },
+      
+      groupByService: function(pods, services) {
+        var podsBySvc = {};
+        _.each(pods, function(pod) {
+          var svc = _.find(services, function(svc) {
+            var svcSelector = new LabelSelector(svc.spec.selector);
+            return svcSelector.matches(pod);
+          });
+
+          var svcName = _.get(svc, 'metadata.name', '');
+          _.set(podsBySvc, [svcName, pod.metadata.name], pod);
+        });
+
+        return podsBySvc;        
       }
     };
   });

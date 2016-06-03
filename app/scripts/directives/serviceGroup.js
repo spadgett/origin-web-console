@@ -16,7 +16,8 @@ angular.module('openshiftConsole')
         podsByDeployment: '=',
         hpaByDc: '=',
         hpaByRc: '=',
-        scalableDeploymentByConfig: '='
+        scalableDeploymentByConfig: '=',
+        monopodsByService: '='
       },
       templateUrl: '/views/service-group.html',
       link: function($scope) {

@@ -64,7 +64,8 @@
             pods-by-deployment="podsByDeployment",
             hpa-by-dc="hpaByDc"
             hpa-by-rc="hpaByRc"
-            scalable-deployment-by-config="scalableDeploymentByConfig">
+            scalable-deployment-by-config="scalableDeploymentByConfig"
+            monopods="monopodsByService[service.metadata.name]">
         </overview-service>
         <overview-service
             ng-repeat="child in childServices"
@@ -79,7 +80,8 @@
             class="child-service"
             hpa-by-dc="hpaByDc"
             hpa-by-rc="hpaByRc"
-            scalable-deployment-by-config="scalableDeploymentByConfig">
+            scalable-deployment-by-config="scalableDeploymentByConfig"
+            monopods="monopodsByService[service.metadata.name]">
         </overview-service>
       </div>
       <service-group-notifications
