@@ -1,5 +1,6 @@
-<div ng-if="!(deployments | hashSize)" class="pad-md">
-  There are no deployments for this service.
+<div ng-if="!(deployments | hashSize)" class="text-muted h4 mar-left-xl mar-top-sm mar-bottom-md">
+  There are no deployments for service
+  <a ng-href="{{service | navigateResourceURL}}">{{service.metadata.name}}</a>.
 </div>
 <!-- FIXME: ng-if is not exactly right, need to understand how to show dep status -->
 <div ng-repeat="deployment in deployments | orderObjectsByDate : true track by (deployment | uid)"
