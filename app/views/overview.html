@@ -53,7 +53,7 @@
                 </div>
               </div>
 
-              <div ng-repeat="service in services" ng-if="!isChildService(service)">
+              <div ng-repeat="service in services" ng-if="!isChildService(service) && (service.metadata.labels.app || routesByService[service.metadata.name].length || childServicesByParent[service.metadata.name].length)">
                 <service-group
                     service="service"
                     child-services="childServicesByParent[service.metadata.name]"
@@ -69,6 +69,29 @@
                     scalable-deployment-by-config="scalableDeploymentByConfig"
                     monopods-by-service="monopodsByService">
                 </service-group>
+              </div>
+              
+              <div row wrap>
+                <div
+                    ng-repeat="service in services"
+                    ng-if="!isChildService(service) && !service.metadata.labels.app && !routesByService[service.metadata.name].length && !childServicesByParent[service.metadata.name].length"
+                    class="standalone-service">
+                  <service-group
+                      service="service"
+                      child-services="childServicesByParent[service.metadata.name]"
+                      routes="routesByService[service.metadata.name]"
+                      route-warnings="routeWarningsByService[service.metadata.name]"
+                      deployment-configs-by-service="deploymentConfigsByService"
+                      deployments-by-service="deploymentsByService"
+                      recent-pipelines="recentPipelinesByDC"
+                      pipelines-by-deployment="pipelinesByDeployment"
+                      pods-by-deployment="podsByDeployment",
+                      hpa-by-dc="hpaByDC"
+                      hpa-by-rc="hpaByRC"
+                      scalable-deployment-by-config="scalableDeploymentByConfig"
+                      monopods-by-service="monopodsByService">
+                  </service-group>
+                </div>              
               </div>
             </div>
           </div>
