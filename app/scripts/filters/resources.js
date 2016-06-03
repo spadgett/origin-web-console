@@ -1022,8 +1022,8 @@ angular.module('openshiftConsole')
   })
   .filter('routeHost', function() {
     return function (route) {
-      if (!route.status.ingress) {
-        return route.spec.host;
+      if (!_.get(route, 'status.ingress')) {
+        return _.get(route, 'spec.host');
       }
       var oldestAdmittedIngress = null;
       angular.forEach(route.status.ingress, function(ingress) {
