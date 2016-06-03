@@ -340,7 +340,8 @@ angular.module("openshiftConsole")
       }
 
       // Otherwise, check the map to find the most recent deployment that's scalable.
-      return scalableDeploymentByConfig[deploymentConfigId].metadata.name === deployment.metadata.name;
+      var scalableName = _.get(scalableDeploymentByConfig, [deploymentConfigId, 'metadata', 'name']);
+      return scalableName === deployment.metadata.name;
     };
 
     DeploymentsService.prototype.groupByService = function(/* deployments or deployment configs */ resources, services) {
