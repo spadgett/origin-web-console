@@ -45,7 +45,8 @@
   <!-- </div> -->
   <div>
     <div ng-repeat="dc in deploymentConfigsByService[service.metadata.name]">
-      <div row ng-repeat="pipeline in recentPipelinesByDc[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)">
+      <div row ng-repeat="pipeline in recentPipelinesByDc[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)"
+           class="animate-repeat">
         <build-pipeline flex build="pipeline" overview="true"></build-pipeline>
       </div>
     </div>
@@ -89,7 +90,6 @@
           service="service"
           pods-by-deployment="podsByDeployment">
       </service-group-notifications>
-
     </div>
   </div>
 </div>
