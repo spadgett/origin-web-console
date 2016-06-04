@@ -625,16 +625,7 @@ angular.module('openshiftConsole')
       }
 
       var timestamp = build.status.completionTimestamp || build.metadata.creationTimestamp;
-      switch (build.status.phase) {
-        case 'Complete':
-        case 'Cancelled':
-          return ageLessThanFilter(timestamp, 1, 'minutes');
-        case 'Failed':
-        case 'Error':
-          /* falls through */
-        default:
-          return ageLessThanFilter(timestamp, 5, 'minutes');
-      }
+      return ageLessThanFilter(timestamp, 5, 'minutes');
     };
   })
   .filter('deploymentCauses', function(annotationFilter) {
