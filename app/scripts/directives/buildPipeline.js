@@ -34,6 +34,13 @@ angular.module('openshiftConsole')
             Logger.error('Could not parse Jenkins status as JSON', value);
           }
         });
+
+        var buildConfigForBuild = $filter('buildConfigForBuild');
+        $scope.$watch(function() {
+          return buildConfigForBuild($scope.build);
+        }, function(buildConfigName) {
+          $scope.buildConfigName = buildConfigName;
+        });
       }
     };
   })

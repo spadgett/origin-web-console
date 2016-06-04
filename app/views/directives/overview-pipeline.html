@@ -4,7 +4,8 @@
   </div>
   <div row class="overview-pipeline-details">
     <div class="build-name">
-      <a ng-href="{{build | navigateResourceURL}}">Build #{{build | annotation : 'buildNumber'}}</a>
+      <a ng-href="{{buildConfigName | navigateResourceURL : 'BuildConfig' : build.metadata.namespace}}">{{buildConfigName}}</a>,
+      <a ng-href="{{build | navigateResourceURL}}">#{{build | annotation : 'buildNumber'}}</a>
     </div>
     <div class="build-phase">
       {{build.status.phase}}
