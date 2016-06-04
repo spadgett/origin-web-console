@@ -84,14 +84,24 @@
       }
     }
     .stage + .stage {
-      margin-left: 10px;
+      &:before {
+        background-color: #cccccc;
+        content: '';
+        display: inline-block;
+        height: 1px;
+        width: 10px;
+        position: relative;
+        top: -3px;
+        left: 1px;
+        margin: 0 2px;
+      }
     }
     .incomplete-stage {
       margin-left: 5px;
     }
     .pipeline-status .fa-stack {
       display: inline-block;
-      margin-top: -3px;
+      margin-top: -4px;
     }
     .log-link, .stages {
       padding: 5px 10px;

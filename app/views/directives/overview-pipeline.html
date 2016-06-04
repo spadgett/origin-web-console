@@ -18,7 +18,7 @@
         <span
             data-toggle="tooltip"
             data-trigger="hover"
-            dynamic-content="{{stage.name}}: {{stage.status | sentenceCase}}">
+            dynamic-content="{{stage.name}}, {{stage.status | sentenceCase}}">
           <pipeline-status ng-if="stage.status" status="stage.status"></pipeline-status>
         </span>
         <span ng-if="!(stage | pipelineStageComplete)" class="incomplete-stage">
