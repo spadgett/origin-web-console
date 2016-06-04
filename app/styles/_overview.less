@@ -78,9 +78,6 @@
     }
     .stage {
       display: inline-block;
-      .pipeline-status {
-        vertical-align: 2px;
-      }
       .stage-duration {
         .text-muted();
         margin-left: 5px;
@@ -91,6 +88,10 @@
     }
     .incomplete-stage {
       margin-left: 5px;
+    }
+    .pipeline-status .fa-stack {
+      display: inline-block;
+      margin-top: -3px;
     }
     .log-link, .stages {
       padding: 5px 10px;
