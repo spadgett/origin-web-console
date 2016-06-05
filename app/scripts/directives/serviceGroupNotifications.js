@@ -49,7 +49,7 @@ angular.module('openshiftConsole')
           });
           _.each(svcs, function(svc) {
             // Get notifications for deployments in this service group
-            if ($scope.deploymentsByService) {
+            if ($scope.deploymentsByService && $scope.podsByDeployment) {
               _.each($scope.deploymentsByService[svc.metadata.name], function(deployment) {
                 $filter('groupedPodWarnings')($scope.podsByDeployment[deployment.metadata.name], groupedPodWarnings);
               });
