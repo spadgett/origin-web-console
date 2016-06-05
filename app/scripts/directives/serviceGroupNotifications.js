@@ -15,10 +15,9 @@ angular.module('openshiftConsole')
       link: function($scope) {
         var hasHealthChecks = $filter('hasHealthChecks');
         var alerts = $scope.alerts = {};
-        // TODO needs to be cleaned up
-        $scope.$watchGroup(['service', 'childServices', 'deploymentConfigsByService'], function() {
-          var svcs = ($scope.childServices || []).concat([$scope.service]);
-          _.each(svcs, function(svc) {
+        var svcs = [];
+        var setDCNotifications = function() {
+           _.each(svcs, function(svc) {
             // Get notifications for DCs in this service group
             if ($scope.deploymentConfigsByService) {
               _.each($scope.deploymentConfigsByService[svc.metadata.name], function(dc) {
@@ -32,9 +31,51 @@ angular.module('openshiftConsole')
                     }]
                   };
                 }
+                else {
+                  delete alerts["health_checks" + dc.metadata.uid];
+                }
               });
             }
+          });         
+        };
+        
+        var setDeploymentNotifications = function() {
+          var groupedPodWarnings = {};
+          // clear out pod warning alerts
+          _.each(alerts, function(alert, alertId) {
+            if (alertId.indexOf("pod_warning")) {
+              delete alert[alertId];
+            }
           });
+          _.each(svcs, function(svc) {
+            // Get notifications for deployments in this service group
+            if ($scope.deploymentsByService) {
+              _.each($scope.deploymentsByService[svc.metadata.name], function(deployment) {
+                $filter('groupedPodWarnings')($scope.podsByDeployment[deployment.metadata.name], groupedPodWarnings);
+              });
+            }        
+          });
+          _.each(groupedPodWarnings, function(podWarnings, groupId) {
+            if (podWarnings.length) {
+              alerts["pod_warning"+groupId] = {
+                type: "warning",
+                message: podWarnings[0].message
+              };
+            }
+          });
+        };
+        
+        // TODO worried about how this will perform
+        $scope.$watchGroup(['service', 'childServices'], function() {
+          svcs = ($scope.childServices || []).concat([$scope.service]);
+          setDCNotifications();
+          setDeploymentNotifications();
+        });
+        $scope.$watch('deploymentConfigsByService', function() {
+          setDCNotifications();
+        });
+        $scope.$watchGroup(['podsByDeployment', 'deploymentsByService'], function() {
+          setDeploymentNotifications();
         });
       }
     };
