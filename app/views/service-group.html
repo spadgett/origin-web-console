@@ -8,7 +8,7 @@
       {{appName | startCase}}
     </div>
     <h4 class="route-title truncate">
-      <span ng-if="appName">
+      <span ng-if="appName && (displayRoute | isWebRoute)">
         <i class="fa fa-external-link mar-right-sm small" aria-hidden="true"></i>
       </span>
       <span ng-if="!appName">
