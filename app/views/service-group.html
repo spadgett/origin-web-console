@@ -24,25 +24,6 @@
       </span>
     </h4>
   </div>
-  <!-- <div ng-if="displayRoute" class="service-group-header"> -->
-  <!--   <div class="pull-right text-muted"> -->
-  <!--     Route: -->
-  <!--     <a ng-href="{{displayRoute | navigateResourceURL}}">{{displayRoute.metadata.name}}</a> -->
-  <!--   </div> -->
-  <!--   <h2 class="route-title truncate"> -->
-  <!--     <a ng-if="displayRoute | isWebRoute" -->
-  <!--        ng-href="{{displayRoute | routeWebURL}}">{{displayRoute | routeLabel}}</a> -->
-  <!--     <span ng-if="!(displayRoute | isWebRoute)">{{displayRoute | routeLabel}}</span> -->
-  <!--       <span ng-if="routeWarnings && routes.length === 1"> -->
-  <!--         <route-warnings warnings="routeWarnings"></route-warnings> -->
-  <!--       </span> -->
-  <!--     </span> -->
-  <!--   </h2> -->
-  <!--   <div ng-if="routeWarnings && routes.length > 1" class="small text-muted"> -->
-  <!--     <span class="pficon pficon-warning-triangle-o" aria-hidden="true"></span> -->
-  <!--     This service has <a ng-href="project/{{service.metadata.namespace}}/browse/routes">routes</a> with warnings. -->
-  <!--   </div> -->
-  <!-- </div> -->
   <div>
     <div ng-repeat="dc in deploymentConfigsByService[service.metadata.name]">
       <div row ng-repeat="pipeline in recentPipelinesByDc[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)"
