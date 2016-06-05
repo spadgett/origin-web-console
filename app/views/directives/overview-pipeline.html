@@ -23,7 +23,7 @@
         </span>
         <span ng-if="!(stage | pipelineStageComplete)" class="incomplete-stage">
           {{stage.name}}
-          <span ng-if="stage.durationMillis" class="stage-duration">{{stage.durationMillis | humanizeDurationValue}}</span>
+          <span ng-if="stage.durationMillis" class="small text-muted mar-left-xs">{{stage.durationMillis | conciseDuration}}</span>
         </span>
       </div>
     </div>
