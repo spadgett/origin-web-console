@@ -504,8 +504,8 @@ angular.module('openshiftConsole')
   })
   // Groups pod warnings by reason + container name, all messages in a group are expected to be the same
   .filter('groupedPodWarnings', function(podWarningsFilter) {
-    return function(pods) {
-      var groupedPodWarnings = {};
+    return function(pods, existingMap) {
+      var groupedPodWarnings = existingMap || {};
       _.each(pods, function(pod) {
         var podWarnings = podWarningsFilter(pod);
         _.each(podWarnings, function(warning) {

@@ -27,7 +27,7 @@
         }
       }
       @media (min-width: @screen-sm-min) {
-        width: 50%; 
+        width: 50%;
       }
     }
     @media (min-width: @screen-sm-min) {     
@@ -49,6 +49,14 @@
   .standalone-service {
     width: 50%;
     padding-right: 10px;
+    
+    .alert-wrapper {
+      width: 100%;
+      
+      &.odd-alert {
+        padding-right: 5px;
+      }
+    }
   }  
   .service-group-header {
     justify-content: space-between;
