@@ -30,13 +30,13 @@
         width: 50%;
       }
     }
-    @media (min-width: @screen-sm-min) {     
+    @media (min-width: @screen-sm-min) {
       .odd-alert {
         padding-right: 10px;
       }
       .even-alert {
         padding-right: 5px;
-      }        
+      }
     }
   }
   .service-group-header, .deployment-tile, .overview-pipeline {
@@ -47,17 +47,20 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   }
   .standalone-service {
-    width: 50%;
-    padding-right: 10px;
-    
-    .alert-wrapper {
-      width: 100%;
-      
-      &.odd-alert {
-        padding-right: 5px;
+    width: 100%;
+    @media (min-width: @screen-sm-min) {
+      width: 50%;
+      padding-right: 10px;
+
+      .alert-wrapper {
+        width: 100%;
+
+        &.odd-alert {
+          padding-right: 5px;
+        }
       }
     }
-  }  
+  }
   .service-group-header {
     justify-content: space-between;
     padding: 10px;
@@ -220,7 +223,7 @@
       }
     }
   }
-  
+
   .shield {
 		background: @shield-bgcolor;
 		border: 1px solid @shield-border-color;
