@@ -63,8 +63,14 @@
     padding: 10px;
     .route-title {
       line-height: 1.4;
-      margin: 10px 0 0;
+      // Margin at mobile if there is an app name. The route is stacked below the app name.
+      margin: 10px 0 0 6px;
+      &:only-child {
+        // Margin without app name.
+        margin: 0;
+      }
       @media (min-width: @screen-sm-min) {
+        // At wider screen widths, always 0 margin.
         margin: 0;
       }
     }
