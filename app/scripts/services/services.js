@@ -26,7 +26,7 @@ angular.module("openshiftConsole")
       }
 
       // Find dependent services. Example annotation:
-      //   "service.alpha.openshift.io/dependencies": "[{\"name\": \"database\", \"namespace\": \"\", \"kind\": \"service\"}]"
+      //   "service.alpha.openshift.io/dependencies": "[{\"name\": \"database\", \"namespace\": \"\", \"kind\": \"Service\"}]"
       // Default kind if missing is Service and default namespace is this namespace.
       serviceNamespace = _.get(service, 'metadata.namespace');
       var isDependentService = function(dependency) {
