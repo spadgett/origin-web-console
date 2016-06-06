@@ -280,7 +280,6 @@
     display: inline-block;
     margin-left: 10px;
     overflow: hidden;
-    width: 150px;
   }
   .usage-value {
     font-size: (@font-size-base * 2);
@@ -312,13 +311,16 @@
     }
   }
   @media (max-width: @screen-xs-max) {
+    .text-center();
     display: inline-block;
     margin-top: 5px;
     .metrics-sparkline {
       display: none;
     }
     .metrics-usage {
-      width: auto;
+      .usage-value {
+        font-size: 22px;
+      }
     }
   }
 }
