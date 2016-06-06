@@ -63,6 +63,9 @@
             scalable-deployment-by-config="scalableDeploymentByConfig"
             monopods="monopodsByService[service.metadata.name]">
         </overview-service>
+        <div ng-if="(childServices | hashSize) === 0" class="no-child-services-message">
+          No linked services.
+        </div>
       </div>
       <service-group-notifications
           deployment-configs-by-service="deploymentConfigsByService"

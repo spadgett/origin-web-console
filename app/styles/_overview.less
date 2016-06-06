@@ -13,6 +13,8 @@
     border-left: 3px solid #00b9e4;
     margin-bottom: 20px;
     .alert-wrapper {
+      width: 100%;
+      padding-right: 5px;
       .alert {
         width: 100%;
         border-color: @overview-border-gray;
@@ -26,18 +28,18 @@
           color: #8b8d8f;
         }
       }
-      @media (min-width: @screen-sm-min) {
-        width: 50%;
-      }
+      // @media (min-width: @screen-sm-min) {
+      //   width: 50%;
+      // }
     }
-    @media (min-width: @screen-sm-min) {
-      .odd-alert {
-        padding-right: 10px;
-      }
-      .even-alert {
-        padding-right: 5px;
-      }
-    }
+    // @media (min-width: @screen-sm-min) {
+    //   .odd-alert {
+    //     padding-right: 10px;
+    //   }
+    //   .even-alert {
+    //     padding-right: 5px;
+    //   }
+    // }
   }
   .service-group-header, .deployment-tile, .overview-pipeline {
     background-color: #ffffff;
@@ -50,15 +52,16 @@
     width: 100%;
     @media (min-width: @screen-sm-min) {
       width: 50%;
-      padding-right: 10px;
+      // FIXME: magic number, why 13px?
+      padding-right: 13px;
 
-      .alert-wrapper {
-        width: 100%;
+      // .alert-wrapper {
+      //   width: 100%;
 
-        &.odd-alert {
-          padding-right: 5px;
-        }
-      }
+      //   &.odd-alert {
+      //     padding-right: 5px;
+      //   }
+      // }
     }
   }
   .service-group-header {
@@ -204,7 +207,6 @@
       align-items: center;
     }
     .overview-metrics {
-      overflow: hidden;
       max-width: 100%;
       @media (max-width: @screen-xs-max) {
         margin: 0 auto;
@@ -220,13 +222,25 @@
         flex-basis: 40%;
       }
     }
-    @media (min-width: @screen-sm-min) {
-      .deployment-body {
+    .deployment-tile {
+      @media (min-width: @screen-sm-min) {
+        max-width: 50%;
+      }
+      @media (min-width: @screen-lg-min) {
         max-width: 650px;
       }
     }
   }
-
+  .no-child-services-message {
+    .h4();
+    .text-muted();
+    margin-left: 10px;
+    padding: 0 10px;
+    width: 50%;
+  }
+  .standalone-service .no-child-services-message {
+    display: none;
+  }
   .shield {
     background: @shield-bgcolor;
     border: 1px solid @shield-border-color;
