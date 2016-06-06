@@ -43,7 +43,7 @@ angular.module('openshiftConsole')
           var groupedPodWarnings = {};
           // clear out pod warning alerts
           _.each(alerts, function(alert, alertId) {
-            if (alertId.indexOf("pod_warning")) {
+            if (alertId.indexOf("pod_warning") >= 0) {
               delete alert[alertId];
             }
           });

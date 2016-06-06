@@ -91,8 +91,24 @@
                       scalable-deployment-by-config="scalableDeploymentByConfig"
                       monopods-by-service="monopodsByService">
                   </service-group>
-                </div>              
+                </div>               
               </div>
+              
+              <!-- UNSERVICED STUFF GOES HERE
+              <div row wrap>
+                <div ng-repeat="dc in deploymentConfigsByService['']" outline>
+                  dc with no service {{dc.metadata.name}}
+                </div>
+                
+                <div ng-repeat="deployment in deploymentsByService['']" ng-if="deploymentsByDeploymentConfig[''][deployment.metadata.name]" outline>
+                  rc with no service {{deployment.metadata.name}}
+                </div>
+                
+                <div ng-repeat="pod in monopodsByService['']" outline>
+                  pod with no service {{pod.metadata.name}}
+                </div>
+              </div>
+              -->
             </div>
           </div>
         </div>

@@ -25,6 +25,7 @@ angular.module('openshiftConsole')
 
     var isJenkinsPipelineStrategy = $filter('isJenkinsPipelineStrategy');
     var annotation = $filter('annotation');
+    var label = $filter('label');
 
     var groupRoutes = function() {
       $scope.routesByService = RoutesService.groupByService(routes);
@@ -88,13 +89,40 @@ angular.module('openshiftConsole')
       $scope.hpaByRC = hpaByRC;
     };
 
+    // Filter out monopods we know we don't want to see
+    var showMonopod = function(pod) {
+      // Hide pods in the Succeeded, Terminated, and Failed phases since these
+      // are run once pods that are done.
+      if (pod.status.phase === 'Succeeded' ||
+          pod.status.phase === 'Terminated' ||
+          pod.status.phase === 'Failed') {
+        // TODO we may want to show pods for X amount of time after they have completed
+        return false;
+      }
+
+      // Hide our deployer pods since it is obvious the deployment is
+      // happening when the new deployment appears.
+      if (label(pod, "openshift.io/deployer-pod-for.name")) {
+        return false;
+      }
+
+      // Hide our build pods since we are already showing details for
+      // currently running or recently run builds under the appropriate
+      // areas.
+      if (annotation(pod, "openshift.io/build.name")) {
+        return false;
+      }
+
+      return true;
+    };
+
     var groupPods = function() {
       if (!pods || !deployments) {
         return;
       }
 
       $scope.podsByDeployment = PodsService.groupByReplicationController(pods, deployments);
-      $scope.monopodsByService = PodsService.groupByService($scope.podsByDeployment[''], services);
+      $scope.monopodsByService = PodsService.groupByService($scope.podsByDeployment[''], services, showMonopod);
     };
 
     // Set of child services in this project.
