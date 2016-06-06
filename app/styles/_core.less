@@ -270,10 +270,12 @@
 }
 
 .metrics-compact {
-  align-items: flex-end;
-  flex: 0 0 auto;
   margin-bottom: 10px;
   white-space : nowrap;
+  .metrics-sparkline {
+    display: inline-block;
+    vertical-align: -6px;
+  }
   .metrics-usage {
     display: inline-block;
     margin-left: 10px;
@@ -301,11 +303,22 @@
   .c3 {
     &:after {
       content: "";
+      display: block;
       border-bottom: 1px solid @border-color-light-grey;
-      margin: -8px 2px 0;
+      margin: -14px 2px 0;
     }
     .c3-line {
       stroke-width: 1px;
+    }
+  }
+  @media (max-width: @screen-xs-max) {
+    display: inline-block;
+    margin-top: 5px;
+    .metrics-sparkline {
+      display: none;
+    }
+    .metrics-usage {
+      width: auto;
     }
   }
 }
