@@ -1,11 +1,12 @@
 'use strict';
 
 angular.module('openshiftConsole')
-  .directive('serviceGroup', function(RoutesService) {
+  .directive('serviceGroup', function($uibModal, RoutesService, ServicesService) {
     return {
       restrict: 'E',
       scope: {
         service: '=',
+        services: '=',
         childServices: '=',
         routes: '=',
         routeWarnings: '=',
@@ -24,6 +25,19 @@ angular.module('openshiftConsole')
         $scope.collapse = false;
         $scope.toggleCollapse = function() {
           $scope.collapse = !$scope.collapse;
+        };
+
+        $scope.linkService = function() {
+          var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'views/modals/link-service.html',
+            controller: 'LinkServiceModalController',
+            scope: $scope
+          });
+          modalInstance.result.then(function(child) {
+            // TODO: Handle errors!
+            ServicesService.linkService($scope.service, child);
+          });
         };
 
         $scope.$watch('service.metadata.labels.app', function(appName) {

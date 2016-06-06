@@ -63,8 +63,10 @@
             scalable-deployment-by-config="scalableDeploymentByConfig"
             monopods="monopodsByService[service.metadata.name]">
         </overview-service>
-        <div ng-if="(childServices | hashSize) === 0" class="no-child-services-message">
+        <div ng-if="(childServices | hashSize) === 0" class="no-child-services-block">
           No linked services.
+          <a href="" ng-show="(services | hashSize) > 1"
+             ng-click="linkService()" role="button">Link a service</a>
         </div>
       </div>
       <service-group-notifications

@@ -56,6 +56,7 @@
               <div ng-repeat="service in services" ng-if="!isChildService(service) && (service.metadata.labels.app || routesByService[service.metadata.name].length || childServicesByParent[service.metadata.name].length)">
                 <service-group
                     service="service"
+                    services="services"
                     child-services="childServicesByParent[service.metadata.name]"
                     routes="routesByService[service.metadata.name]"
                     route-warnings="routeWarningsByService[service.metadata.name]"
