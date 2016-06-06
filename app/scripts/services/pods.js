@@ -61,9 +61,14 @@ angular.module("openshiftConsole")
         return podsByRC;
       },
       
-      groupByService: function(pods, services) {
+      // includeFn is an optional filter to only include certain pods in the map
+      // common use case is to hide infrastructure pods like build and deployer
+      groupByService: function(pods, services, includeFn) {
         var podsBySvc = {};
         _.each(pods, function(pod) {
+          if (includeFn && !includeFn(pod)) {
+            return;
+          }
           var svc = _.find(services, function(svc) {
             var svcSelector = new LabelSelector(svc.spec.selector);
             return svcSelector.matches(pod);

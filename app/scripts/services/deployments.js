@@ -346,19 +346,24 @@ angular.module("openshiftConsole")
 
     DeploymentsService.prototype.groupByService = function(/* deployments or deployment configs */ resources, services) {
       var byService = {};
-
       _.each(resources, function(resource) {
         var selector = new LabelSelector(getLabels(resource));
+        var foundSvc = false;
         _.each(services, function(service) {
           var serviceSelector = new LabelSelector(service.spec.selector);
           if (serviceSelector.covers(selector)) {
+            foundSvc = true;
             _.set(byService,
                   [service.metadata.name, resource.metadata.name],
                   resource);
           }
         });
+        if (!foundSvc) {
+          _.set(byService,
+                  ['', resource.metadata.name],
+                  resource);
+        }
       });
-
       return byService;
     };
     
