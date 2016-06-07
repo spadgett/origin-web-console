@@ -34,6 +34,9 @@ angular.module('openshiftConsole')
         var getCPULimit = $parse('resources.limits.cpu');
         var compact = scope.profile === 'compact';
 
+        // Set to true when the route changes so we don't update charts that no longer exist.
+        var destroyed = false;
+
         function bytesToMiB(value) {
           if (!value) {
             return value;
@@ -344,6 +347,10 @@ angular.module('openshiftConsole')
               sparklineConfig.color = { pattern: metric.chartDataColors };
             }
             $timeout(function() {
+              if (destroyed) {
+                return;
+              }
+
               sparklineByMetric[chartId] = c3.generate(sparklineConfig);
             });
           } else {
@@ -464,6 +471,10 @@ angular.module('openshiftConsole')
             $q.all(promises).then(
               // success
               function(responses) {
+                if (destroyed) {
+                  return;
+                }
+
                 angular.forEach(responses, function(response) {
                   var dataset = _.find(metric.datasets, {
                     id: response.metricID
@@ -474,6 +485,10 @@ angular.module('openshiftConsole')
               },
               // failure
               function(responses) {
+                if (destroyed) {
+                  return;
+                }
+
                 angular.forEach(responses, function(response) {
                   scope.metricsError = {
                     status: response.status,
@@ -518,6 +533,8 @@ angular.module('openshiftConsole')
             chart.destroy();
           });
           sparklineByMetric = null;
+
+          destroyed = true;
         });
       }
     };
