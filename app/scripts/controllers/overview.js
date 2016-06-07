@@ -20,12 +20,16 @@ angular.module('openshiftConsole')
                         RoutesService,
                         ServicesService) {
     $scope.projectName = $routeParams.project;
+    $scope.renderOptions = $scope.renderOptions || {};
+    $scope.renderOptions.showGetStarted = false;
+    
     var watches = [];
     var routes, services, deploymentConfigs, deployments, pods, buildConfigs, builds, horizontalPodAutoscalers, hpaByDC, hpaByRC;
 
     var isJenkinsPipelineStrategy = $filter('isJenkinsPipelineStrategy');
     var annotation = $filter('annotation');
     var label = $filter('label');
+    var hashSize = $filter('hashSize');
 
     var groupRoutes = function() {
       $scope.routesByService = RoutesService.groupByService(routes);
@@ -210,6 +214,19 @@ angular.module('openshiftConsole')
       // });
     };
        
+    // Show the "Get Started" message if the project is empty.
+    // TODO copied from old overview, do we want to adust this at all based on our new grouping logic?
+    var updateShowGetStarted = function() {
+      var projectEmpty =
+        hashSize(services) === 0 &&
+        hashSize(pods) === 0 &&
+        hashSize(deployments) === 0 &&
+        hashSize(deploymentConfigs) === 0 &&
+        hashSize(builds) === 0;
+
+      $scope.renderOptions.showGetStarted = projectEmpty;
+    };
+       
     ProjectsService
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
@@ -218,6 +235,7 @@ angular.module('openshiftConsole')
         watches.push(DataService.watch("pods", context, function(podsData) {
           pods = podsData.by("metadata.name");
           groupPods();
+          updateShowGetStarted();
           Logger.log("pods", pods);
         }));
 
@@ -228,12 +246,14 @@ angular.module('openshiftConsole')
           groupDeploymentConfigs();
           groupDeployments();
           updateRouteWarnings();
+          updateShowGetStarted();
           Logger.log("services (list)", services);
         }));
 
         watches.push(DataService.watch("builds", context, function(buildData) {
           builds = buildData.by("metadata.name");
           groupPipelines();
+          updateShowGetStarted();
           Logger.log("builds (list)", builds);
         }));
 
@@ -256,6 +276,7 @@ angular.module('openshiftConsole')
           groupDeployments();
           groupPods();
           groupPipelines();
+          updateShowGetStarted();
           Logger.log("replicationcontrollers (subscribe)", deployments);
         }));
 
@@ -263,6 +284,7 @@ angular.module('openshiftConsole')
         watches.push(DataService.watch("deploymentconfigs", context, function(dcData) {
           deploymentConfigs = dcData.by("metadata.name");
           groupDeploymentConfigs();
+          updateShowGetStarted();
           Logger.log("deploymentconfigs (subscribe)", $scope.deploymentConfigs);
         }));
 
