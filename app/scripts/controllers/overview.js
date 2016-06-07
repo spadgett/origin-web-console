@@ -36,6 +36,7 @@ angular.module('openshiftConsole')
     var isJenkinsPipelineStrategy = $filter('isJenkinsPipelineStrategy');
     var annotation = $filter('annotation');
     var label = $filter('label');
+    var imageObjectRef = $filter('imageObjectRef');
 
     var groupRoutes = function() {
       $scope.routesByService = RoutesService.groupByService(routes);
@@ -176,7 +177,7 @@ angular.module('openshiftConsole')
 
     var isRecentBuild = $filter('isRecentBuild');
     var buildConfigForBuild = $filter('buildConfigForBuild');
-    var groupPipelines = function() {
+    var groupBuilds = function() {
       if (!builds) {
         return;
       }
@@ -184,25 +185,31 @@ angular.module('openshiftConsole')
       var pipelinesByJenkinsURI = {};
       $scope.pipelinesByDeployment = {};
       $scope.recentPipelinesByDC = {};
+      $scope.recentBuildsByOutputImage = {};
 
       _.each(builds, function(build) {
         var jenkinsURI, bc, dc;
         if (!isJenkinsPipelineStrategy(build)) {
-          return;
+          if (isRecentBuild(build)) {
+            var buildOutputImage = imageObjectRef(build.spec.output.to, build.metadata.namespace);
+            $scope.recentBuildsByOutputImage[buildOutputImage] = $scope.recentBuildsByOutputImage[buildOutputImage] || [];
+            $scope.recentBuildsByOutputImage[buildOutputImage].push(build);
+          }          
         }
+        else {
+          // Index pipelines by Jenkins URI first so we can find them quickly later.
+          jenkinsURI = annotation(build, 'openshift.io/jenkins-build-uri');
+          if (jenkinsURI) {
+            pipelinesByJenkinsURI[jenkinsURI] = build;
+          }
 
-        // Index pipelines by Jenkins URI first so we can find them quickly later.
-        jenkinsURI = annotation(build, 'openshift.io/jenkins-build-uri');
-        if (jenkinsURI) {
-          pipelinesByJenkinsURI[jenkinsURI] = build;
-        }
-
-        // Index running pipelines by DC so that we can show them before a deployment has started.
-        if (buildConfigs && isRecentBuild(build)) {
-          bc = buildConfigs[buildConfigForBuild(build)];
-          dc = annotation(bc, 'openshift.io/deployment-config') || '';
-          $scope.recentPipelinesByDC[dc] = $scope.recentPipelinesByDC[dc] || [];
-          $scope.recentPipelinesByDC[dc].push(build);
+          // Index running pipelines by DC so that we can show them before a deployment has started.
+          if (buildConfigs && isRecentBuild(build)) {
+            bc = buildConfigs[buildConfigForBuild(build)];
+            dc = annotation(bc, 'openshift.io/deployment-config') || '';
+            $scope.recentPipelinesByDC[dc] = $scope.recentPipelinesByDC[dc] || [];
+            $scope.recentPipelinesByDC[dc].push(build);
+          }
         }
       });
 
@@ -258,14 +265,14 @@ angular.module('openshiftConsole')
 
         watches.push(DataService.watch("builds", context, function(buildData) {
           builds = buildData.by("metadata.name");
-          groupPipelines();
+          groupBuilds();
           updateShowGetStarted();
           Logger.log("builds (list)", builds);
         }));
 
         watches.push(DataService.watch("buildConfigs", context, function(buildConfigData) {
           buildConfigs = buildConfigData.by("metadata.name");
-          groupPipelines();
+          groupBuilds();
           Logger.log("builds (list)", builds);
         }));
 
@@ -281,7 +288,7 @@ angular.module('openshiftConsole')
           deployments = rcData.by("metadata.name");
           groupDeployments();
           groupPods();
-          groupPipelines();
+          groupBuilds();
           updateShowGetStarted();
           Logger.log("replicationcontrollers (subscribe)", deployments);
         }));

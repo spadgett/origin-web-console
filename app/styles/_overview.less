@@ -9,6 +9,33 @@
   h2 {
     line-height: 1.4;
   }
+  /* Can remove some of these styles when we dump the old overview and its old build-block styles */
+  .builds-block {
+    background-color: #fff;
+    margin-left: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border-right: 1px solid @overview-border-gray; 
+    
+    .builds {
+      overflow: inherit;
+      
+      .build {
+        padding-bottom: 0;
+        padding-top: 0;
+        padding-left: 14px;  
+        border-radius: 0;
+        
+        &:first-child {
+          padding-top: 5px;
+        }
+        
+        &:last-child {
+          border-bottom: 1px solid @overview-border-gray;
+          padding-bottom: 5px;
+        }
+      }
+    }
+  }
   .loading-message {
     font-weight: normal;
     margin-top: 5px;
