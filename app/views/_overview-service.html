@@ -29,8 +29,8 @@
       <relative-timestamp timestamp="latestDeployment.metadata.creationTimestamp"></relative-timestamp>
     </div>
   </div>
-  <div ng-if="dcName" class="deployment-header">
-    <div column flex class="shield">
+  <div class="deployment-header">
+    <div ng-if="dcName" column flex class="shield">
       <a ng-href="{{latestDeployment | navigateResourceURL}}">
         <span class="shield-number">#{{latestDeployment | annotation: 'deploymentVersion'}}</span>
       </a>
