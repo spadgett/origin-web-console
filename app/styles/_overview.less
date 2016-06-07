@@ -230,9 +230,7 @@
       }
       @media (min-width: @screen-lg-min) {
         flex-direction: row;
-        .metrics-usage {
-          width: 150px;
-        }
+        justify-content: space-between;
       }
     }
     .deployment-body, .overview-donut, .overview-metrics {
@@ -247,19 +245,14 @@
     @media (min-width: @screen-lg-min) {
       .overview-metrics {
         order: 1;
-        flex-basis: 60%;
       }
       .overview-donut {
         order: 2;
-        flex-basis: 40%;
       }
     }
     .deployment-tile {
       @media (min-width: @screen-sm-min) {
         max-width: 50%;
-      }
-      @media (min-width: @screen-lg-min) {
-        max-width: 650px;
       }
     }
   }
