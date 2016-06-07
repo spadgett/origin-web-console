@@ -35,7 +35,7 @@
       <div row mobile="column" class="overview-services">
         <overview-service
             column
-            grow="1"
+            flex
             service="service"
             deployment-configs="deploymentConfigsByService[service.metadata.name]"
             deployments="deploymentsByService[service.metadata.name]"
@@ -50,7 +50,7 @@
         <overview-service
             ng-repeat="child in childServices"
             column
-            grow="1"
+            flex
             service="child"
             deployment-configs="deploymentConfigsByService[child.metadata.name]"
             deployments="deploymentsByService[child.metadata.name]"
