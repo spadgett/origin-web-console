@@ -30,6 +30,9 @@
            class="animate-repeat">
         <build-pipeline flex build="pipeline" overview="true"></build-pipeline>
       </div>
+      <div>
+        <triggers triggers="dc.spec.triggers" builds-by-output-image="buildsByOutputImage" namespace="dc.metadata.namespace"></triggers>
+      </div>
     </div>
     <div uib-collapse="collapse" class="service-group-body">
       <div row mobile="column" class="overview-services">
