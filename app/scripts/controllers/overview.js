@@ -36,7 +36,6 @@ angular.module('openshiftConsole')
     var isJenkinsPipelineStrategy = $filter('isJenkinsPipelineStrategy');
     var annotation = $filter('annotation');
     var label = $filter('label');
-    var hashSize = $filter('hashSize');
 
     var groupRoutes = function() {
       $scope.routesByService = RoutesService.groupByService(routes);
@@ -220,20 +219,20 @@ angular.module('openshiftConsole')
       //   $scope.pipelinesByDeployment[rc.metadata.name] = pipelinesByJenkinsURI[jenkinsBuildURI];
       // });
     };
-       
+
     // Show the "Get Started" message if the project is empty.
     // TODO copied from old overview, do we want to adust this at all based on our new grouping logic?
     var updateShowGetStarted = function() {
       var projectEmpty =
-        hashSize(services) === 0 &&
-        hashSize(pods) === 0 &&
-        hashSize(deployments) === 0 &&
-        hashSize(deploymentConfigs) === 0 &&
-        hashSize(builds) === 0;
+        _.isEmpty(services) &&
+        _.isEmpty(pods) &&
+        _.isEmpty(deployments) &&
+        _.isEmpty(deploymentConfigs) &&
+        _.isEmpty(builds);
 
       $scope.renderOptions.showGetStarted = projectEmpty;
     };
-       
+
     ProjectsService
       .get($routeParams.project)
       .then(_.spread(function(project, context) {
