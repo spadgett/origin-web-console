@@ -1,4 +1,6 @@
-<div ng-repeat="metric in metrics" ng-if="anyUsageByMetric(metric) && !metricsError" class="metrics-compact">
+<div ng-repeat="metric in metrics"
+     ng-if="anyUsageByMetric(metric) && !metricsError"
+     class="metrics-compact animate-repeat">
   <div ng-attr-id="{{metric.chartPrefix + uniqueID}}-sparkline" class="metrics-sparkline"></div>
   <div class="metrics-usage">
     <div class="usage-value">
