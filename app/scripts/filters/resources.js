@@ -804,6 +804,11 @@ angular.module('openshiftConsole')
       return ['New', 'Pending', 'Running'].indexOf(deploymentStatusFilter(deployment)) > -1;
     };
   })
+  .filter('anyDeploymentIsInProgress', function(deploymentIsInProgressFilter) {
+    return function(deployments) {
+      return _.some(deployments, deploymentIsInProgressFilter);
+    };
+  })
   .filter('isDeployment', function(annotationFilter) {
     return function(deployment) {
       return (annotationFilter(deployment, 'deploymentConfig')) ? true : false;
