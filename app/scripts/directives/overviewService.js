@@ -1,7 +1,10 @@
 'use strict';
 
 angular.module('openshiftConsole')
-  .directive('overviewService', function($filter, Navigate, DeploymentsService) {
+  .directive('overviewService', function($filter,
+                                         DeploymentsService,
+                                         MetricsService,
+                                         Navigate) {
     return {
       restrict: 'E',
       scope: {
@@ -19,6 +22,10 @@ angular.module('openshiftConsole')
       },
       templateUrl: '/views/_overview-service.html',
       link: function($scope) {
+        MetricsService.isAvailable().then(function(available) {
+          $scope.metricsAvailable = available;
+        });
+
         var annotation = $filter('annotation');
         var isRecentDeployment = $filter('isRecentDeployment');
 
