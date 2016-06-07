@@ -24,11 +24,11 @@
       <relative-timestamp timestamp="deployment.metadata.creationTimestamp"></relative-timestamp>
     </div>
   </div>
-  <div class="deployment-header">
-    <div column flex class="shield" ng-if="dcName">
-      <div row class="shield-number">
-        <a ng-if="dcName" ng-href="{{deployment | navigateResourceURL}}">#{{deployment | annotation: 'deploymentVersion'}}</a>
-      </div>
+  <div ng-if="dcName" class="deployment-header">
+    <div column flex class="shield">
+      <a ng-href="{{deployment | navigateResourceURL}}">
+        <span class="shield-number">#{{deployment | annotation: 'deploymentVersion'}}</span>
+      </a>
     </div>
   </div>
   <div row ng-if="!dcName" class="rc-header">
