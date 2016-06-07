@@ -63,6 +63,7 @@ angular.module("openshiftConsole")
       });
 
       _.set(updatedService, ['metadata', 'annotations', DEPENDENCIES], JSON.stringify(dependencies));
+
       return DataService.update("services", updatedService.metadata.name, updatedService, {
         namespace: updatedService.metadata.namespace
       });

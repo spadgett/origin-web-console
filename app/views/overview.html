@@ -4,38 +4,12 @@
   <!-- Middle section -->
   <div class="middle-section">
     <div class="middle-container">
-      <div class="middle-header header-light">
-        <div class="container-fluid">
-          <tasks></tasks>
-
-          <div ng-if="renderOptions.showToolbar" class="page-header page-header-bleed-right page-header-bleed-left">
-            <h1 title="Overview">Overview</h1>
-          </div>
-          <!-- TODO handle things that don't live under services -->
-          <alerts alerts="alerts"></alerts>
-          <div ng-if="renderOptions.showToolbar" class="data-toolbar">
-            <div class="data-toolbar-filter">
-              <project-filter></project-filter>
-            </div>
-            <div class="data-toolbar-views">
-              <div class="actions">
-                <div class="btn-group">
-                  <label class="btn btn-default" ng-model="$parent.overviewMode" uib-btn-radio="'tiles'" title="Tile View">
-                    <i class="fa fa-list"></i>
-                  </label>
-                  <label class="btn btn-default" ng-model="$parent.overviewMode" uib-btn-radio="'topology'" title="Topology View">
-                    <i class="pficon pficon-topology"></i>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div><!-- /middle-header-->
       <div class="middle-content  has-scroll surface-shaded">
-        <div class="container-fluid surface-shaded">
+        <div class="container-fluid surface-shaded mar-top-lg">
+          <tasks class="mar-top-lg"></tasks>
+          <alerts alerts="alerts"></alerts>
           <div class="row">
-            <div class="col-md-12 gutter-top">
+            <div class="col-md-12">
               <!-- Empty states -->
               <div ng-if="renderOptions.showGetStarted">
                 <!-- Getting started -->
@@ -68,10 +42,11 @@
                     hpa-by-dc="hpaByDC"
                     hpa-by-rc="hpaByRC"
                     scalable-deployment-by-config="scalableDeploymentByConfig"
-                    monopods-by-service="monopodsByService">
+                    monopods-by-service="monopodsByService"
+                    alerts="alerts">
                 </service-group>
               </div>
-              
+
               <div row wrap>
                 <div
                     ng-repeat="service in services"
@@ -90,11 +65,12 @@
                       hpa-by-dc="hpaByDC"
                       hpa-by-rc="hpaByRC"
                       scalable-deployment-by-config="scalableDeploymentByConfig"
-                      monopods-by-service="monopodsByService">
+                      monopods-by-service="monopodsByService"
+                      alerts="alerts">
                   </service-group>
-                </div>               
+                </div>
               </div>
-              
+
               <!-- UNSERVICED STUFF GOES HERE
               <div row wrap>
                 <div ng-repeat="dc in deploymentConfigsByService['']" outline>

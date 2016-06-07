@@ -1,7 +1,10 @@
 'use strict';
 
 angular.module('openshiftConsole')
-  .directive('serviceGroup', function($uibModal, RoutesService, ServicesService) {
+  .directive('serviceGroup', function($filter,
+                                      $uibModal,
+                                      RoutesService,
+                                      ServicesService) {
     return {
       restrict: 'E',
       scope: {
@@ -18,7 +21,8 @@ angular.module('openshiftConsole')
         hpaByDc: '=',
         hpaByRc: '=',
         scalableDeploymentByConfig: '=',
-        monopodsByService: '='
+        monopodsByService: '=',
+        alerts: '='
       },
       templateUrl: '/views/service-group.html',
       link: function($scope) {
@@ -35,8 +39,19 @@ angular.module('openshiftConsole')
             scope: $scope
           });
           modalInstance.result.then(function(child) {
-            // TODO: Handle errors!
-            ServicesService.linkService($scope.service, child);
+            ServicesService.linkService($scope.service, child).then(
+              // success
+              _.noop,
+              // failure
+              function(result) {
+                $scope.alerts = $scope.alerts || {};
+                $scope.alerts["link-service"] =
+                  {
+                    type: "error",
+                    message: "Could not link services.",
+                    details: $filter('getErrorDetails')(result)
+                  };
+              });
           });
         };
 

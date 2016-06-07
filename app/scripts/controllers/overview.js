@@ -12,6 +12,7 @@ angular.module('openshiftConsole')
               function ($filter,
                         $routeParams,
                         $scope,
+                        AlertMessageService,
                         DataService,
                         DeploymentsService,
                         Logger,
@@ -22,7 +23,13 @@ angular.module('openshiftConsole')
     $scope.projectName = $routeParams.project;
     $scope.renderOptions = $scope.renderOptions || {};
     $scope.renderOptions.showGetStarted = false;
-    
+
+    $scope.alerts = $scope.alerts || {};
+    AlertMessageService.getAlerts().forEach(function(alert) {
+      $scope.alerts[alert.name] = alert.data;
+    });
+    AlertMessageService.clearAlerts();
+
     var watches = [];
     var routes, services, deploymentConfigs, deployments, pods, buildConfigs, builds, horizontalPodAutoscalers, hpaByDC, hpaByRC;
 
