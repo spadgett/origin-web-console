@@ -48,6 +48,27 @@ angular.module('openshiftConsole')
           return isRecentDeployment(deployment, dc);
         };
 
+        $scope.visibleDeployments = function(deployments) {
+          return _.filter(deployments, $scope.isDeploymentVisible);
+        };
+
+        $scope.isDeploymentLatest = function(deployment) {
+          var dcName = annotation(deployment, 'deploymentConfig');
+          if (!dcName) {
+            return true;
+          }
+
+          // Wait for deployment configs to load.
+          if (!$scope.deploymentConfigs) {
+            return false;
+          }
+
+          var deploymentVersion = parseInt(annotation(deployment, 'deploymentVersion'));
+          return _.find($scope.deploymentConfigs, function(dc) {
+            return dc.metadata.name === dcName && dc.status.latestVersion === deploymentVersion;
+          });
+        };
+
         $scope.viewPodsForDeployment = function(deployment) {
           if (_.isEmpty($scope.podsByDeployment[deployment.metadata.name])) {
             return;
@@ -55,7 +76,7 @@ angular.module('openshiftConsole')
 
           Navigate.toPodsForDeployment(deployment);
         };
-        
+
 
         $scope.getHPA = function(rcName, dcName) {
           var hpaByDC = $scope.hpaByDc;
@@ -75,8 +96,8 @@ angular.module('openshiftConsole')
 
           hpaByRC[rcName] = hpaByRC[rcName] || [];
           return hpaByRC[rcName];
-        };        
-        
+        };
+
         $scope.isScalableDeployment = DeploymentsService.isScalable;
       }
     };

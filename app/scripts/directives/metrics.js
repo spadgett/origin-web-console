@@ -372,7 +372,7 @@ angular.module('openshiftConsole')
             return '60s';
           }
 
-          return Math.floor(getTimeRangeMillis() / 60) + "ms"
+          return Math.floor(getTimeRangeMillis() / 60) + "ms";
         }
 
         function getConfig(metric, dataset, start) {
