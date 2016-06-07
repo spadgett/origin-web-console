@@ -359,14 +359,27 @@ angular.module('openshiftConsole')
         }
 
         function getTimeRangeMillis() {
+          if (compact) {
+            // 15 minutes
+            return 15 * 60 * 1000;
+          }
+
           return scope.options.timeRange.value * 60 * 1000;
+        }
+
+        function getBucketDuration() {
+          if (compact) {
+            return '60s';
+          }
+
+          return Math.floor(getTimeRangeMillis() / 60) + "ms"
         }
 
         function getConfig(metric, dataset, start) {
           var lastPoint;
           var config = {
             metric: dataset.id,
-            bucketDuration: Math.floor(getTimeRangeMillis() / 60) + "ms"
+            bucketDuration: getBucketDuration()
           };
 
           // Leave the end time off to use the server's current time as the
@@ -439,14 +452,7 @@ angular.module('openshiftConsole')
           // Leave the end time off to use the server's current time as the end
           // time. This prevents an issue where the donut chart shows 0 for
           // current usage if the client clock is ahead of the server clock.
-          var start, buckets;
-          if (compact) {
-            start = Date.now() - 30 * 60 * 1000;
-            buckets = 15;
-          } else {
-            start = Date.now() - scope.options.timeRange.value * 60 * 1000;
-          }
-
+          var start = Date.now() - getTimeRangeMillis();
           angular.forEach(scope.metrics, function(metric) {
             var promises = [];
 
@@ -454,9 +460,9 @@ angular.module('openshiftConsole')
             // incoming and outgoing traffic) we perform one request for each,
             // but collect and handle all requests in one single promise below.
             // It's important that every metric uses the same 'start' timestamp
-            // and number of buckets, so that the returned data for every metric
-            // fit in the same collection of 'dates' and can be displayed in
-            // exactly the same point in time in the graph.
+            // so that the returned data for every metric fit in the same
+            // collection of 'dates' and can be displayed in exactly the same
+            // point in time in the graph.
             angular.forEach(metric.datasets, function(dataset) {
               var config = getConfig(metric, dataset, start);
               if (!config) {
