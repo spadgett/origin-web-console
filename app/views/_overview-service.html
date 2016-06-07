@@ -39,13 +39,35 @@
       <a ng-href="{{latestDeployment | navigateResourceURL}}">{{latestDeployment.metadata.name}}</a>
     </div>
     <div row class="deployment-body">
+      <!-- other visible deployment(s) -->
+      <!-- usually the last active when one is in progress -->
+      <div column
+          ng-repeat="deployment in visibleDeployments(deployments) | orderObjectsByDate : true track by (deployment | uid)"
+          ng-init="dcName = (deployment | annotation : 'deploymentConfig')"
+          ng-if="!isDeploymentLatest(deployment)"
+          class="overview-donut">
+        <deployment-donut
+            rc="deployment"
+            deployment-config="deploymentConfigs[(deployment | annotation : 'deploymentConfig')]"
+            pods="podsByDeployment[deployment.metadata.name]"
+            hpa="getHPA(deployment.metadata.name, dcName)"
+            limit-ranges="limitRanges"
+            scalable="isScalableDeployment(deployment, deploymentConfigs, hpaByDc, hpaByRc, scalableDeploymentByConfig)"
+            alerts="alerts">
+        </deployment-donut>
+      </div>
+      <div ng-if="deployments | anyDeploymentIsInProgress" column class="overview-donut-connector">
+        &rarr;
+        <span>deploying</span>
+      </div>
+      <!-- /other visible deployment(s) -->
       <!-- latest deployment -->
-      <div column class="overview-donut">
+      <div column class="overview-donut latest">
         <deployment-donut
             rc="latestDeployment"
-            deployment-config="deploymentConfigs[(latestDeployment | annotation : 'deploymentConfig')]"
+            deployment-config="deploymentConfigs[dcName]"
             pods="podsByDeployment[latestDeployment.metadata.name]"
-            hpa="getHPA(latestDeployment.metadata.name, (latestDeployment | annotation : 'deploymentConfig'))"
+            hpa="getHPA(latestDeployment.metadata.name, dcName)"
             limit-ranges="limitRanges"
             scalable="isScalableDeployment(latestDeployment, deploymentConfigs, hpaByDc, hpaByRc, scalableDeploymentByConfig)"
             alerts="alerts">
@@ -58,22 +80,6 @@
         </div>
       </div>
       <!-- /latest deployment -->
-      <!-- deployment in progress -->
-      <div column
-          ng-repeat="deployment in visibleDeployments(deployments) | orderObjectsByDate : true track by (deployment | uid)"
-          ng-if="!isDeploymentLatest(deployment)"
-          ng-init="dcName = (deployment | annotation : 'deploymentConfig')">
-        <deployment-donut
-            rc="deployment"
-            deployment-config="deploymentConfigs[(deployment | annotation : 'deploymentConfig')]"
-            pods="podsByDeployment[deployment.metadata.name]"
-            hpa="getHPA(deployment.metadata.name, dcName)"
-            limit-ranges="limitRanges"
-            scalable="isScalableDeployment(deployment, deploymentConfigs, hpaByDc, hpaByRc, scalableDeploymentByConfig)"
-            alerts="alerts">
-        </deployment-donut>
-      </div>
-      <!-- deployment in progress -->
     </div>
   </div>
 </div>
