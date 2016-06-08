@@ -405,7 +405,7 @@ angular.module('openshiftConsole')
           if (scope.deployment) {
             return _.assign(config, {
               namespace: scope.deployment.metadata.namespace,
-              deployment: scope.deployment.metadata.name
+              deployment: scope.deployment
             });
           }
 
@@ -482,6 +482,10 @@ angular.module('openshiftConsole')
                 }
 
                 angular.forEach(responses, function(response) {
+                  if (!response) {
+                    return;
+                  }
+
                   var dataset = _.find(metric.datasets, {
                     id: response.metricID
                   });

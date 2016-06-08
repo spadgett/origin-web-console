@@ -1,17 +1,17 @@
 'use strict';
 
 angular.module("openshiftConsole")
-  .factory("MetricsService", function($http, $q, APIDiscovery) {
+  .factory("MetricsService", function($filter, $http, $q, APIDiscovery) {
     var POD_COUNTER_TEMPLATE = "/counters/{containerName}%2F{podUID}%2F{metric}/data";
     var POD_GAUGE_TEMPLATE = "/gauges/{containerName}%2F{podUID}%2F{metric}/data";
     // Used in compact view
     var POD_STACKED_COUNTER_TEMPLATE = "/counters/data?stacked=true&tags=descriptor_name:{metric},type:{type},pod_name:{podName}";
     var POD_STACKED_GAUGE_TEMPLATE = "/gauges/data?stacked=true&tags=descriptor_name:{metric},type:{type},pod_name:{podName}";    
 
-    // Use a regex to match the label deployement=<name> at word boundaries. In Hawkular, it's
+    // Use a regex to match the label name=<name> at word boundaries. In Hawkular, it's
     // stored as a comma-separated list of values in the form name:value.
-    var DEPLOYMENT_COUNTER_TEMPLATE = "/counters/data?stacked=true&tags=descriptor_name:{metric},type:{type},labels:.*\\bdeployment:{deployment}\\b.*";
-    var DEPLOYMENT_GAUGE_TEMPLATE = "/gauges/data?stacked=true&tags=descriptor_name:{metric},type:{type},labels:.*\\bdeployment:{deployment}\\b.*";
+    var RC_COUNTER_TEMPLATE = "/counters/data?stacked=true&tags=descriptor_name:{metric},type:{type},labels:.*\\b{labelName}:{labelValue}\\b.*";
+    var RC_GAUGE_TEMPLATE = "/gauges/data?stacked=true&tags=descriptor_name:{metric},type:{type},labels:.*\\b{labelName}:{labelValue}\\b.*";
 
     // URL template to show for each type of metric.
     var podURLTemplateByMetric = {
@@ -20,20 +20,20 @@ angular.module("openshiftConsole")
       "network/rx": POD_COUNTER_TEMPLATE,
       "network/tx": POD_COUNTER_TEMPLATE
     };
-    
+
     // URL template to show for each type of metric.
     var podStackedURLTemplateByMetric = {
       "cpu/usage": POD_STACKED_COUNTER_TEMPLATE,
       "memory/usage": POD_STACKED_GAUGE_TEMPLATE,
       "network/rx": POD_STACKED_COUNTER_TEMPLATE,
       "network/tx": POD_STACKED_COUNTER_TEMPLATE
-    };    
+    };
 
     var deploymentURLTemplateByMetric = {
-      "cpu/usage": DEPLOYMENT_COUNTER_TEMPLATE,
-      "memory/usage": DEPLOYMENT_GAUGE_TEMPLATE,
-      "network/rx": DEPLOYMENT_COUNTER_TEMPLATE,
-      "network/tx": DEPLOYMENT_COUNTER_TEMPLATE
+      "cpu/usage": RC_COUNTER_TEMPLATE,
+      "memory/usage": RC_GAUGE_TEMPLATE,
+      "network/rx": RC_COUNTER_TEMPLATE,
+      "network/tx": RC_COUNTER_TEMPLATE
     };
 
     var metricsURL;
@@ -131,6 +131,7 @@ angular.module("openshiftConsole")
       return data;
     }
 
+    var isDeployment = $filter('isDeployment');
     function getRequestURL(config) {
       return getMetricsURL().then(function(metricsURL) {
         var template;
@@ -147,13 +148,33 @@ angular.module("openshiftConsole")
           default:
             type = 'pod_container';
           }
+
+          var labelName, labelValue;
+          if (isDeployment(config.deployment)) {
+            // Use the deployment label for OpenShift deployments.
+            labelName = "deployment";
+            labelValue = config.deployment.metadata.name;
+          } else {
+            // Fall back to looking at the replication controller selectors.
+            // We can't only do this reliably if there's one!
+            var selector = _.get(config, 'deployment.spec.selector', {});
+            var keys = _.keys(selector);
+            if (keys.length !== 1) {
+              return null;
+            }
+
+            labelName = keys[0];
+            labelValue = selector[labelName];
+          }
+
           return URI.expand(template, {
-            deployment: config.deployment,
+            labelName: labelName,
+            labelValue: labelValue,
             metric: config.metric,
             type: type
           }).toString();
         }
-        
+
         // Are we requesting stacked pod metrics?
         if (config.stacked) {
           template = metricsURL + podStackedURLTemplateByMetric[config.metric];
@@ -206,6 +227,10 @@ angular.module("openshiftConsole")
       // Returns a promise resolved with the metrics data.
       get: function(config) {
         return getRequestURL(config).then(function(url) {
+          if (!url) {
+            return null;
+          }
+
           var params = {
             bucketDuration: config.bucketDuration,
             start: config.start
