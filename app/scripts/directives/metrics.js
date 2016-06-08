@@ -256,9 +256,15 @@ angular.module('openshiftConsole')
         function updateChart(metric) {
           var dates, values = {};
 
+          var missingData = _.some(metric.datasets, function(dataset) {
+            return !dataset.data;
+          });
+          if (missingData) {
+            return;
+          }
+
           angular.forEach(metric.datasets, function(dataset) {
             var metricID = dataset.id, metricData = dataset.data;
-
             dates = ['dates'], values[metricID] = [dataset.label || metricID];
 
             var usage = scope.usageByMetric[metricID] = {
