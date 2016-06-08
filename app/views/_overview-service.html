@@ -1,4 +1,4 @@
-<div ng-if="!(deployments | hashSize) && !(monopods | hashSize)" class="no-deployments-block">
+<div ng-if="!(visibleDeployments | hashSize) && !(monopods | hashSize)" class="no-deployments-block">
   <h2>No deployments.</h2>
   <p>
     There are no deployments or pods for service
@@ -6,11 +6,7 @@
   </p>
 </div>
 
-<!-- latest deployment -->
-<div ng-repeat="latestDeployment in deployments track by (latestDeployment | uid)"
-    ng-if="isDeploymentVisible(latestDeployment) && isDeploymentLatest(latestDeployment)"
-    ng-init="dcName = (latestDeployment | annotation : 'deploymentConfig')"
-    class="deployment-tile">
+<div class="deployment-tile">
   <div row class="service-title">
     <div>
       Service:
@@ -26,29 +22,32 @@
     <!--   </span> -->
     <!-- </div> -->
     <div>
-      <relative-timestamp timestamp="latestDeployment.metadata.creationTimestamp"></relative-timestamp>
+      <relative-timestamp timestamp="activeDeployment.metadata.creationTimestamp"></relative-timestamp>
     </div>
   </div>
   <div class="deployment-header">
-    <div ng-if="dcName" column flex class="shield">
-      <a ng-href="{{latestDeployment | navigateResourceURL}}">
-        <span class="shield-number">#{{latestDeployment | annotation: 'deploymentVersion'}}</span>
+    <div column flex
+        ng-if="activeDeployment | annotation : 'deploymentConfig'"
+        class="shield">
+      <a ng-href="{{activeDeployment | navigateResourceURL}}">
+        <span class="shield-number">#{{activeDeployment | annotation: 'deploymentVersion'}}</span>
       </a>
     </div>
-    <div row ng-if="!dcName" class="rc-header">
-      <a ng-href="{{latestDeployment | navigateResourceURL}}">{{latestDeployment.metadata.name}}</a>
+    <div row
+        ng-if="!(activeDeployment | annotation : 'deploymentConfig')"
+        class="rc-header">
+      <a ng-href="{{activeDeployment | navigateResourceURL}}">{{activeDeployment.metadata.name}}</a>
     </div>
     <div row class="deployment-body">
-      <!-- other visible deployment(s) -->
-      <!-- usually the last active when one is in progress -->
+      <!-- all visible deployments -->
       <div column
-          ng-repeat="deployment in visibleDeployments(deployments) | orderObjectsByDate : true track by (deployment | uid)"
+          ng-repeat="deployment in visibleDeployments | orderObjectsByDate : true track by (deployment | uid)"
           ng-init="dcName = (deployment | annotation : 'deploymentConfig')"
-          ng-if="!isDeploymentLatest(deployment)"
-          class="overview-donut">
+          class="overview-donut"
+          ng-class="isDeploymentLatest(deployment) ? 'latest' : ''">
         <deployment-donut
             rc="deployment"
-            deployment-config="deploymentConfigs[(deployment | annotation : 'deploymentConfig')]"
+            deployment-config="deploymentConfigs[dcName]"
             pods="podsByDeployment[deployment.metadata.name]"
             hpa="getHPA(deployment.metadata.name, dcName)"
             limit-ranges="limitRanges"
@@ -56,34 +55,30 @@
             alerts="alerts">
         </deployment-donut>
       </div>
-      <div ng-if="deployments | anyDeploymentIsInProgress" column class="overview-donut-connector">
-        &rarr;
-        <span>deploying</span>
-      </div>
-      <!-- /other visible deployment(s) -->
-      <!-- latest deployment -->
-      <div column class="overview-donut latest">
-        <deployment-donut
-            rc="latestDeployment"
-            deployment-config="deploymentConfigs[dcName]"
-            pods="podsByDeployment[latestDeployment.metadata.name]"
-            hpa="getHPA(latestDeployment.metadata.name, dcName)"
-            limit-ranges="limitRanges"
-            scalable="isScalableDeployment(latestDeployment, deploymentConfigs, hpaByDc, hpaByRc, scalableDeploymentByConfig)"
-            alerts="alerts">
-        </deployment-donut>
-      </div>
-      <div ng-if="!(deployments | anyDeploymentIsInProgress)" column class="overview-metrics">
-        <metrics ng-if="showMetrics" deployment="latestDeployment" profile="compact"></metrics>
-        <div ng-if="!showMetrics">
-          <pod-template pod-template="latestDeployment.spec.template"></pod-template>
+      <!-- /all visible deployments -->
+      <!-- connecting arrow -->
+      <div column
+          ng-if="!activeDeployment"
+          class="overview-donut-connector">
+        <div ng-if="(visibleDeployments | anyDeploymentIsInProgress) && visibleDeployments.length > 1">
+          &rarr;
+          <span>deploying...</span>
         </div>
       </div>
-      <!-- /latest deployment -->
+      <!-- /connecting arrow -->
+      <!-- metrics or pod template -->
+      <div column
+          ng-if="activeDeployment"
+          class="overview-metrics">
+        <metrics ng-if="showMetrics" deployment="activeDeployment" profile="compact"></metrics>
+        <div ng-if="!showMetrics">
+          <pod-template pod-template="activeDeployment.spec.template"></pod-template>
+        </div>
+      </div>
+      <!-- /metrics or pod template -->
     </div>
   </div>
 </div>
-<!-- /latest deployment -->
 
 <!-- monopods -->
 <div ng-repeat="pod in monopods | orderObjectsByDate : true track by (pod | uid)"
