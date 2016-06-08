@@ -41,8 +41,7 @@
             flex
             service="service"
             deployment-configs="deploymentConfigsByService[service.metadata.name]"
-            visible-deployments="visibleDeploymentsByService[service.metadata.name]"
-            active-deployment="activeDeploymentByService[service.metadata.name]"
+            visible-deployments-by-config="visibleDeploymentsByConfigAndService[service.metadata.name]"
             recent-pipelines="recentPipelines"
             pipelines-by-deployment="pipelinesByDeployment"
             pods-by-deployment="podsByDeployment",
@@ -57,8 +56,7 @@
             flex
             service="child"
             deployment-configs="deploymentConfigsByService[child.metadata.name]"
-            visible-deployments="visibleDeploymentsByService[child.metadata.name]"
-            active-deployment="activeDeploymentByService[child.metadata.name]"
+            visible-deployments-by-config="visibleDeploymentsByConfigAndService[child.metadata.name]"
             recent-pipelines="recentPipelines"
             pipelines-by-deployment="pipelinesByDeployment"
             pods-by-deployment="podsByDeployment"

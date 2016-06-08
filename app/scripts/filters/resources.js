@@ -814,6 +814,11 @@ angular.module('openshiftConsole')
       return (annotationFilter(deployment, 'deploymentConfig')) ? true : false;
     };
   })
+  .filter('getActiveDeployment', function(DeploymentsService) {
+    return function(deployments) {
+      return DeploymentsService.getActiveDeployment(deployments);
+    };
+  })
   .filter('isRecentDeployment', function(deploymentIsLatestFilter, deploymentIsInProgressFilter) {
     return function(deployment, deploymentConfig) {
       if (deploymentIsLatestFilter(deployment, deploymentConfig)) {
