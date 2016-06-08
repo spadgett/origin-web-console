@@ -281,7 +281,7 @@ angular.module('openshiftConsole')
 
             // Round to the closest whole number for the utilization chart.
             if (lastValue < 1) {
-              usage.used = d3.format(".1r")(lastValue);
+              usage.used = Number(d3.format(".1r")(lastValue));
             } else {
               usage.used = d3.round(lastValue);
             }
