@@ -3,6 +3,7 @@
 angular.module("openshiftConsole")
   .factory("ServicesService", function($filter, DataService) {
     var DEPENDENCIES = 'service.alpha.openshift.io/dependencies';
+    var INFRASTRUCTURE = 'service.openshift.io/infrastructure';
     var annotation = $filter('annotation');
 
     var getDependenciesJSON = function(service) {
@@ -69,9 +70,14 @@ angular.module("openshiftConsole")
       });
     };
 
+    var isInfrastructure = function(service) {
+      return annotation(service, INFRASTRUCTURE) === 'true';
+    };
+
     return {
       // Returns an array of service names that are dependencies in the same namespace as service.
       getDependentServices: getDependentServices,
-      linkService: linkService
+      linkService: linkService,
+      isInfrastructure: isInfrastructure
     };
   });
