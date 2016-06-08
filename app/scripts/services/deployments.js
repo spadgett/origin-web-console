@@ -309,13 +309,13 @@ angular.module("openshiftConsole")
       var hpaArray = _.get(hpaByRC, [name]);
       return !_.isEmpty(hpaArray);
     };
-    
+
     DeploymentsService.prototype.isScalable = function(deployment, deploymentConfigs, hpaByDC, hpaByRC, scalableDeploymentByConfig) {
       // If this RC has an autoscaler, don't allow manual scaling.
       if (isRCAutoscaled(deployment.metadata.name, hpaByRC)) {
         return false;
       }
-      
+
       var deploymentConfigId = $filter('annotation')(deployment, 'deploymentConfig');
 
       // Otherwise allow scaling of RCs with no deployment config.
@@ -366,7 +366,7 @@ angular.module("openshiftConsole")
       });
       return byService;
     };
-    
+
     DeploymentsService.prototype.groupByDeploymentConfig = function(deployments) {
       var byDC = {};
 
@@ -376,7 +376,7 @@ angular.module("openshiftConsole")
       });
 
       return byDC;
-    };    
+    };
 
     return new DeploymentsService();
   });

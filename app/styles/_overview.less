@@ -4,6 +4,36 @@
 @shield-border-color:  @overview-border-gray;
 @shield-width:         36px;
 
+// fadeSlideOut
+@keyframes fadeSlideOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; margin-left: -350px; }
+}
+@-webkit-keyframes fadeSlideOut {
+	0% { opacity: 1; }
+	100% { opacity: 0; margin-left: -350px; }
+}
+
+// fadeIn
+@keyframes fadeIn {
+	0% { opacity: 0; }
+	100% { opacity: 1; }
+}
+@-webkit-keyframes fadeIn {
+	0% { opacity: 0; }
+	100% { opacity: 1; }
+}
+
+// fadeOut
+@keyframes fadeOut {
+		0% { opacity: 1; }
+		100% { opacity: 0; }
+}
+@-webkit-keyframes fadeOut {
+		0% { opacity: 1; }
+		100% { opacity: 0; }
+}
+
 .overview {
   font-weight: 300;
   h2 {
@@ -245,6 +275,18 @@
     @media (min-width: @screen-lg-min) {
       .overview-metrics {
         order: 1;
+        &.ng-leave {
+				  animation: fadeSlideOut 1s ease forwards;
+			  }
+      }
+      .overview-donut {
+        order: 2;
+        &.ng-appear {
+          animation: fadeIn 1s ease forwards;
+        }
+        &.latest {
+          order: 4;
+        }
       }
       .overview-donut-connector {
         order: 3;
@@ -252,14 +294,12 @@
         color: #cccccc;
         align-items: center;
         line-height: 1;
-        span {
-          font-size: 45%;
+        div {
+          text-align: center;
         }
-      }
-      .overview-donut {
-        order: 2;
-        &.latest {
-          order: 4;
+        span {
+          display: block;
+          font-size: 40%;
         }
       }
     }

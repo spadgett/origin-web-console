@@ -30,7 +30,6 @@
                    class="loading-message">
                 Loading...
               </div>
-
               <div ng-repeat="service in services" ng-if="!isChildService(service) && (service.metadata.labels.app || routesByService[service.metadata.name].length || childServicesByParent[service.metadata.name].length)">
                 <service-group
                     service="service"
@@ -40,6 +39,8 @@
                     route-warnings="routeWarningsByService[service.metadata.name]"
                     deployment-configs-by-service="deploymentConfigsByService"
                     deployments-by-service="deploymentsByService"
+                    active-deployment-by-service="activeDeploymentByService"
+                    visible-deployments-by-service="visibleDeploymentsByService"
                     recent-pipelines-by-dc="recentPipelinesByDC"
                     pipelines-by-deployment="pipelinesByDeployment"
                     pods-by-deployment="podsByDeployment",
@@ -64,6 +65,8 @@
                       route-warnings="routeWarningsByService[service.metadata.name]"
                       deployment-configs-by-service="deploymentConfigsByService"
                       deployments-by-service="deploymentsByService"
+                      active-deployment-by-service="activeDeploymentByService"
+                      visible-deployments-by-service="visibleDeploymentsByService"
                       recent-pipelines="recentPipelinesByDC"
                       pipelines-by-deployment="pipelinesByDeployment"
                       pods-by-deployment="podsByDeployment",
@@ -82,11 +85,11 @@
                 <div ng-repeat="dc in deploymentConfigsByService['']" outline>
                   dc with no service {{dc.metadata.name}}
                 </div>
-                
+
                 <div ng-repeat="deployment in deploymentsByService['']" ng-if="deploymentsByDeploymentConfig[''][deployment.metadata.name]" outline>
                   rc with no service {{deployment.metadata.name}}
                 </div>
-                
+
                 <div ng-repeat="pod in monopodsByService['']" outline>
                   pod with no service {{pod.metadata.name}}
                 </div>

@@ -37,6 +37,7 @@ angular.module('openshiftConsole')
     var annotation = $filter('annotation');
     var label = $filter('label');
     var imageObjectRef = $filter('imageObjectRef');
+    var isRecentDeployment = $filter('isRecentDeployment');
 
     var groupRoutes = function() {
       $scope.routesByService = RoutesService.groupByService(routes);
@@ -54,8 +55,30 @@ angular.module('openshiftConsole')
       if (!deployments) {
         return;
       }
-      
+
       $scope.deploymentsByDeploymentConfig = DeploymentsService.groupByDeploymentConfig(deployments);
+    };
+
+    // FIXME: Too much common code with topology.js
+    var isDeploymentVisible = function(deployment) {
+      if (_.get(deployment, 'status.replicas')) {
+        return true;
+      }
+      var dcName = annotation(deployment, 'deploymentConfig');
+      if (!dcName) {
+        return true;
+      }
+      // Wait for deployment configs to load.
+      if (!deploymentConfigs) {
+        return false;
+      }
+      // If the deployment config has been deleted and the deployment has no replicas, hide it.
+      // Otherwise all old deployments for a deleted deployment config will be visible.
+      var dc = deploymentConfigs[dcName];
+      if (!dc) {
+        return false;
+      }
+      return isRecentDeployment(deployment, dc);
     };
 
     var groupDeployments = function() {
@@ -72,6 +95,18 @@ angular.module('openshiftConsole')
         scalableDeploymentByConfig[dcName] = DeploymentsService.getActiveDeployment(deployments);
       });
       $scope.scalableDeploymentByConfig = scalableDeploymentByConfig;
+
+      // Take the active deployment for every service
+      $scope.activeDeploymentByService = {};
+      _.each($scope.deploymentsByService, function(deployments, svcName) {
+        $scope.activeDeploymentByService[svcName] = DeploymentsService.getActiveDeployment(deployments);
+      });
+
+      // Deployments visible for every service
+      $scope.visibleDeploymentsByService = {};
+      _.each($scope.deploymentsByService, function(deployments, svcName) {
+        $scope.visibleDeploymentsByService[svcName] = _.filter(deployments, isDeploymentVisible);
+      });
     };
 
     var groupHPAs = function() {
@@ -194,7 +229,7 @@ angular.module('openshiftConsole')
             var buildOutputImage = imageObjectRef(build.spec.output.to, build.metadata.namespace);
             $scope.recentBuildsByOutputImage[buildOutputImage] = $scope.recentBuildsByOutputImage[buildOutputImage] || [];
             $scope.recentBuildsByOutputImage[buildOutputImage].push(build);
-          }          
+          }
         }
         else {
           // Index pipelines by Jenkins URI first so we can find them quickly later.
@@ -305,7 +340,7 @@ angular.module('openshiftConsole')
           group: "extensions",
           resource: "horizontalpodautoscalers"
         }, context, function(hpaData) {
-          horizontalPodAutoscalers = hpaData.by("metadata.name"); 
+          horizontalPodAutoscalers = hpaData.by("metadata.name");
           groupHPAs();
         }));
 
