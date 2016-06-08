@@ -22,9 +22,12 @@ angular.module('openshiftConsole')
       },
       templateUrl: '/views/_overview-service.html',
       link: function($scope) {
-        MetricsService.isAvailable().then(function(available) {
-          $scope.metricsAvailable = available;
-        });
+        if (!window.OPENSHIFT_CONSTANTS.DISABLE_OVERVIEW_METRICS ||
+             window.OPENSHIFT_CONSTANTS.DISABLE_OVERVIEW_METRICS !== 'true') {
+          MetricsService.isAvailable().then(function(available) {
+            $scope.showMetrics = available;
+          });
+        }
 
         var annotation = $filter('annotation');
         var isRecentDeployment = $filter('isRecentDeployment');

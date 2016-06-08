@@ -74,8 +74,8 @@
         </deployment-donut>
       </div>
       <div ng-if="!(deployments | anyDeploymentIsInProgress)" column class="overview-metrics">
-        <metrics ng-if="metricsAvailable" deployment="latestDeployment" profile="compact"></metrics>
-        <div ng-if="!metricsAvailable">
+        <metrics ng-if="showMetrics" deployment="latestDeployment" profile="compact"></metrics>
+        <div ng-if="!showMetrics">
           <pod-template pod-template="latestDeployment.spec.template"></pod-template>
         </div>
       </div>
