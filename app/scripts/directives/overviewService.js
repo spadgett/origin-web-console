@@ -22,8 +22,7 @@ angular.module('openshiftConsole')
       },
       templateUrl: '/views/_overview-service.html',
       link: function($scope) {
-        if (!window.OPENSHIFT_CONSTANTS.DISABLE_OVERVIEW_METRICS ||
-             window.OPENSHIFT_CONSTANTS.DISABLE_OVERVIEW_METRICS !== 'true') {
+        if (!window.OPENSHIFT_CONSTANTS.DISABLE_OVERVIEW_METRICS) {
           MetricsService.isAvailable(true).then(function(available) {
             $scope.showMetrics = available;
           });

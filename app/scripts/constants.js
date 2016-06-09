@@ -29,8 +29,8 @@ window.OPENSHIFT_CONSTANTS = {
   // This value is set in the HPA when the input is left blank.
   DEFAULT_HPA_CPU_TARGET_PERCENT: 80,
 
-  // 'true' indicates that deployment metrics should be disabled on the web console overview
-  DISABLE_OVERVIEW_METRICS: 'false',
+  // true indicates that deployment metrics should be disabled on the web console overview
+  DISABLE_OVERVIEW_METRICS: false,
 
   // This blacklist hides certain kinds from the "Other Resources" page because they are unpersisted, disallowed for most end users, or not supported by openshift but exist in kubernetes
   AVAILABLE_KINDS_BLACKLIST: [
