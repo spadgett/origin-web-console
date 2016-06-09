@@ -28,6 +28,9 @@
         </div>
       </div>
       <div class="deployment-header">
+        <div row class="rc-header" ng-if="!service">
+          <a ng-href="{{deploymentConfigs[dcName] | navigateResourceURL}}">{{dcName}}</a>
+        </div>        
         <div column flex class="shield">
           <a ng-href="{{activeDeployment | navigateResourceURL}}">
             <span class="shield-number">#{{activeDeployment | annotation: 'deploymentVersion'}}</span>
