@@ -4,9 +4,11 @@ angular.module("openshiftConsole")
   .factory("MetricsService", function($filter, $http, $q, APIDiscovery) {
     var POD_COUNTER_TEMPLATE = "/counters/{containerName}%2F{podUID}%2F{metric}/data";
     var POD_GAUGE_TEMPLATE = "/gauges/{containerName}%2F{podUID}%2F{metric}/data";
-    // Used in compact view
-    var POD_STACKED_COUNTER_TEMPLATE = "/counters/data?stacked=true&tags=descriptor_name:{metric},type:{type},pod_name:{podName}";
-    var POD_STACKED_GAUGE_TEMPLATE = "/gauges/data?stacked=true&tags=descriptor_name:{metric},type:{type},pod_name:{podName}";
+
+    // Used in compact view.
+    var POD_QUERY = "?stacked=true&tags=descriptor_name:{metric},type:{type},pod_name:{podName}";
+    var POD_STACKED_COUNTER_TEMPLATE = "/counters/data" + POD_QUERY;
+    var POD_STACKED_GAUGE_TEMPLATE = "/gauges/data" + POD_QUERY;
 
     // Find metrics matching the RC selector.
     var RC_QUERY = "?stacked=true&tags=descriptor_name:{metric},type:{type},labels:{labels}";
@@ -161,10 +163,6 @@ angular.module("openshiftConsole")
 
           var selector = _.get(config, 'deployment.spec.selector', {});
           var labels = labelRegex(selector);
-          if (!labels) {
-            return null;
-          }
-
           return URI.expand(template, {
             labels: labels,
             metric: config.metric,
