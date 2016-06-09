@@ -215,7 +215,7 @@ angular.module('openshiftConsole')
             },
             size: {
               height: scope.sparklineHeight || (compact ? 35 : 160),
-              width: scope.sparklineWidth || (compact ? 160 : undefined),
+              width: scope.sparklineWidth,
             },
             tooltip: {
               format: {

@@ -275,7 +275,10 @@
   .metrics-sparkline {
     display: inline-block;
     vertical-align: -6px;
-    width: 160px;
+    width: 150px;
+    @media (min-width: 1400px) {
+      width: 240px;
+    }
   }
   .metrics-usage {
     display: inline-block;
