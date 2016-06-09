@@ -140,7 +140,10 @@
           <pod-donut pods="[pod]"></pod-donut>
         </div>
         <div column class="overview-metrics">
-          <metrics pod="pod" profile="compact"></metrics>
+          <metrics ng-if="showMetrics" pod="pod" profile="compact"></metrics>
+          <div ng-if="!showMetrics">
+            <pod-template pod-template="pod"></pod-template>
+          </div>
         </div>
       </div>
     </div>
