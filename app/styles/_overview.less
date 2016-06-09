@@ -162,7 +162,8 @@
       border-right: 1px solid @overview-border-gray;
     }
     .stage {
-      display: inline-block;
+      .flex-display(@display: flex);
+      position: relative;
       .stage-duration {
         .text-muted();
         margin-left: 5px;
@@ -172,13 +173,12 @@
       &:before {
         background-color: #cccccc;
         content: '';
-        display: inline-block;
+        display: block;
         height: 1px;
-        width: 10px;
-        position: relative;
-        top: -3px;
-        left: 1px;
-        margin: 0 2px;
+        width: 12px;
+        position: absolute;
+        top: 50%;
+        left: -8px;
       }
     }
     .incomplete-stage {
@@ -190,6 +190,9 @@
     }
     .log-link, .stages {
       padding: 5px 10px;
+    }
+    .stages {
+      .flex-display(@display: flex);
     }
     .timestamp {
       .text-muted();
