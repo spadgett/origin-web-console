@@ -215,10 +215,17 @@
     }
     
     .no-service {
-      .deployment-tile-wrapper {
-        width: 50%;
+      .deployment-tile-wrapper {        
+        @media (min-width: @screen-sm-min) {
+          width: 50%;
+              
+          .deployment-tile-wrapper {
+            width: 100%;
+          }
+          
+        }
         
-        .deployment-tile-wrapper {
+        @media (max-width: @screen-sm-min) {
           width: 100%;
         }
         
