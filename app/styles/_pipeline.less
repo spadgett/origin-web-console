@@ -282,7 +282,7 @@
 }
 
 .pipeline-status-bar {
-	.flex-display(@display: flex);
+  .flex-display(@display: flex);
   .align-items(@align: center);
   .flex-direction(@direction: column);
   height: @circle-diameter;
@@ -301,14 +301,14 @@
   }
 }
 .pipeline-circle {
-	background: @build-pipeline-pending-color;
-	width: @circle-diameter;
-	height: @circle-diameter;
-	border-radius: @circle-radius;
+  background: @build-pipeline-pending-color;
+  width: @circle-diameter;
+  height: @circle-diameter;
+  border-radius: @circle-radius;
   margin-top: (-(@circle-diameter / 2) - (@line-height / 2));
-	position: relative;
-	transform: rotate(-90deg);
-	animation: fadeOut 0.1s (@line-animation-time + @circle-animation-time) linear forwards;
+  position: relative;
+  transform: rotate(-90deg);
+  animation: fadeOut 0.1s (@line-animation-time + @circle-animation-time) linear forwards;
   &:after {
     position: absolute;
     color: @inner-circle-color;
@@ -321,42 +321,42 @@
     animation: fadeIn .1s linear forwards;
     animation-delay: 1s;
   }
-	.clip1 {
-		position: absolute;
-		clip: rect(0, @circle-diameter, @circle-diameter, @circle-radius);
-		&:before {
-			content: '';
-			position: absolute;
-			width: @circle-diameter;
-			height: @circle-diameter;
-			clip: rect(0, @circle-radius, @circle-diameter, 0);
-			border-radius: @circle-radius;
-			transform: rotate(360deg);
-			animation: progress @semi-circle-animation-time @line-animation-time linear forwards;
-		}
-	}
-	.clip2 {
-		position: absolute;
-		clip: rect(0, @circle-radius, @circle-diameter, 0);
-		&:before {
-			content: '';
-			position: absolute;
-			width: @circle-diameter;
-			height: @circle-diameter;
-			clip: rect(0, @circle-diameter, @circle-diameter, @circle-radius);
-			border-radius: @circle-radius;
-			transform: rotate(360deg);
-			animation: progress @semi-circle-animation-time (@semi-circle-animation-time + @line-animation-time) linear forwards;
-		}
-	}
-	.inner-circle {
-		height: (@circle-diameter - @circle-border-width * 2);
-		width: (@circle-diameter - @circle-border-width * 2);
-		border-radius: @circle-radius;
+  .clip1 {
+    position: absolute;
+    clip: rect(0, @circle-diameter, @circle-diameter, @circle-radius);
+    &:before {
+      content: '';
+      position: absolute;
+      width: @circle-diameter;
+      height: @circle-diameter;
+      clip: rect(0, @circle-radius, @circle-diameter, 0);
+      border-radius: @circle-radius;
+      transform: rotate(360deg);
+      animation: progress @semi-circle-animation-time @line-animation-time linear forwards;
+    }
+  }
+  .clip2 {
+    position: absolute;
+    clip: rect(0, @circle-radius, @circle-diameter, 0);
+    &:before {
+      content: '';
+      position: absolute;
+      width: @circle-diameter;
+      height: @circle-diameter;
+      clip: rect(0, @circle-diameter, @circle-diameter, @circle-radius);
+      border-radius: @circle-radius;
+      transform: rotate(360deg);
+      animation: progress @semi-circle-animation-time (@semi-circle-animation-time + @line-animation-time) linear forwards;
+    }
+  }
+  .inner-circle {
+    height: (@circle-diameter - @circle-border-width * 2);
+    width: (@circle-diameter - @circle-border-width * 2);
+    border-radius: @circle-radius;
     background-color: @inner-circle-color;
-		position: absolute;
-		top: @circle-border-width;
-		left: @circle-border-width;
+    position: absolute;
+    top: @circle-border-width;
+    left: @circle-border-width;
     animation: fadeOut 0.1s (@line-animation-time + @circle-animation-time) linear forwards;
     .inner-circle-fill {
       box-sizing: border-box;
@@ -365,7 +365,7 @@
       border-radius: 50%;
       opacity: 0;
     }
-	}
+  }
 }
 
 // Condensed Pipeline on Overview

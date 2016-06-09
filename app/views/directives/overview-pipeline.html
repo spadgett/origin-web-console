@@ -14,7 +14,7 @@
       <div ng-if="!jenkinsStatus.stages.length">
         <div>No stages have started.</div>
       </div>
-      <div ng-repeat="stage in jenkinsStatus.stages" class="stage">
+      <div ng-repeat="stage in jenkinsStatus.stages track by stage.id" class="stage">
         <span
             data-toggle="tooltip"
             data-trigger="hover"
