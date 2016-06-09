@@ -198,15 +198,42 @@ angular.module("openshiftConsole")
       });
     }
 
+    var connectionSucceeded, connectionFailed;
+    var isAvailable = function(testConnection) {
+      return getMetricsURL().then(function(url) {
+        if (!url) {
+          return false;
+        }
+
+        if (!testConnection) {
+          return true;
+        }
+
+        // A previous connection succeeded.
+        if (connectionSucceeded) {
+          return true;
+        }
+
+        // A previous connection failed.
+        if (connectionFailed) {
+          return false;
+        }
+
+        return $http.get(url).then(function() {
+          connectionSucceeded = true;
+          return true;
+        }, function(response) {
+          connectionFailed = true;
+          return false;
+        });
+      });
+    };
+
     return {
       // Check if the metrics service is available. The service is considered
       // available if a metrics URL is set. Returns a promise resolved with a
       // boolean value.
-      isAvailable: function() {
-        return getMetricsURL().then(function(url) {
-          return !!url;
-        });
-      },
+      isAvailable: isAvailable,
 
       getMetricsURL: getMetricsURL,
 
