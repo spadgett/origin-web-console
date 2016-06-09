@@ -24,14 +24,15 @@
           <a ng-href="{{service | navigateResourceURL}}">{{service.metadata.name}}</a>
         </div>
         <div>
-          <relative-timestamp timestamp="activeDeploymentByConfig[dcName].metadata.creationTimestamp"></relative-timestamp>
+          <span ng-if="!activeDeploymentByConfig[dcName]">deploying...</span>
+          <relative-timestamp ng-if="activeDeploymentByConfig[dcName]" timestamp="activeDeploymentByConfig[dcName].metadata.creationTimestamp"></relative-timestamp>
         </div>
       </div>
       <div class="deployment-header">
         <div row class="rc-header" ng-if="!service">
           <a ng-href="{{deploymentConfigs[dcName] | navigateResourceURL}}">{{dcName}}</a>
-        </div>        
-        <div column flex class="shield">
+        </div>
+        <div column flex class="shield" ng-if="activeDeploymentByConfig[dcName]">
           <a ng-href="{{activeDeploymentByConfig[dcName] | navigateResourceURL}}">
             <span class="shield-number">#{{activeDeploymentByConfig[dcName] | annotation: 'deploymentVersion'}}</span>
           </a>
@@ -57,7 +58,9 @@
         <div column class="overview-donut-connector" ng-if="(deployments | anyDeploymentIsInProgress)">
           <div ng-if="deployments.length > 1">
             &rarr;
-            <span>deploying...</span>
+          </div>
+          <div ng-if="deployments.length == 1">
+            TODO
           </div>
         </div>
         <!-- /connecting arrow -->
