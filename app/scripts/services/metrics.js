@@ -6,12 +6,12 @@ angular.module("openshiftConsole")
     var POD_GAUGE_TEMPLATE = "/gauges/{containerName}%2F{podUID}%2F{metric}/data";
     // Used in compact view
     var POD_STACKED_COUNTER_TEMPLATE = "/counters/data?stacked=true&tags=descriptor_name:{metric},type:{type},pod_name:{podName}";
-    var POD_STACKED_GAUGE_TEMPLATE = "/gauges/data?stacked=true&tags=descriptor_name:{metric},type:{type},pod_name:{podName}";    
+    var POD_STACKED_GAUGE_TEMPLATE = "/gauges/data?stacked=true&tags=descriptor_name:{metric},type:{type},pod_name:{podName}";
 
-    // Use a regex to match the label name=<name> at word boundaries. In Hawkular, it's
-    // stored as a comma-separated list of values in the form name:value.
-    var RC_COUNTER_TEMPLATE = "/counters/data?stacked=true&tags=descriptor_name:{metric},type:{type},labels:.*\\b{labelName}:{labelValue}\\b.*";
-    var RC_GAUGE_TEMPLATE = "/gauges/data?stacked=true&tags=descriptor_name:{metric},type:{type},labels:.*\\b{labelName}:{labelValue}\\b.*";
+    // Find metrics matching the RC selector.
+    var RC_QUERY = "?stacked=true&tags=descriptor_name:{metric},type:{type},labels:{labels}";
+    var RC_COUNTER_TEMPLATE = "/counters/data" + RC_QUERY;
+    var RC_GAUGE_TEMPLATE = "/gauges/data" + RC_QUERY;
 
     // URL template to show for each type of metric.
     var podURLTemplateByMetric = {
@@ -131,7 +131,17 @@ angular.module("openshiftConsole")
       return data;
     }
 
-    var isDeployment = $filter('isDeployment');
+    function labelRegex(selector) {
+      var regex = '^';
+      _.each(selector, function(value, key) {
+        // Use lookarounds to find the labels in any order. They're stored as name:value tags in Hawkular.
+        regex += '(?=.*\\b' + key + ':' + value + '\\b)';
+      });
+      regex += '.*$';
+
+      return regex;
+    }
+
     function getRequestURL(config) {
       return getMetricsURL().then(function(metricsURL) {
         var template;
@@ -149,27 +159,14 @@ angular.module("openshiftConsole")
             type = 'pod_container';
           }
 
-          var labelName, labelValue;
-          if (isDeployment(config.deployment)) {
-            // Use the deployment label for OpenShift deployments.
-            labelName = "deployment";
-            labelValue = config.deployment.metadata.name;
-          } else {
-            // Fall back to looking at the replication controller selectors.
-            // We can't only do this reliably if there's one!
-            var selector = _.get(config, 'deployment.spec.selector', {});
-            var keys = _.keys(selector);
-            if (keys.length !== 1) {
-              return null;
-            }
-
-            labelName = keys[0];
-            labelValue = selector[labelName];
+          var selector = _.get(config, 'deployment.spec.selector', {});
+          var labels = labelRegex(selector);
+          if (!labels) {
+            return null;
           }
 
           return URI.expand(template, {
-            labelName: labelName,
-            labelValue: labelValue,
+            labels: labels,
             metric: config.metric,
             type: type
           }).toString();
