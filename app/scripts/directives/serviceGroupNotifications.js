@@ -18,9 +18,10 @@ angular.module('openshiftConsole')
         var svcs = [];
         var setDCNotifications = function() {
            _.each(svcs, function(svc) {
+             var svcName = _.get(svc, "metadata.name", '');
             // Get notifications for DCs in this service group
             if ($scope.deploymentConfigsByService) {
-              _.each($scope.deploymentConfigsByService[svc.metadata.name], function(dc) {
+              _.each($scope.deploymentConfigsByService[svcName], function(dc) {
                 if (!hasHealthChecks(dc.spec.template)) {
                   alerts["health_checks" + dc.metadata.uid] = {
                     type: "info",
@@ -49,8 +50,9 @@ angular.module('openshiftConsole')
           });
           _.each(svcs, function(svc) {
             // Get notifications for deployments in this service group
+            var svcName = _.get(svc, "metadata.name", '');
             if ($scope.deploymentsByService && $scope.podsByDeployment) {
-              _.each($scope.deploymentsByService[svc.metadata.name], function(deployment) {
+              _.each($scope.deploymentsByService[svcName], function(deployment) {
                 $filter('groupedPodWarnings')($scope.podsByDeployment[deployment.metadata.name], groupedPodWarnings);
               });
             }        

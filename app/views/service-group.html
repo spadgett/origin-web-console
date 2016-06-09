@@ -25,7 +25,7 @@
     </h4>
   </div>
   <div>
-    <div ng-repeat="dc in deploymentConfigsByService[service.metadata.name]">
+    <div ng-repeat="dc in deploymentConfigsByService[service.metadata.name || '']">
       <div row ng-repeat="pipeline in recentPipelinesByDc[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)"
            class="animate-repeat">
         <build-pipeline flex build="pipeline" overview="true"></build-pipeline>
@@ -40,15 +40,15 @@
             column
             flex
             service="service"
-            deployment-configs="deploymentConfigsByService[service.metadata.name]"
-            visible-deployments-by-config="visibleDeploymentsByConfigAndService[service.metadata.name]"
+            deployment-configs="deploymentConfigsByService[service.metadata.name || '']"
+            visible-deployments-by-config="visibleDeploymentsByConfigAndService[service.metadata.name || '']"
             recent-pipelines="recentPipelines"
             pipelines-by-deployment="pipelinesByDeployment"
             pods-by-deployment="podsByDeployment",
             hpa-by-dc="hpaByDc"
             hpa-by-rc="hpaByRc"
             scalable-deployment-by-config="scalableDeploymentByConfig"
-            monopods="monopodsByService[service.metadata.name]">
+            monopods="monopodsByService[service.metadata.name || '']">
         </overview-service>
         <overview-service
             ng-repeat="child in childServices"
@@ -64,25 +64,30 @@
             hpa-by-dc="hpaByDc"
             hpa-by-rc="hpaByRc"
             scalable-deployment-by-config="scalableDeploymentByConfig"
-            monopods="monopodsByService[service.metadata.name]">
+            monopods="monopodsByService[service.metadata.name || '']">
         </overview-service>
-        <div column ng-if="(childServices | hashSize) === 0" class="no-child-services-message hidden-xs">
+        <div column ng-if="(childServices | hashSize) === 0 && service" class="no-child-services-message hidden-xs">
           <!-- <div class="blank-state-icon"> -->
           <!--   <span class="pficon pficon pficon-add-circle-o" aria-hidden="true"></span> -->
           <!-- </div> -->
-          <h2>No linked services.</h2>
-          <p>
-            No services are linked to {{service.metadata.name}}.
-            <span ng-if="(services | hashSize) > 1">Add a service to group them together.</span>
-          </p>
-          <div ng-if="(services | hashSize) > 1">
-            <button class="btn btn-primary" ng-show="(services | hashSize) > 1" ng-click="linkService()">
-              Link Service
-            </button>
+          <div>
+            <h2>No linked services.</h2>
+            <p>
+              No services are linked to {{service.metadata.name}}.
+              <span ng-if="(services | hashSize) > 1">Add a service to group them together.</span>
+            </p>
+            <div ng-if="(services | hashSize) > 1">
+              <button class="btn btn-primary" ng-show="(services | hashSize) > 1" ng-click="linkService()">
+                Link Service
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      <service-group-notifications
+      <!-- FIXME unserviced things should only be getting the notifications that apply to them but reusing service group to show all
+           unserviced things makes the notifications show up as a big block at the end of all of them -->
+      <service-group-notifications 
+          ng-if="service"
           deployment-configs-by-service="deploymentConfigsByService"
           deployments-by-service="deploymentsByService"
           child-services="childServices"
