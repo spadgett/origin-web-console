@@ -102,7 +102,10 @@
     //   }
     // }
   }
-  .service-group-header, .deployment-tile, .overview-pipeline {
+  .service-group-header,
+  .deployment-tile,
+  .overview-pipeline,
+  .no-deployments-block .service-title {
     background-color: #ffffff;
     border: 1px solid @overview-border-gray;
     border-left-width: 0;
@@ -301,7 +304,10 @@
       }
     }
   }
-  .no-child-services-block, .no-deployments-block {
+  .no-deployments-block {
+    margin-left: 10px;
+  }
+  .no-child-services-message, .no-deployments-message {
     .text-center();
     .text-muted();
     justify-content: center;
@@ -317,10 +323,10 @@
       margin-top: 0;
     }
   }
-  .no-child-services-block {
+  .no-child-services-message {
     width: 50%;
   }
-  .standalone-service .no-child-services-block {
+  .standalone-service .no-child-services-message {
     display: none;
   }
   .shield {

@@ -1,9 +1,17 @@
 <div ng-if="!(visibleDeploymentsByConfig | hashSize) && !(monopods | hashSize)" class="no-deployments-block">
-  <h2>No deployments.</h2>
-  <p>
-    There are no deployments or pods for service
-    <a ng-href="{{service | navigateResourceURL}}">{{service.metadata.name}}</a>.
-  </p>
+  <div class="service-title">
+    <div>
+      Service:
+      <a ng-href="{{service | navigateResourceURL}}">{{service.metadata.name}}</a>
+    </div>
+  </div>
+  <div class="no-deployments-message">
+    <h2>No deployments.</h2>
+    <p>
+      There are no deployments or pods for service
+      <a ng-href="{{service | navigateResourceURL}}">{{service.metadata.name}}</a>.
+    </p>
+  </div>
 </div>
 
 <div class="deployment-tile" ng-repeat="(dcName, deployments) in visibleDeploymentsByConfig">
