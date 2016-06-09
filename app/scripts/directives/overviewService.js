@@ -10,8 +10,7 @@ angular.module('openshiftConsole')
       scope: {
         service: '=',
         deploymentConfigs: '=',
-        visibleDeployments: '=',
-        activeDeployment: '=',
+        visibleDeploymentsByConfig: '=',
         replicationControllers: '=',
         recentPipelines: '=',
         pipelinesByDeployment: '=',
@@ -56,7 +55,6 @@ angular.module('openshiftConsole')
 
           Navigate.toPodsForDeployment(deployment);
         };
-
 
         $scope.getHPA = function(rcName, dcName) {
           var hpaByDC = $scope.hpaByDc;

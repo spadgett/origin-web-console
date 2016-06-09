@@ -96,16 +96,13 @@ angular.module('openshiftConsole')
       });
       $scope.scalableDeploymentByConfig = scalableDeploymentByConfig;
 
-      // Take the active deployment for every service
-      $scope.activeDeploymentByService = {};
+      // Take all visible deployments grouped by deployment config and service
+      $scope.visibleDeploymentsByConfigAndService = {};
       _.each($scope.deploymentsByService, function(deployments, svcName) {
-        $scope.activeDeploymentByService[svcName] = DeploymentsService.getActiveDeployment(deployments);
-      });
-
-      // Deployments visible for every service
-      $scope.visibleDeploymentsByService = {};
-      _.each($scope.deploymentsByService, function(deployments, svcName) {
-        $scope.visibleDeploymentsByService[svcName] = _.filter(deployments, isDeploymentVisible);
+        $scope.visibleDeploymentsByConfigAndService[svcName] = {};
+        _.each(DeploymentsService.groupByDeploymentConfig(deployments), function(deployments, dcName) {
+          $scope.visibleDeploymentsByConfigAndService[svcName][dcName] = _.filter(_.values(deployments), isDeploymentVisible);
+        });
       });
     };
 
