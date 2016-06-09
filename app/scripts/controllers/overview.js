@@ -156,6 +156,11 @@ angular.module('openshiftConsole')
         return false;
       }
 
+      // Hide Jenkins slave pods.
+      if (label(pod, "jenkins") === "slave") {
+        return false;
+      }
+
       return true;
     };
 
