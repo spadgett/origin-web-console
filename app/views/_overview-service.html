@@ -17,20 +17,20 @@
 <div ng-attr-row="{{!service ? '' : undefined}}" ng-attr-wrap="{{!service ? '' : undefined}}" ng-class="{'no-service': !service}">
   <div ng-repeat="(dcName, deployments) in visibleDeploymentsByConfig" class="deployment-tile-wrapper">
     <!-- visible deployments with a dc -->
-    <div class="deployment-tile" ng-if="dcName.length" ng-init="activeDeployment = (deployments | getActiveDeployment)">
+    <div class="deployment-tile" ng-if="dcName">
       <div row class="service-title" ng-if="service">
         <div>
           Service:
           <a ng-href="{{service | navigateResourceURL}}">{{service.metadata.name}}</a>
         </div>
         <div>
-          <relative-timestamp timestamp="activeDeployment.metadata.creationTimestamp"></relative-timestamp>
+          <relative-timestamp timestamp="activeDeploymentByConfig[dcName].metadata.creationTimestamp"></relative-timestamp>
         </div>
       </div>
       <div class="deployment-header">
         <div column flex class="shield">
-          <a ng-href="{{activeDeployment | navigateResourceURL}}">
-            <span class="shield-number">#{{activeDeployment | annotation: 'deploymentVersion'}}</span>
+          <a ng-href="{{activeDeploymentByConfig[dcName] | navigateResourceURL}}">
+            <span class="shield-number">#{{activeDeploymentByConfig[dcName] | annotation: 'deploymentVersion'}}</span>
           </a>
         </div>
       </div>
@@ -60,9 +60,9 @@
         <!-- /connecting arrow -->
         <!-- metrics or pod template -->
         <div column class="overview-metrics" ng-if="!(deployments | anyDeploymentIsInProgress)">
-          <metrics ng-if="showMetrics" deployment="activeDeployment" profile="compact"></metrics>
+          <metrics ng-if="showMetrics" deployment="activeDeploymentByConfig[dcName]" profile="compact"></metrics>
           <div ng-if="!showMetrics">
-            <pod-template pod-template="activeDeployment.spec.template"></pod-template>
+            <pod-template pod-template="activeDeploymentByConfig[dcName].spec.template"></pod-template>
           </div>
         </div>
         <!-- /metrics or pod template -->

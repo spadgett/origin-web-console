@@ -31,6 +31,13 @@ angular.module('openshiftConsole')
 
         var annotation = $filter('annotation');
 
+        $scope.$watch('visibleDeploymentsByConfig', function(visibleDeploymentsByConfig) {
+          $scope.activeDeploymentByConfig = {};
+          _.each(visibleDeploymentsByConfig, function(deployments, dcName) {
+            $scope.activeDeploymentByConfig[dcName] = DeploymentsService.getActiveDeployment(deployments);
+          });
+        });
+
         $scope.isDeploymentLatest = function(deployment) {
           var dcName = annotation(deployment, 'deploymentConfig');
           if (!dcName) {

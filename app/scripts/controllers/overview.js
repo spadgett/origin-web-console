@@ -329,6 +329,7 @@ angular.module('openshiftConsole')
         watches.push(DataService.watch("deploymentconfigs", context, function(dcData) {
           deploymentConfigs = dcData.by("metadata.name");
           groupDeploymentConfigs();
+          groupDeployments();
           updateShowGetStarted();
           Logger.log("deploymentconfigs (subscribe)", $scope.deploymentConfigs);
         }));
