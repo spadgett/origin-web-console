@@ -169,8 +169,16 @@
         margin-left: 5px;
       }
     }
-    .incomplete-stage {
-      margin-left: 5px;
+    .current-stage {
+      margin-left: 10px;
+      padding-left: 10px;
+      border-left: 1px solid #d1d1d1;
+      .flex-display(@display: flex);
+      .align-items(@align: center);
+      .in-progress-stage {
+        width: 150px;
+        margin-left: 5px;
+      }
     }
     .log-link, .stages {
       padding: 5px 10px;
