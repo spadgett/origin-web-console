@@ -11,7 +11,7 @@ angular.module('openshiftConsole')
         deploymentsByService: '=',
         podsByDeployment: '='
       },
-      templateUrl: '/views/directives/service-group-notifications.html',
+      templateUrl: 'views/directives/service-group-notifications.html',
       link: function($scope) {
         var alertHiddenKey = function(alertID) {
           return 'hide/alert/' + alertID;

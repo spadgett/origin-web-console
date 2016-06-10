@@ -20,7 +20,7 @@ angular.module('openshiftConsole')
         scalableDeploymentByConfig: '=',
         monopods: '='
       },
-      templateUrl: '/views/_overview-service.html',
+      templateUrl: 'views/_overview-service.html',
       link: function($scope) {
         if (!window.OPENSHIFT_CONSTANTS.DISABLE_OVERVIEW_METRICS) {
           MetricsService.isAvailable(true).then(function(available) {
