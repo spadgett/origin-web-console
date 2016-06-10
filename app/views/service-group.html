@@ -18,9 +18,8 @@
       <a ng-if="displayRoute | isWebRoute"
          ng-href="{{displayRoute | routeWebURL}}">{{displayRoute | routeLabel}}</a>
       <span ng-if="displayRoute && !(displayRoute | isWebRoute)">{{displayRoute | routeLabel}}</span>
-        <span ng-if="routeWarnings && routes.length === 1">
-          <route-warnings warnings="routeWarnings"></route-warnings>
-        </span>
+      <span ng-if="routeWarnings && routes.length === 1">
+        <route-warnings warnings="routeWarnings"></route-warnings>
       </span>
     </h4>
     <span ng-if="!displayRoute">
@@ -47,7 +46,7 @@
             visible-deployments-by-config="visibleDeploymentsByConfigAndService[service.metadata.name || '']"
             recent-pipelines="recentPipelines"
             pipelines-by-deployment="pipelinesByDeployment"
-            pods-by-deployment="podsByDeployment",
+            pods-by-deployment="podsByDeployment"
             hpa-by-dc="hpaByDc"
             hpa-by-rc="hpaByRc"
             scalable-deployment-by-config="scalableDeploymentByConfig"
