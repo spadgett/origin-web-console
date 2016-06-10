@@ -54,24 +54,49 @@
           </deployment-donut>
         </div>
         <!-- /all visible deployments -->
-        <!-- connecting arrow -->
+
+        <!-- deployment in progress (connecting arrow) -->
         <div column class="overview-donut-connector" ng-if="(deployments | anyDeploymentIsInProgress)">
           <div ng-if="deployments.length > 1">
             &rarr;
           </div>
           <div ng-if="deployments.length === 1" class="finishing-deployment-text">
-            Completing deployment #{{deployments[0] | annotation : 'deploymentVersion'}}...
+            Running deployment #{{deployments[0] | annotation : 'deploymentVersion'}}...
           </div>
         </div>
-        <!-- /connecting arrow -->
-        <!-- metrics or pod template -->
-        <div column class="overview-metrics" ng-if="!(deployments | anyDeploymentIsInProgress)">
+        <!-- /deployment in progress (connecting arrow) -->
+
+        <!-- cancelled/failed state -->
+        <div column class="overview-unsuccessful-state" ng-if="!activeDeploymentByConfig[dcName] && !(deployments | anyDeploymentIsInProgress)" ng-switch="deployments[0] | deploymentStatus">
+          <span ng-switch-when="Cancelled">
+            <span class="text-warning unsuccessful-state-text">
+              <i class="fa fa-ban" aria-hidden="true"></i>
+              Deployment
+              <a ng-href="{{deployments[0] | navigateResourceURL}}"><span class="shield-number">#{{deployments[0] | annotation: 'deploymentVersion'}}</span></a>
+              cancelled
+            </span>
+          </span>
+          <span ng-switch-when="Failed">
+            <span class="text-danger unsuccessful-state-text">
+              <i class="fa fa-times" aria-hidden="true"></i>
+              Deployment
+              <a ng-href="{{deployments[0] | navigateResourceURL}}"><span class="shield-number">#{{deployments[0] | annotation: 'deploymentVersion'}}</span></a>
+              failed
+            </span>
+          </span>
+        </div>
+        <!-- /cancelled/failed state -->
+
+        <!-- succeeded state -->
+        <div column class="overview-metrics" ng-if="activeDeploymentByConfig[dcName] && !(deployments | anyDeploymentIsInProgress)">
+          <!-- metrics or pod template -->
           <metrics ng-if="showMetrics" deployment="activeDeploymentByConfig[dcName]" profile="compact"></metrics>
           <div ng-if="!showMetrics">
             <pod-template pod-template="activeDeploymentByConfig[dcName].spec.template"></pod-template>
           </div>
+          <!-- /metrics or pod template -->
         </div>
-        <!-- /metrics or pod template -->
+        <!-- /succeeded state -->
       </div>
     </div>
     <!-- /visible deployments with a dc -->
