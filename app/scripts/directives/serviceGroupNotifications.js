@@ -13,6 +13,20 @@ angular.module('openshiftConsole')
       },
       templateUrl: '/views/directives/service-group-notifications.html',
       link: function($scope) {
+        var alertHiddenKey = function(alertID) {
+          return 'hide/alert/' + alertID;
+        };
+
+        var isAlertHidden = function(alertID) {
+          var key = alertHiddenKey(alertID);
+          return localStorage.getItem(key) === 'true';
+        };
+
+        var hideAlert = function(alertID) {
+          var key = alertHiddenKey(alertID);
+          localStorage.setItem(key, 'true');
+        };
+
         var hasHealthChecks = $filter('hasHealthChecks');
         var alerts = $scope.alerts = {};
         var svcs = [];
@@ -22,24 +36,31 @@ angular.module('openshiftConsole')
             // Get notifications for DCs in this service group
             if ($scope.deploymentConfigsByService) {
               _.each($scope.deploymentConfigsByService[svcName], function(dc) {
+                var id = "health_checks_" + dc.metadata.uid;
                 if (!hasHealthChecks(dc.spec.template)) {
-                  alerts["health_checks" + dc.metadata.uid] = {
+                  if (isAlertHidden(id)) {
+                    return;
+                  }
+                  alerts[id] = {
                     type: "info",
                     message: dc.metadata.name + " has containers without health checks, which ensure your application is running correctly.",
                     links: [{
                       href: Navigate.healthCheckURL(dc.metadata.namespace, "DeploymentConfig", dc.metadata.name),
                       label: "Add health checks"
-                    }]
+                    }],
+                    onClose: function() {
+                      hideAlert(id);
+                    }
                   };
                 }
                 else {
-                  delete alerts["health_checks" + dc.metadata.uid];
+                  delete alerts[id];
                 }
               });
             }
-          });         
+          });
         };
-        
+
         var setDeploymentNotifications = function() {
           var groupedPodWarnings = {};
           // clear out pod warning alerts
@@ -55,7 +76,7 @@ angular.module('openshiftConsole')
               _.each($scope.deploymentsByService[svcName], function(deployment) {
                 $filter('groupedPodWarnings')($scope.podsByDeployment[deployment.metadata.name], groupedPodWarnings);
               });
-            }        
+            }
           });
           _.each(groupedPodWarnings, function(podWarnings, groupId) {
             if (podWarnings.length) {
@@ -66,7 +87,7 @@ angular.module('openshiftConsole')
             }
           });
         };
-        
+
         // TODO worried about how this will perform
         $scope.$watchGroup(['service', 'childServices'], function() {
           svcs = ($scope.childServices || []).concat([$scope.service]);

@@ -9,6 +9,14 @@ angular.module('openshiftConsole')
         hideCloseButton: '=?',
         toast: '=?'
       },
-      templateUrl: 'views/_alerts.html'
+      templateUrl: 'views/_alerts.html',
+      link: function($scope) {
+        $scope.close = function(alert) {
+          alert.hidden = true;
+          if (_.isFunction(alert.onClose)) {
+            alert.onClose();
+          }
+        };
+      }
     };
   });
