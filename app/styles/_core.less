@@ -273,16 +273,23 @@
   margin-bottom: 5px;
   white-space : nowrap;
   .metrics-sparkline {
-    display: inline-block;
-    vertical-align: -6px;
-    width: 140px;
+    display: none;
+    @media (min-width: @screen-lg-min) {
+      display: inline-block;
+      width: 120px;
+      vertical-align: -6px;
+      width: 120px;
+    }
     @media (min-width: 1400px) {
       width: 240px;
     }
   }
   .metrics-usage {
-    display: inline-block;
+    display: block;
     margin-left: 10px;
+    @media (min-width: @screen-lg-min) {
+      display: inline-block;
+    }
   }
   .usage-value {
     font-size: 22px;
@@ -313,13 +320,10 @@
       stroke-width: 1px;
     }
   }
-  @media (max-width: @screen-xs-max) {
+  @media (max-width: @screen-sm-max) {
     .text-center();
     display: inline-block;
-    margin-top: 5px;
-    .metrics-sparkline {
-      display: none;
-    }
+    margin: 10px;
     .metrics-usage {
       .usage-value {
         font-size: 22px;
