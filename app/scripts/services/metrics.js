@@ -222,7 +222,7 @@ angular.module("openshiftConsole")
         return $http.get(url).then(function() {
           connectionSucceeded = true;
           return true;
-        }, function(response) {
+        }, function() {
           connectionFailed = true;
           return false;
         });
