@@ -24,7 +24,7 @@
           <a ng-href="{{service | navigateResourceURL}}">{{service.metadata.name}}</a>
         </div>
         <div>
-          <span ng-if="!activeDeploymentByConfig[dcName]">deploying...</span>
+          <span ng-if="!activeDeploymentByConfig[dcName]">Deploying...</span>
           <relative-timestamp ng-if="activeDeploymentByConfig[dcName]" timestamp="activeDeploymentByConfig[dcName].metadata.creationTimestamp"></relative-timestamp>
         </div>
       </div>
@@ -42,7 +42,7 @@
         <!-- all visible deployments -->
         <div column class="overview-donut"
             ng-repeat="deployment in deployments | orderObjectsByDate : true track by (deployment | uid)"
-            ng-class="isDeploymentLatest(deployment) ? 'latest' : ''">
+            ng-class="{ latest: isDeploymentLatest(deployment) }">
           <deployment-donut
               rc="deployment"
               deployment-config="deploymentConfigs[dcName]"
@@ -59,8 +59,8 @@
           <div ng-if="deployments.length > 1">
             &rarr;
           </div>
-          <div ng-if="deployments.length == 1">
-            TODO
+          <div ng-if="deployments.length === 1" class="finishing-deployment-text">
+            Completing deployment #{{deployments[0] | annotation : 'deploymentVersion'}}...
           </div>
         </div>
         <!-- /connecting arrow -->
