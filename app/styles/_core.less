@@ -277,6 +277,8 @@
   }
   .metrics-sparkline {
     display: none;
+    height: 27px;
+    border-bottom: 1px solid #fafafa;
     @media (min-width: @screen-lg-min) {
       display: inline-block;
       width: 150px;
@@ -311,17 +313,10 @@
     line-height: 1;
     margin-bottom: -1px;
   }
-  .c3 {
-    &:after {
-      content: "";
-      display: block;
-      border-bottom: 1px solid @border-color-light-grey;
-      margin: -14px 2px 0;
-    }
-    .c3-line {
-      stroke-width: 1px;
-    }
+  .c3-line {
+    stroke-width: 1px;
   }
+
   @media (max-width: @screen-sm-max) {
     .text-center();
     display: inline-block;
