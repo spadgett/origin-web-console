@@ -270,8 +270,11 @@
 }
 
 .metrics-compact {
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   white-space : nowrap;
+  @media (min-width: @screen-lg-min) {
+    margin-bottom: 5px;
+  }
   .metrics-sparkline {
     display: none;
     @media (min-width: @screen-lg-min) {
