@@ -55,7 +55,7 @@ angular
      .id(builder.join(pluginName, "overview"))
      .title(function () { return "Overview"; })
      .template(template)
-     .href(projectHref("status"))
+     .href(projectHref("overview"))
      .page(function () { return builder.join(templatePath, 'pipeline-overview.html'); })
      .build();
     tab.icon = "dashboard";
