@@ -29,7 +29,8 @@
         </div>
       </div>
       <div class="deployment-header">
-        <div row class="rc-header" ng-if="!service">
+        <div class="rc-header">
+          Deployment:
           <a ng-href="{{deploymentConfigs[dcName] | navigateResourceURL}}">{{dcName}}</a>
         </div>
         <div column flex class="shield" ng-if="activeDeploymentByConfig[dcName]">
