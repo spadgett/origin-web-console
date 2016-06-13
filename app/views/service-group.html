@@ -27,13 +27,15 @@
     </span>
   </div>
   <div>
-    <div ng-repeat="dc in deploymentConfigsByService[service.metadata.name || '']">
-      <div row ng-repeat="pipeline in recentPipelinesByDc[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)"
-           class="animate-repeat">
-        <build-pipeline flex build="pipeline" overview="true"></build-pipeline>
-      </div>
-      <div>
-        <triggers triggers="dc.spec.triggers" builds-by-output-image="buildsByOutputImage" namespace="dc.metadata.namespace"></triggers>
+    <div class="service-group-triggers">
+      <div ng-repeat="dc in deploymentConfigsByService[service.metadata.name || '']">
+        <div row ng-repeat="pipeline in recentPipelinesByDc[dc.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)"
+            class="animate-repeat">
+          <build-pipeline flex build="pipeline" overview="true"></build-pipeline>
+        </div>
+        <div>
+          <triggers triggers="dc.spec.triggers" builds-by-output-image="buildsByOutputImage" namespace="dc.metadata.namespace"></triggers>
+        </div>
       </div>
     </div>
     <div uib-collapse="collapse" class="service-group-body">
