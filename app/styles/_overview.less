@@ -277,18 +277,18 @@
         justify-content: space-between;
       }
     }
-    .deployment-body, .overview-donut, .overview-metrics {
+    .deployment-body,
+    .overview-donut {
       align-items: center;
     }
     .overview-metrics {
-      // max-width: 100%;
-      @media (max-width: @screen-xs-max) {
-        .text-center();
+      @media (max-width: @screen-sm-max) {
         margin: 0 auto;
+        .text-center();
       }
     }
     @media (min-width: @screen-md-min) {
-      .overview-metrics {
+      .deployment-details {
         margin-left: 15px;
         order: 1;
         &.ng-leave {

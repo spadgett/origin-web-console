@@ -83,12 +83,10 @@
         <!-- /cancelled/failed state -->
 
         <!-- succeeded state -->
-        <div column class="overview-metrics" ng-if="activeDeploymentByConfig[dcName] && !(deployments | anyDeploymentIsInProgress)">
+        <div column class="deployment-details" ng-if="activeDeploymentByConfig[dcName] && !(deployments | anyDeploymentIsInProgress)">
           <!-- metrics or pod template -->
-          <metrics ng-if="showMetrics" deployment="activeDeploymentByConfig[dcName]" profile="compact"></metrics>
-          <div ng-if="!showMetrics">
-            <pod-template pod-template="activeDeploymentByConfig[dcName].spec.template"></pod-template>
-          </div>
+          <metrics ng-if="showMetrics" deployment="activeDeploymentByConfig[dcName]" profile="compact" class="overview-metrics"></metrics>
+          <pod-template ng-if="!showMetrics" pod-template="activeDeploymentByConfig[dcName].spec.template"></pod-template>
           <!-- /metrics or pod template -->
         </div>
         <!-- /succeeded state -->
@@ -129,11 +127,9 @@
           </div>
           <!-- /all visible deployments -->
           <!-- metrics or pod template -->
-          <div column class="overview-metrics">
-            <metrics ng-if="showMetrics" deployment="deployment" profile="compact"></metrics>
-            <div ng-if="!showMetrics">
-              <pod-template pod-template="deployment.spec.template"></pod-template>
-            </div>
+          <div column class="deployment-details">
+            <metrics ng-if="showMetrics" deployment="deployment" profile="compact" class="overview-metrics"></metrics>
+            <pod-template ng-if="!showMetrics" pod-template="deployment.spec.template"></pod-template>
           </div>
           <!-- /metrics or pod template -->
         </div>
@@ -161,11 +157,9 @@
         <div column class="overview-donut">
           <pod-donut pods="[pod]"></pod-donut>
         </div>
-        <div column class="overview-metrics">
-          <metrics ng-if="showMetrics" pod="pod" profile="compact"></metrics>
-          <div ng-if="!showMetrics">
-            <pod-template pod-template="pod"></pod-template>
-          </div>
+        <div column class="deployment-details">
+          <metrics ng-if="showMetrics" pod="pod" profile="compact" class="overview-metrics"></metrics>
+          <pod-template ng-if="!showMetrics" pod-template="pod"></pod-template>
         </div>
       </div>
     </div>
