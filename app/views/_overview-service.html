@@ -115,7 +115,8 @@
           </div>
         </div>
         <div class="deployment-header">
-          <div row class="rc-header">
+          <div class="rc-header">
+            Replication Controller:
             <a ng-href="{{deployment | navigateResourceURL}}">{{deployment.metadata.name}}</a>
           </div>
         </div>
@@ -158,7 +159,8 @@
           <relative-timestamp timestamp="pod.metadata.creationTimestamp"></relative-timestamp>
         </div>
       </div>
-      <div row class="rc-header"> <!-- TODO may want different treatment for a pod-name? -->
+      <div class="rc-header"> <!-- TODO may want different treatment for a pod-name? -->
+        Pod:
         <a ng-href="{{pod | navigateResourceURL}}">{{pod.metadata.name}}</a>
       </div>
       <div row class="deployment-body">
