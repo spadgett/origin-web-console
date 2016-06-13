@@ -61,15 +61,16 @@ angular
     tab.icon = "dashboard";
     tabs.push(tab);
 
-    tab = builder.create()
-     .id(builder.join(pluginName, "topology"))
-     .title(function () { return "Topology"; })
-     .template(template)
-     .href(projectHref("overview"))
-     .page(function () { return builder.join(templatePath, 'project.html'); })
-     .build();
-    tab.icon = "map-o";
-    tabs.push(tab);
+    // Old overview, keep for now in case of emergency
+    // tab = builder.create()
+    //  .id(builder.join(pluginName, "topology"))
+    //  .title(function () { return "Topology"; })
+    //  .template(template)
+    //  .href(projectHref("overview"))
+    //  .page(function () { return builder.join(templatePath, 'project.html'); })
+    //  .build();
+    // tab.icon = "map-o";
+    // tabs.push(tab);
 
     tab = builder.create()
       .id(builder.join(pluginName, "browse"))
@@ -116,14 +117,15 @@ angular
           return '/project/' + encodeURIComponent(params.project) + "/overview";
         }
       })
-      .when('/project/:project/status', {
+      .when('/project/:project/overview', {
         templateUrl: 'views/overview.html',
         controller: 'OverviewController'
       })
-      .when('/project/:project/overview', {
-        templateUrl: 'views/project.html',
-        controller: 'TopologyController'
-      })
+      // Old overview, keep for now in case of emergency
+      // .when('/project/:project/overview', {
+      //   templateUrl: 'views/project.html',
+      //   controller: 'TopologyController'
+      // })
       .when('/project/:project/settings', {
         templateUrl: 'views/settings.html',
         controller: 'SettingsController'
