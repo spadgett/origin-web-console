@@ -271,8 +271,7 @@ angular.module('openshiftConsole')
         _.isEmpty(services) &&
         _.isEmpty(pods) &&
         _.isEmpty(deployments) &&
-        _.isEmpty(deploymentConfigs) &&
-        _.isEmpty(builds);
+        _.isEmpty(deploymentConfigs);
 
       $scope.renderOptions.showGetStarted = projectEmpty;
     };
