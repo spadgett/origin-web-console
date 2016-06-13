@@ -40,7 +40,7 @@ angular.module("openshiftConsole")
        * @returns {String} a URL string for the project overview
        */
       projectOverviewURL: function(projectName){
-        return "project/" + encodeURIComponent(projectName) + "/status";
+        return "project/" + encodeURIComponent(projectName) + "/overview";
       },
 
       /**
