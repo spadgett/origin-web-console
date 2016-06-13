@@ -507,8 +507,10 @@ angular.module('openshiftConsole')
 
                 angular.forEach(responses, function(response) {
                   scope.metricsError = {
-                    status: response.status,
-                    details: _.get(response, 'data.errorMsg') || response.statusText || "Status code " + response.status
+                    status:  _.get(response, 'status', 0),
+                    details: _.get(response, 'data.errorMsg') ||
+                             _.get(response, 'statusText') ||
+                             "Status code " + _.get(response, 'status', 0)
                   };
                 });
               }
