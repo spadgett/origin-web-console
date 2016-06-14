@@ -140,7 +140,7 @@
   .overview-pipeline {
     border-top-width: 0;
     .overview-pipeline-details {
-      .flex-wrap(@wrap: nowrap);
+      .flex-wrap(@wrap: wrap);
     }
     .build-name, .build-phase {
       padding: 5px 10px;
@@ -185,7 +185,7 @@
     overflow: hidden;
     padding: 0;
     .overview-services {
-      .flex-wrap(@wrap: nowrap);
+      .flex-wrap(@wrap: wrap);
       // Put margins between the services, but make them flush with the left
       // border even when they wrap.
       margin-left: -11px;
@@ -203,6 +203,9 @@
           max-width: 50%;
           min-width: 50%;
         }
+      }
+      .no-child-services-message {
+        display: block;
       }
     }
     .no-service {
@@ -367,8 +370,7 @@
     .text-muted();
     .well();
     .justify-content(@justify: center);
-    margin-left: 10px;
-    margin-bottom: 0;
+    margin: 10px 0 0 10px;
 
     padding: 30px;
     // .blank-state-icon {
@@ -382,7 +384,10 @@
     }
   }
   .no-child-services-message {
-    width: 50%;
+    display: none;
+    @media (min-width: 568px) {
+      display: block;
+    }
   }
   .standalone-service .no-child-services-message {
     display: none;
