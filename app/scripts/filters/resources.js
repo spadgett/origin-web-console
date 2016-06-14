@@ -31,6 +31,7 @@ angular.module('openshiftConsole')
       "description":              ["openshift.io/description"],
       "buildNumber":              ["openshift.io/build.number"],
       "buildPod":                 ["openshift.io/build.pod-name"],
+      "jenkinsBuildURL":          ["openshift.io/jenkins-build-uri"],
       "jenkinsLogURL":            ["openshift.io/jenkins-log-url"],
       "jenkinsStatus":            ["openshift.io/jenkins-status-json"]
     };
@@ -865,6 +866,27 @@ angular.module('openshiftConsole')
 
       // Link to the Jenkins console that follows the log instead of the raw log text.
       return logURL.replace(/\/consoleText$/, '/console');
+    };
+  })
+  .filter('jenkinsBuildURL', function(annotationFilter, jenkinsLogURLFilter) {
+    return function(build) {
+      var relativeBuildURL = annotationFilter(build, 'jenkinsBuildURL');
+      if (!relativeBuildURL) {
+        return null;
+      }
+
+      // We expect a relative URL, but if it is absolute, just return it.
+      if (URI(relativeBuildURL).is('absolute')) {
+        return relativeBuildURL;
+      }
+
+      // Use the log URL to determine the base URL of Jenkins since the build URL is relative.
+      var logURL = jenkinsLogURLFilter(build);
+      if (!logURL) {
+        return null;
+      }
+
+      return URI(logURL).path(relativeBuildURL).toString();
     };
   })
   .filter('buildLogURL', function(isJenkinsPipelineStrategyFilter,

@@ -19,6 +19,7 @@
     <div class="small text-muted">
       Started <relative-timestamp timestamp="build.metadata.creationTimestamp"></relative-timestamp>
     </div>
+    <div ng-if="build | jenkinsBuildURL" class="small"><a ng-href="{{build | jenkinsBuildURL}}" target="_blank">Jenkins Build</a></div>
     <div ng-if="build | buildLogURL" class="small"><a ng-href="{{build | buildLogURL}}" target="_blank">View Log</a></div>
   </div>
     <div class="pipeline-container">
