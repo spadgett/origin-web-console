@@ -4,10 +4,9 @@
     <div class="usage-value">
       <span ng-repeat="dataset in metric.datasets">
         <span ng-if="!$first">/</span>
-        <span ng-if="!(usageByMetric[dataset.id].used | isNil)">{{usageByMetric[dataset.id].used}}</span>
-        <span ng-if="usageByMetric[dataset.id].used | isNil">
-          <span class="text-muted" aria-hidden="true">--</span>
-          <span class="sr-only">No data</span>
+        <span class="fade-inline" ng-hide="usageByMetric[dataset.id].used | isNil">{{usageByMetric[dataset.id].used}}</span>
+        <span ng-if="usageByMetric[dataset.id].used | isNil" class="text-muted" aria-hidden="true">
+          --
         </span>
         <span ng-if="dataset.iconClass"
               ng-class="dataset.iconClass"
