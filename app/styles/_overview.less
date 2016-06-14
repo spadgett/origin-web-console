@@ -140,7 +140,9 @@
     }
     .build-name, .build-phase {
       padding: 5px 10px;
-      border-right: 1px solid @overview-border-gray;
+      @media (min-width: 568px) {
+        border-right: 1px solid @overview-border-gray;
+      }
     }
     .stage {
       .flex-display(@display: flex);
@@ -166,6 +168,9 @@
     }
     .stages {
       .flex-display(@display: flex);
+      // @media (max-width: 567px) {
+      //   flex-basis: 100%;
+      // }
     }
     .timestamp {
       .text-muted();
@@ -174,6 +179,11 @@
     }
     .log-link {
       border-left: 1px solid @overview-border-gray;
+    }
+    @media (max-width: 567px) {
+      .timestamp {
+        display: none;
+      }
     }
   }
   .service-group-body {

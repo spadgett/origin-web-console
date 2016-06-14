@@ -2,7 +2,7 @@
   <div class="timestamp">
     <relative-timestamp timestamp="build.metadata.creationTimestamp"></relative-timestamp>
   </div>
-  <div row class="overview-pipeline-details">
+  <div row class="overview-pipeline-details" ng-class="build.status.phase">
     <div class="build-name">
       <a ng-href="{{buildConfigName | navigateResourceURL : 'BuildConfig' : build.metadata.namespace}}">{{buildConfigName}}</a>,
       <a ng-href="{{build | navigateResourceURL}}">#{{build | annotation : 'buildNumber'}}</a>
@@ -22,8 +22,8 @@
           <pipeline-status ng-if="stage.status" status="stage.status"></pipeline-status>
         </span>
         <div ng-if="!(stage | pipelineStageComplete)" class="current-stage">
-          Stage {{stage.name}}, {{stage.status | camelToLower}}
-          <div class="in-progress-stage">
+          <span class="hidden-xs">Stage</span> {{stage.name}}, {{stage.status | camelToLower}}
+          <div class="in-progress-stage hidden-xs">
             <div class="build-stage-animation">
               <div class="build-rail">
                 <div class="build-bar"></div>
