@@ -92,8 +92,8 @@
     width: 100%;
     @media (min-width: @screen-sm-min) {
       width: 50%;
-      // FIXME: magic number, why 13px?
-      padding-right: 13px;
+      // FIXME: magic number, why 4px?
+      padding-right: 4px;
 
       // .alert-wrapper {
       //   width: 100%;
@@ -102,6 +102,14 @@
       //     padding-right: 5px;
       //   }
       // }
+    }
+    .service-group-body .overview-services {
+      overview-service {
+        max-width: none;
+      }
+      .deployment-tile {
+        margin-top: 0;
+      }
     }
   }
   .service-group-header {
@@ -181,17 +189,22 @@
       // Put margins between the services, but make them flush with the left
       // border even when they wrap.
       margin-left: -11px;
-      overview-service {
-        max-width: 50%;
-        min-width: 50%;
-      }
+      .flex-direction(@direction: column);
       .deployment-tile {
         margin-left: 10px;
         margin-top: 10px;
         position: relative;
       }
     }
-
+    @media (min-width: 568px) {
+      .overview-services {
+        .flex-direction(@direction: row);
+        overview-service {
+          max-width: 50%;
+          min-width: 50%;
+        }
+      }
+    }
     .no-service {
       .deployment-tile-wrapper {
         width: 100%;
@@ -354,7 +367,7 @@
     .text-muted();
     .well();
     .justify-content(@justify: center);
-    margin-left: 5px;
+    margin-left: 10px;
     margin-bottom: 0;
 
     padding: 30px;
