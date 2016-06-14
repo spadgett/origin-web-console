@@ -38,7 +38,7 @@
         <div column class="overview-donut"
             ng-repeat="deployment in deployments | orderObjectsByDate : true track by (deployment | uid)"
             ng-class="{ latest: isDeploymentLatest(deployment) }"
-            ng-if="!(isDeploymentLatest(deployment) && ((deployments[0] | deploymentStatus) == 'Cancelled' || (deployments[0] | deploymentStatus) == 'Failed'))">
+            ng-if="!activeDeploymentByConfig[dcName] || !(isDeploymentLatest(deployment) && ((deployment | deploymentStatus) == 'Cancelled' || (deployment | deploymentStatus) == 'Failed'))">
           <deployment-donut
               rc="deployment"
               deployment-config="deploymentConfigs[dcName]"
