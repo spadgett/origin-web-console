@@ -225,7 +225,7 @@ angular.module('openshiftConsole')
       $scope.recentBuildsByOutputImage = {};
 
       _.each(builds, function(build) {
-        var jenkinsURI, bc, deployments;
+        var jenkinsURI, bc, uses;
         if (!isJenkinsPipelineStrategy(build)) {
           if (isRecentBuild(build)) {
             var buildOutputImage = imageObjectRef(build.spec.output.to, build.metadata.namespace);
@@ -243,29 +243,33 @@ angular.module('openshiftConsole')
           // Index running pipelines by DC so that we can show them before a deployment has started.
           if (buildConfigs && isRecentBuild(build)) {
             bc = buildConfigs[buildConfigForBuild(build)];
-            deployments = annotation(bc, 'downstream.openshift.io/deployments') || '';
-            if (!deployments) {
+            uses = annotation(bc, 'pipeline.alpha.openshift.io/uses') || '';
+            if (!uses) {
               return;
             }
 
             try {
-              deployments = JSON.parse(deployments);
+              uses = JSON.parse(uses);
             } catch(e) {
-              Logger.warn('Could not pase "downstream.openshift.io/deployments" annotation', e);
+              Logger.warn('Could not pase "pipeline.alpha.openshift.io/uses" annotation', e);
               return;
             }
 
-            _.each(deployments, function(dc) {
-              if (!dc.name) {
+            _.each(uses, function(resource) {
+              if (!resource.name) {
                 return;
               }
 
-              if (dc.namespace && dc.namespace !== $scope.projectName) {
+              if (resource.namespace && resource.namespace !== $scope.projectName) {
                 return;
               }
 
-              $scope.recentPipelinesByDC[dc.name] = $scope.recentPipelinesByDC[dc.name] || [];
-              $scope.recentPipelinesByDC[dc.name].push(build);
+              if (resource.kind !== 'DeploymentConfig') {
+                return;
+              }
+
+              $scope.recentPipelinesByDC[resource.name] = $scope.recentPipelinesByDC[resource.name] || [];
+              $scope.recentPipelinesByDC[resource.name].push(build);
             });
           }
         }
