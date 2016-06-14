@@ -285,6 +285,12 @@
     }
     .overview-donut-connector {
       text-align: center;
+      .deployment-connector-arrow {
+        display: none;
+      }
+    }
+    .overview-unsuccessful-state {
+      text-align: center;
     }
 
     // fadeSlideOut
@@ -338,6 +344,9 @@
         .align-items(@align: center);
         .justify-content(@justify: center);
         line-height: 1;
+        .deployment-connector-arrow {
+          display: block;
+        }
         .finishing-deployment-text {
           font-size: 18px;
           text-align: center;

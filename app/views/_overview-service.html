@@ -54,7 +54,7 @@
 
         <!-- deployment in progress (connecting arrow) -->
         <div column class="overview-donut-connector" ng-if="(deployments | anyDeploymentIsInProgress)">
-          <div ng-if="deployments.length > 1">
+          <div ng-if="deployments.length > 1" class="deployment-connector-arrow">
             &rarr;
           </div>
           <div ng-if="deployments.length === 1" class="finishing-deployment-text">
