@@ -225,7 +225,7 @@ angular.module('openshiftConsole')
       $scope.recentBuildsByOutputImage = {};
 
       _.each(builds, function(build) {
-        var jenkinsURI, bc, dc;
+        var jenkinsURI, bc, deployments;
         if (!isJenkinsPipelineStrategy(build)) {
           if (isRecentBuild(build)) {
             var buildOutputImage = imageObjectRef(build.spec.output.to, build.metadata.namespace);
@@ -243,9 +243,30 @@ angular.module('openshiftConsole')
           // Index running pipelines by DC so that we can show them before a deployment has started.
           if (buildConfigs && isRecentBuild(build)) {
             bc = buildConfigs[buildConfigForBuild(build)];
-            dc = annotation(bc, 'openshift.io/deployment-config') || '';
-            $scope.recentPipelinesByDC[dc] = $scope.recentPipelinesByDC[dc] || [];
-            $scope.recentPipelinesByDC[dc].push(build);
+            deployments = annotation(bc, 'downstream.openshift.io/deployments') || '';
+            if (!deployments) {
+              return;
+            }
+
+            try {
+              deployments = JSON.parse(deployments);
+            } catch(e) {
+              Logger.warn('Could not pase "downstream.openshift.io/deployments" annotation', e);
+              return;
+            }
+
+            _.each(deployments, function(dc) {
+              if (!dc.name) {
+                return;
+              }
+
+              if (dc.namespace && dc.namespace !== $scope.projectName) {
+                return;
+              }
+
+              $scope.recentPipelinesByDC[dc.name] = $scope.recentPipelinesByDC[dc.name] || [];
+              $scope.recentPipelinesByDC[dc.name].push(build);
+            });
           }
         }
       });
