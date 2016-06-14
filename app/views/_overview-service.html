@@ -56,29 +56,31 @@
             &rarr;
           </div>
           <div ng-if="deployments.length === 1" class="finishing-deployment-text">
-            Running deployment #{{deployments[0] | annotation : 'deploymentVersion'}}...
+            <span class="text-muted">
+              Running deployment #{{deployments[0] | annotation : 'deploymentVersion'}}...
+            </span>
           </div>
         </div>
         <!-- /deployment in progress (connecting arrow) -->
 
         <!-- cancelled/failed state -->
         <div column class="overview-unsuccessful-state" ng-if="!activeDeploymentByConfig[dcName] && !(deployments | anyDeploymentIsInProgress)" ng-switch="deployments[0] | deploymentStatus">
-          <span ng-switch-when="Cancelled">
+          <div ng-switch-when="Cancelled">
             <span class="text-warning unsuccessful-state-text">
               <i class="fa fa-ban" aria-hidden="true"></i>
               Deployment
-              <a ng-href="{{deployments[0] | navigateResourceURL}}"><span class="shield-number">#{{deployments[0] | annotation: 'deploymentVersion'}}</span></a>
+              <a ng-href="{{deployments[0] | navigateResourceURL}}">#{{deployments[0] | annotation: 'deploymentVersion'}}</a>
               cancelled
             </span>
-          </span>
-          <span ng-switch-when="Failed">
+          </div>
+          <div ng-switch-when="Failed">
             <span class="text-danger unsuccessful-state-text">
               <i class="fa fa-times" aria-hidden="true"></i>
               Deployment
-              <a ng-href="{{deployments[0] | navigateResourceURL}}"><span class="shield-number">#{{deployments[0] | annotation: 'deploymentVersion'}}</span></a>
+              <a ng-href="{{deployments[0] | navigateResourceURL}}">#{{deployments[0] | annotation: 'deploymentVersion'}}</a>
               failed
             </span>
-          </span>
+          </div>
         </div>
         <!-- /cancelled/failed state -->
 
@@ -114,7 +116,7 @@
         </div>
         <div row class="deployment-body">
           <!-- all visible deployments -->
-          <div column class="overview-donut" ng-class="isDeploymentLatest(deployment) ? 'latest' : ''">
+          <div column class="overview-donut" ng-class="{ latest: isDeploymentLatest(deployment) }">
             <deployment-donut
                 rc="deployment"
                 deployment-config="deploymentConfigs[dcName]"
