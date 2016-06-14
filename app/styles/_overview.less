@@ -269,14 +269,14 @@
       }
     }
     .overview-donut-connector {
-      text-align: center; 
+      text-align: center;
     }
-    
+
     // fadeSlideOut
     @keyframes fadeSlideOut {
       0% { opacity: 1; }
       50% { opacity: 0; }
-      100% { opacity: 0; 
+      100% { opacity: 0;
         margin-left: -300px; }
     }
 
@@ -287,7 +287,7 @@
         .flex-shrink(@shrink: 1);
       }
     }
-    
+
     @media (min-width: @screen-md-min) {
       .deployment-details {
         .align-items(@align: flex-start);
@@ -301,7 +301,7 @@
       }
       .overview-donut {
         .flex(@columns: 1 1 0%);
-        overflow: hidden; 
+        overflow: hidden;
         .flex-order(@order: 2);
         max-width: 50%;
         min-height: 150px;
@@ -323,9 +323,7 @@
         .align-items(@align: center);
         .justify-content(@justify: center);
         line-height: 1;
-        div {
-          text-align: center;
-        }
+        padding: 30px 0 15px;
         .finishing-deployment-text {
           font-size: 18px;
           text-align: center;
@@ -335,6 +333,7 @@
         .flex-order(@order: 3);
         .align-items(@align: center);
         line-height: 1;
+        padding: 30px 0 15px;
         .unsuccessful-state-text {
           font-size: 18px;
           margin: 0 30px;
