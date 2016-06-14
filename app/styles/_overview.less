@@ -5,12 +5,16 @@
 @shield-width:         36px;
 @shield-width-lg:      50px;
 
-
-
 .overview {
   font-weight: 300;
   h2 {
     line-height: 1.4;
+  }
+  .container-fluid {
+    margin-top: 20px;
+    @media (min-width: @screen-md-min) {
+      margin-top: 30px;
+    }
   }
   /* Can remove some of these styles when we dump the old overview and its old build-block styles */
   .builds-block {
@@ -94,14 +98,6 @@
       width: 50%;
       // FIXME: magic number, why 4px?
       padding-right: 4px;
-
-      // .alert-wrapper {
-      //   width: 100%;
-
-      //   &.odd-alert {
-      //     padding-right: 5px;
-      //   }
-      // }
     }
     .service-group-body .overview-services {
       overview-service {
@@ -384,6 +380,12 @@
   }
   .standalone-service .no-child-services-message {
     display: none;
+  }
+  .standalone-service .no-deployments-block {
+    margin-left: 0;
+    .no-deployments-message {
+      margin-top: 0;
+    }
   }
   .shield {
     background: @shield-bgcolor;
