@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module("openshiftConsole")
-  .factory("ServicesService", function($filter, DataService) {
+  .factory("ServicesService", function($filter, $q, DataService) {
     var DEPENDENCIES = 'service.alpha.openshift.io/dependencies';
     var INFRASTRUCTURE = 'service.openshift.io/infrastructure';
     var annotation = $filter('annotation');
@@ -54,6 +54,10 @@ angular.module("openshiftConsole")
               .value();
     };
 
+    var setDependencies = function(service, dependencies) {
+      _.set(service, ['metadata', 'annotations', DEPENDENCIES], JSON.stringify(dependencies));
+    };
+
     var linkService = function(parent, child) {
       var updatedService = angular.copy(parent);
       var dependencies = getDependenciesJSON(updatedService) || [];
@@ -63,8 +67,37 @@ angular.module("openshiftConsole")
         kind: child.kind
       });
 
-      _.set(updatedService, ['metadata', 'annotations', DEPENDENCIES], JSON.stringify(dependencies));
+      setDependencies(updatedService, dependencies);
+      return DataService.update("services", updatedService.metadata.name, updatedService, {
+        namespace: updatedService.metadata.namespace
+      });
+    };
 
+    var removeServiceLink = function(parent, name, namespace) {
+      var updatedService = angular.copy(parent);
+      var dependencies = getDependenciesJSON(updatedService) || [];
+      namespace = namespace || parent.metadata.namespace;
+
+      // Remove the item from the array of dependencies.
+      var updatedDependencies = _.reject(dependencies, function(dependency) {
+        if (dependency.kind !== 'Service') {
+          return false;
+        }
+
+        var dependencyNamespace = dependency.namespace || namespace;
+        if (dependencyNamespace !== namespace) {
+          return false;
+        }
+
+        return dependency.name === name;
+      });
+
+      if (updatedDependencies.length === dependencies.length) {
+        // Nothing to do. Return a promise that resolves immediately.
+        return $q.when(true);
+      }
+
+      setDependencies(updatedService, updatedDependencies);
       return DataService.update("services", updatedService.metadata.name, updatedService, {
         namespace: updatedService.metadata.namespace
       });
@@ -78,6 +111,7 @@ angular.module("openshiftConsole")
       // Returns an array of service names that are dependencies in the same namespace as service.
       getDependentServices: getDependentServices,
       linkService: linkService,
+      removeServiceLink: removeServiceLink,
       isInfrastructure: isInfrastructure
     };
   });

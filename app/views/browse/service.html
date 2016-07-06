@@ -26,6 +26,14 @@
                        role="button">Create Route</a>
                   </li>
                   <li>
+                    <a href=""
+                       ng-class="{ 'disabled-link': !canLink() }"
+                       ng-click="linkService()"
+                       role="button">
+                       Link Service
+                    </a>
+                  </li>
+                  <li>
                     <edit-link
                       resource="service"
                       kind="Service"
@@ -83,6 +91,21 @@
                             <span ng-if="!(route | isWebRoute)">{{route | routeLabel}}</span>
                             <span ng-show="!$last">, </span>
                         </span>
+                      </dd>
+                      <dt>Depends on:</dt>
+                      <dd>
+                        <span ng-if="!dependentServices.length">
+                          <a href="" ng-if="canLink()" ng-click="linkService()" role="button">Link service</a>
+                          <span ng-if="!canLink()">None</span>
+                        </span>
+                        <div ng-repeat="dependent in dependentServices">
+                          Service
+                          <a ng-href="{{dependent | navigateResourceURL : 'Service' : service.metadata.namespace}}">{{dependent}}</a>
+                          <a href="" title="Remove" class="action-button" ng-click="removeLink(dependent)" role="button">
+                            <i class="icon icon-remove"></i>
+                            <span class="sr-only">Remove</span>
+                          </a>
+                        </div>
                       </dd>
                     </dl>
                     <div ng-if="service.spec.ports.length" class="table-responsive">

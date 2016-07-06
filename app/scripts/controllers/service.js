@@ -7,7 +7,14 @@
  * Controller of the openshiftConsole
  */
 angular.module('openshiftConsole')
-  .controller('ServiceController', function ($scope, $routeParams, DataService, ProjectsService, $filter) {
+  .controller('ServiceController', function ($scope,
+                                             $filter,
+                                             $routeParams,
+                                             $q,
+                                             $uibModal,
+                                             DataService,
+                                             ProjectsService,
+                                             ServicesService) {
     $scope.projectName = $routeParams.project;
     $scope.service = null;
     $scope.alerts = {};
@@ -30,6 +37,15 @@ angular.module('openshiftConsole')
       .then(_.spread(function(project, context) {
         $scope.project = project;
         $scope.projectContext = context;
+
+        $scope.canLink = function() {
+          if (!$scope.services || !$scope.dependentServices) {
+            return false;
+          }
+
+          return _.size($scope.services) > (_.size($scope.dependentServices) + 1);
+        };
+
         DataService.get("services", $routeParams.service, context).then(
           // success
           function(service) {
@@ -45,6 +61,7 @@ angular.module('openshiftConsole')
                 };
               }
               $scope.service = service;
+              $scope.dependentServices = ServicesService.getDependentServices(service);
             }));
           },
           // failure
@@ -70,9 +87,81 @@ angular.module('openshiftConsole')
           Logger.log("routes (subscribe)", $scope.routesByService);
         }));
 
+        // List services for linking.
+        DataService.list("services", context, function(serviceData) {
+          $scope.services = serviceData.by('metadata.name');
+        }, function(result) {
+          $scope.alerts["load"] = {
+            type: "services-list-error",
+            message: "An error occurred getting the list of services.",
+            details: "Reason: " + $filter('getErrorDetails')(result)
+          };
+        });
+
         $scope.$on('$destroy', function(){
           DataService.unwatchAll(watches);
         });
 
+        $scope.linkService = function() {
+          var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'views/modals/link-service.html',
+            controller: 'LinkServiceModalController',
+            scope: $scope
+          });
+          modalInstance.result.then(function(child) {
+            ServicesService.linkService($scope.service, child).then(
+              // success
+              _.noop,
+              // failure
+              function(result) {
+                $scope.alerts = $scope.alerts || {};
+                $scope.alerts["link-service"] = {
+                  type: "error",
+                  message: "Could not link services.",
+                  details: $filter('getErrorDetails')(result)
+                };
+              }
+            );
+          });
+        };
+
+        $scope.removeLink = function(service) {
+            var modalInstance = $uibModal.open({
+              animation: true,
+              templateUrl: 'views/modals/confirm.html',
+              controller: 'ConfirmModalController',
+              resolve: {
+                message: function() {
+                  return "Remove link to service " + service + "?";
+                },
+                details: function() {
+                  return "The services will no longer be grouped together on the overview.";
+                },
+                buttonText: function() {
+                  return "Remove Link";
+                },
+                buttonClass: function() {
+                  return "btn-danger";
+                }
+              }
+            });
+
+            modalInstance.result.then(function() {
+              ServicesService.removeServiceLink($scope.service, service).then(
+                // success
+                _.noop,
+                // failure
+                function(result) {
+                  $scope.alerts = $scope.alerts || {};
+                  $scope.alerts["remove-service-link"] = {
+                    type: "error",
+                    message: "Could not remove service link.",
+                    details: $filter('getErrorDetails')(result)
+                  };
+                }
+              );
+            });
+        };
     }));
   });
