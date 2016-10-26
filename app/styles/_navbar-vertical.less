@@ -3,7 +3,10 @@
 //  -----------------------------------------------
 
 #header-logo {
-  background-image: url('@{image-path}/logo-origin-thin.svg');
+  background-image: url('@{image-path}/logo-OCP-console-hdr-stacked.svg');
+  @media (min-width: 425px) {
+    background-image: url('@{image-path}/logo-OCP-console-hdr-thin.svg');
+  }
   background-position: left center;
   background-repeat: no-repeat;
   // Max logo dimensions width 196px / height 40px
