@@ -169,6 +169,50 @@ angular.module("openshiftConsole")
       });
     };
 
+    // Network metrics are collected at the pod level.
+    var projectMetricsTags = {
+      'cpu/usage_rate': 'descriptor_name:cpu/usage_rate,type:pod_container',
+      'memory/usage': 'descriptor_name:memory/usage,type:pod_container',
+      'network/tx_rate': 'descriptor_name:network/tx_rate,type:pod',
+      'network/rx_rate': 'descriptor_name:network/rx_rate,type:pod'
+    };
+
+    var getProjectMetrics = function(config) {
+      return getMetricsURL().then(function(url) {
+        var result = {};
+        var params = {
+          bucketDuration: config.bucketDuration,
+          start: config.start,
+          stacked: true
+        };
+
+        if (config.end) {
+          params.end = config.end;
+        }
+
+        var promises = [];
+        var requestURL = url + "/gauges/data";
+        _.each(projectMetricsTags, function(tagQuery, metric) {
+          var promise = $http.get(requestURL, {
+            auth: {},
+            headers: {
+              Accept: 'application/json',
+              'Hawkular-Tenant': config.namespace
+            },
+            params: _.assign({
+              tags: tagQuery
+            }, params)
+          }).then(function(response) {
+            result[metric] = normalize(response.data);
+          });
+          promises.push(promise);
+        });
+
+        return $q.all(promises).then(function() {
+          return result;
+        });
+      });
+    };
 
     return {
       // Check if the metrics service is available. The service is considered
@@ -257,5 +301,14 @@ angular.module("openshiftConsole")
       //
       // Returns a promise resolved with the metrics data.
       getPodMetrics: getPodMetrics,
+
+      // Get metrics data for a namespace (memory, CPU, network send and received).
+      //
+      // config keyword arguments
+      //   start:          start time in millis
+      //   end:            end time in millis (optional)
+      //
+      // Returns a promise resolved with the metrics data.
+      getProjectMetrics: getProjectMetrics
     };
   });

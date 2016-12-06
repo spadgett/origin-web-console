@@ -1,0 +1,47 @@
+<div class="metrics project-metrics">
+  <div ng-if="!metricsError" class="metrics-options pull-right">
+    <div class="form-group">
+      <label for="timeRange">Time Range:</label>
+      <select id="timeRange"
+              ng-model="options.timeRange"
+              ng-options="range.label for range in options.rangeOptions"
+              ng-disabled="metricsError">
+      </select>
+    </div>
+  </div>
+  <h2 class="mar-top-none mar-bottom-none">Project Usage</h2>
+
+  <ellipsis-pulser color="dark" size="sm" msg="Loading metrics" ng-if="!loaded"></ellipsis-pulser>
+  <div ng-if="loaded && noData && !metricsError" class="mar-top-md">
+    No metrics to display.
+  </div>
+
+  <div ng-if="metricsError" class="empty-state-message text-center">
+    <h2>
+      <span class="pficon pficon-error-circle-o" aria-hidden="true"></span>
+      Metrics are not available.
+    </h2>
+
+    <p>
+      An error occurred getting metrics<span ng-if="metricsURL"> from <a ng-href="{{metricsURL}}">{{metricsURL}}</a></span>.
+    </p>
+
+    <p class="text-muted">
+      {{metricsError.details}}
+    </p>
+  </div>
+
+  <div style="clear: both;"></div>
+
+  <div class="row">
+    <div ng-repeat="metric in metrics" ng-show="!noData && !metricsError" class="col-sm-6">
+      <h2 class="metric-label">
+        {{metric.lastValue}}
+        <small>{{metric.units}} {{metric.label}}</small>
+      </h2>
+
+      <!-- Sparkline -->
+      <div ng-attr-id="{{metric.chartID}}" class="metrics-sparkline"></div>
+    </div>
+  </div>
+</div>

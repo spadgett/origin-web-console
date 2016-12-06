@@ -298,6 +298,22 @@ mark {
   }
 }
 
+.project-metrics {
+  h2 {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  .metric-label {
+    margin-top: 15px;
+  }
+  .metrics-sparkline {
+    border-bottom: 1px solid #ededed;
+    svg {
+      margin-bottom: -14px;
+    }
+  }
+}
+
 // Since the monitoring page has additional padding, we need to stop showing ticks sooner.
 @media (max-width: 550px) {
   .monitoring-page .metrics-sparkline .c3-axis-x .tick {
