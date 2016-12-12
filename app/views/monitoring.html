@@ -55,6 +55,9 @@
           <div class="container-fluid">
             <alerts alerts="alerts"></alerts>
             <div class="row">
+              <div ng-if="metricsAvailable && kindSelector.selected.kind === 'All' && !filters.text" class="col-md-12 mar-bottom-xl">
+                <project-metrics project="projectName"></project-metrics>
+              </div>
               <div class="col-md-12">
                 <div ng-if="kindSelector.selected.kind === 'All' || kindSelector.selected.kind === 'Pods'">
                   <h2>Pods</h2>
