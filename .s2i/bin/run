@@ -1,8 +1,39 @@
 #!/bin/bash
 
+readonly OPENSHIFT_EXTENSIONS_DIR="${OPENSHIFT_EXTENSIONS_DIR-/openshift-extensions}"
+
 if [ ! -f /openshift-web-console-config/config.js ]; then
-   echo "No config.js is mounted, the console can not run without a configuration defined."
-   exit -1
+    echo "ERROR: No config.js is mounted, the console can not run without a configuration defined."
+    exit -1
+fi
+
+concat_extensions ()
+{
+    echo "---> Updating extensions from $OPENSHIFT_EXTENSIONS_DIR"
+    find "$OPENSHIFT_EXTENSIONS_DIR" -type f -name "*.js" -print0 | xargs -0 cat > ./scripts/extensions.js
+    find "$OPENSHIFT_EXTENSIONS_DIR" -type f -name "*.css" -print0 | xargs -0 cat > ./styles/extensions.css
+}
+
+watch_extensions ()
+{
+    echo "---> Watching $OPENSHIFT_EXTENSIONS_DIR for changes..."
+    while :
+    do
+        inotifywait -r -q -e modify,close_write,move,create,delete "$OPENSHIFT_EXTENSIONS_DIR" && \
+        echo "---> Extension files changed" && \
+        concat_extensions
+    done &
+}
+
+if [ -d "$OPENSHIFT_EXTENSIONS_DIR" ]; then
+    concat_extensions
+    watch_extensions
+else
+    echo "Extensions directory $OPENSHIFT_EXTENSIONS_DIR not found. To add extensions, create a volume mount at path $OPENSHIFT_EXTENSIONS_DIR (or a subdirectory) containing the JavaScript and CSS files of your extension."
+
+    # Create empty files to avoid 404 errors
+    touch ./scripts/extensions.js
+    touch ./styles/extensions.css
 fi
 
 exec /usr/libexec/s2i/run
