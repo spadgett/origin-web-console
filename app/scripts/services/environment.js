@@ -3,6 +3,7 @@
 angular.module("openshiftConsole")
   .factory("EnvironmentService",
            function($filter,
+                    EditorUtils,
                     keyValueEditorUtils) {
     var altTextForValueFrom = $filter('altTextForValueFrom');
     var getContainers = function(set) {
@@ -42,43 +43,14 @@ angular.module("openshiftConsole")
       // Compare the current and previous versions of an object to see if any
       // of the environment variables have changed.
       isEnvironmentEqual: function(left, right) {
-        var leftContainers = getContainers(left);
-        var rightContainers = getContainers(right);
-        if (leftContainers.length !== rightContainers.length) {
-          return false;
-        }
-
-        var i, leftEnv, rightEnv;
-        for (i = 0; i < leftContainers.length; i++) {
-          // If a container name has changed, consider it a conflict.
-          if (leftContainers[i].name !== rightContainers[i].name) {
-            return false;
-          }
-
-          // Check if any of the variable names or values are different.
-          leftEnv = leftContainers[i].env || [];
-          rightEnv = rightContainers[i].env || [];
-          if (!_.isEqual(leftEnv, rightEnv)) {
-            return false;
-          }
-        }
-
-        return true;
+        return EditorUtils.containerPropertiesEqual(left, right, ['env']);
       },
 
       // Returns a copy of `target` with any environment variable edits from
       // `source`. Assumes `source` and `target` have the same containers in
       // their pod templates.
       mergeEdits: function(source, target) {
-        var i;
-        var copy = angular.copy(target);
-        var sourceContainers = getContainers(source);
-        var targetContainers = getContainers(copy);
-        for (i = 0; i < targetContainers.length; i++) {
-          targetContainers[i].env = _.get(sourceContainers, [i, 'env'], []);
-        }
-
-        return copy;
+        return EditorUtils.mergeContainerEdits(source, target, ['env']);
       }
     };
   });

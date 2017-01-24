@@ -13,11 +13,12 @@ angular.module('openshiftConsole')
                         $location,
                         $routeParams,
                         $scope,
+                        APIService,
                         AlertMessageService,
                         AuthorizationService,
                         BreadcrumbsService,
-                        APIService,
                         DataService,
+                        EditorUtils,
                         Navigate,
                         ProjectsService) {
     if (!$routeParams.kind || !$routeParams.name) {
@@ -25,6 +26,7 @@ angular.module('openshiftConsole')
       return;
     }
 
+    $scope.forms = {};
     var supportedKinds = [
       'Deployment',
       'DeploymentConfig',
@@ -80,17 +82,19 @@ angular.module('openshiftConsole')
         }
 
         DataService.get(resourceGroupVersion, $scope.name, context).then(
-          function(result) {
+          function(original) {
+            var watches = [];
+
             // Modify a copy of the object.
-            var object = $scope.object = angular.copy(result);
+            $scope.object = angular.copy(original);
             $scope.breadcrumbs = BreadcrumbsService.getBreadcrumbs({
-              object: object,
+              object: $scope.object,
               project: project,
               subpage: 'Edit Health Checks',
               includeProject: true
             });
 
-            $scope.containers = _.get(object, 'spec.template.spec.containers');
+            $scope.containers = _.get($scope.object, 'spec.template.spec.containers');
 
             $scope.addProbe = function(container, probe) {
               // Restore the previous values if set.
@@ -109,7 +113,7 @@ angular.module('openshiftConsole')
               $scope.disableInputs = true;
               DataService.update(APIService.kindToResource($routeParams.kind),
                                  $scope.name,
-                                 object,
+                                 $scope.object,
                                  context).then(
                 function() {
                   AlertMessageService.addAlert({
@@ -126,6 +130,66 @@ angular.module('openshiftConsole')
                   displayError(displayName + ' could not be updated.', getErrorDetails(result));
                 });
             };
+
+            var previousConflict = false, deleted = false;
+            $scope.saveDisabled = function() {
+              return _.get($scope, 'forms.healthCheckForm.$pristine') ||
+                     _.get($scope, 'forms.healthCheckForm.$invalid') ||
+                     $scope.disableInputs ||
+                     previousConflict ||
+                     deleted;
+            };
+
+            var latest;
+            var healthCheckProperties = ['readinessProbe', 'livenessProbe'];
+            watches.push(DataService.watch(resourceGroupVersion, $scope.name, context, function(updated, action) {
+              latest = updated;
+
+              if (action === 'DELETED') {
+                deleted = true;
+                $scope.alerts.deleted = {
+                  type: "warning",
+                  message: displayName + " has been deleted."
+                };
+                return;
+              }
+
+              if (previousConflict) {
+                return;
+              }
+
+              // Merge updates into the updated object if there are no conflicts.
+              if (EditorUtils.containerPropertiesEqual(original, latest, healthCheckProperties)) {
+                $scope.object = EditorUtils.mergeContainerEdits($scope.object, latest, healthCheckProperties);
+                original = latest;
+                return;
+              }
+
+              // Otherwise display an error about conflicts.
+              previousConflict = true;
+              $scope.alerts.conflict = {
+                type: 'warning',
+                message: 'The health checks for ' + displayName + ' have been updated in the background. Saving your changes may create a conflict or cause loss of data.',
+                links: [{
+                  label: 'Reload Health Checks',
+                  onClick: function() {
+                    $scope.object = angular.copy(latest);
+                    original = latest;
+                    previousConflict = false;
+                    if ($scope.forms.healthCheckForm) {
+                      $scope.forms.healthCheckForm.$setPristine();
+                    }
+
+                    // Hide the alert.
+                    return true;
+                  }
+                }]
+              };
+            }));
+
+            $scope.$on('$destroy', function(){
+              DataService.unwatchAll(watches);
+            });
           },
           function(result) {
             displayError(displayName + ' could not be loaded.', getErrorDetails(result));
