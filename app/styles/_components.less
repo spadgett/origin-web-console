@@ -275,6 +275,14 @@ code.command {
 }
 
 .pod-donut {
+  &.mini {
+    display: inline-block;
+    margin-left: -8px;
+    min-width: 40px;
+    min-height: 40px;
+    top: 4px;
+    vertical-align: middle;
+  }
   .c3-defocused {
     // Adjusting the default hover "opacity: .3" to be slightly darker
     // and prevent the "c3-Running" state from looking similar to "c3-Not-Ready" state
@@ -299,6 +307,12 @@ code.command {
     // hide tooltip text 'Empty'
     display:none;
   }
+}
+
+.donut-mini-text {
+  display: inline-block;
+  min-width: 50px;
+  vertical-align: -2px;
 }
 
 .deployment-donut {

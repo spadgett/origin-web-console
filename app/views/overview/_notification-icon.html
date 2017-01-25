@@ -1,0 +1,18 @@
+<span ng-if="notification.byType.error" class="notification-icon animate-if">
+  <span
+    class="pficon pficon-error-circle-o warnings-popover"
+    dynamic-content="{{notification.byType.error}}"
+    data-toggle="tooltip"
+    data-trigger="hover"
+    aria-hidden="true"></span>
+  <span class="sr-only" ng-bind-html="notification.byType.error"></span>
+</span>
+<span ng-if="notification.byType.warning" class="notification-icon animate-if">
+  <span
+    class="pficon pficon-warning-triangle-o warnings-popover"
+    dynamic-content="{{notification.byType.warning}}"
+    data-toggle="tooltip"
+    data-trigger="hover"
+    aria-hidden="true"></span>
+  <span class="sr-only" ng-bind-html="notification.byType.warning"></span>
+</span>
