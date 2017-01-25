@@ -1,0 +1,38 @@
+<div ng-if="notification.byType.error" class="notification-icon animate-if">
+  <span
+    dynamic-content="{{notification.byType.error}}"
+    data-toggle="tooltip"
+    data-trigger="hover">
+    <span
+      class="pficon pficon-error-circle-o"
+      aria-hidden="true"></span>
+    <span class="notification-icon-label">
+      {{notification.countByType.error}}
+      <span ng-if="notification.countByType.error === 1">
+        Error
+      </span>
+      <span ng-if="notification.countByType.error !== 1">
+        Errors
+      </span>
+    </span>
+  </span>
+</div>
+<div ng-if="notification.byType.warning" class="notification-icon animate-if">
+  <span
+    dynamic-content="{{notification.byType.warning}}"
+    data-toggle="tooltip"
+    data-trigger="hover">
+    <span
+      class="pficon pficon-warning-triangle-o"
+      aria-hidden="true"></span>
+    <span class="notification-icon-label">
+      {{notification.countByType.warning}}
+      <span ng-if="notification.countByType.warning === 1">
+        Warning
+      </span>
+      <span ng-if="notification.countByType.warning !== 1">
+        Warnings
+      </span>
+    </span>
+  </span>
+</div>

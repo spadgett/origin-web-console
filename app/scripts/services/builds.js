@@ -53,6 +53,7 @@ angular.module("openshiftConsole")
       return true;
     };
 
+    // TODO: Generalize for other kinds since the annotation is generic.
     var usesDeploymentConfigs = function(buildConfig) {
       var uses = annotation(buildConfig, 'pipeline.alpha.openshift.io/uses');
       if (!uses) {
@@ -200,6 +201,79 @@ angular.module("openshiftConsole")
                     }));
     };
 
+    var imageObjectRef = $filter('imageObjectRef');
+    var groupBuildConfigsByOutputImage = function(buildConfigs) {
+      var buildConfigsByOutputImage = {};
+      _.each(buildConfigs, function(buildConfig) {
+        var outputImage = _.get(buildConfig, 'spec.output.to');
+        var ref = imageObjectRef(outputImage, buildConfig.metadata.namespace);
+        if (!ref) {
+          return;
+        }
+
+        buildConfigsByOutputImage[ref] = buildConfigsByOutputImage[ref] || [];
+        buildConfigsByOutputImage[ref].push(buildConfig);
+      });
+
+      return buildConfigsByOutputImage;
+    };
+
+
+    var sortByBuildNumber = function(builds, descending) {
+      var compareBuildNumbers = function(left, right) {
+        var leftNumber = annotation(left, 'buildNumber');
+        var rightNumber = annotation(right, 'buildNumber');
+
+        var leftName, rightName;
+        if (!leftNumber && !rightNumber) {
+          leftName = _.get(left, 'metadata.name', '');
+          rightName = _.get(right, 'metadata.name', '');
+          if (descending) {
+            return rightName.localeCompare(leftName);
+          }
+          return leftName.localeCompare(rightName);
+        }
+
+        if (!leftNumber) {
+          return descending ? 1 : -1;
+        }
+
+        if (!rightNumber) {
+          return descending ? -1 : 1;
+        }
+
+        rightNumber = parseInt(rightNumber, 10);
+        leftNumber = parseInt(leftNumber, 10);
+        if (descending) {
+          return rightNumber - leftNumber;
+        }
+
+        return leftNumber - rightNumber;
+      };
+
+      return _.toArray(builds).sort(compareBuildNumbers);
+    };
+
+    var getJenkinsStatus = function(pipelineBuild) {
+      var json = annotation(pipelineBuild, 'jenkinsStatus');
+      if (!json) {
+        return null;
+      }
+
+      try {
+        return JSON.parse(json);
+      } catch (e) {
+        Logger.error('Could not parse Jenkins status as JSON', json);
+        return null;
+      }
+    };
+
+    var getCurrentStage = function(pipelineBuild) {
+      var jenkinsStatus = getJenkinsStatus(pipelineBuild);
+      var stages = _.get(jenkinsStatus, 'stages', []);
+      return _.last(stages);
+    };
+
     return {
       startBuild: startBuild,
       cancelBuild: cancelBuild,
@@ -215,6 +289,10 @@ angular.module("openshiftConsole")
       incompleteBuilds: incompleteBuilds,
       completeBuilds: completeBuilds,
       lastCompleteByBuildConfig: lastCompleteByBuildConfig,
-      interestingBuilds: interestingBuilds
+      interestingBuilds: interestingBuilds,
+      groupBuildConfigsByOutputImage: groupBuildConfigsByOutputImage,
+      sortByBuildNumber: sortByBuildNumber,
+      getJenkinsStatus: getJenkinsStatus,
+      getCurrentStage: getCurrentStage
     };
   });
