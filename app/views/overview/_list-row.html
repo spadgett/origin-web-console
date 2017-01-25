@@ -1,0 +1,260 @@
+<div class="list-group-item list-group-item-expandable"
+     ng-click="row.toggleExpand($event)"
+     ng-class="{ expanded: row.isExpanded() }">
+  <div class="list-view-pf-checkbox">
+    <span ng-if="row.isExpanded()">
+      <span class="fa fa-angle-down"></span>
+    </span>
+    <span ng-if="!row.isExpanded()">
+      <span class="fa fa-angle-right"></span>
+    </span>
+  </div>
+
+  <div class="list-view-pf-main-info">
+    <div class="list-view-pf-body">
+      <div class="list-view-pf-description">
+        <div class="list-group-item-heading">
+          <h3 class="mar-top-md">
+            <div class="component-label">
+              <span ng-if="row.apiObject.kind === 'DeploymentConfig'">
+                Deployment
+              </span>
+              <span ng-if="row.apiObject.kind !== 'DeploymentConfig'">
+                {{row.apiObject.kind | humanizeKind}}
+              </span>
+            </div>
+            <a ng-href="{{row.apiObject | navigateResourceURL}}"><span ng-bind-html="row.apiObject.metadata.name | highlightKeywords : row.state.filterKeywords"></span></a><span ng-if="row.apiObject.kind === 'DeploymentConfig' && row.current">,
+                <a ng-href="{{row.current | navigateResourceURL}}">#{{row.apiObject.status.latestVersion}}</a>
+              </span><span ng-if="row.apiObject.kind === 'Deployment' && row.current">,
+                <a ng-href="{{row.current | navigateResourceURL}}">#{{row.current | annotation : 'deployment.kubernetes.io/revision'}}</a>
+              </span>
+            <notification-icon alerts="row.getNotifications()"></notification-icon>
+            <small ng-if="!row.isExpanded() && (row.recentPipelines | hashSize)" class="pipeline-summary">
+              <pipeline-summary pipelines="row.recentPipelines"></pipeline-summary>
+            </small>
+          </h3>
+        </div>
+      </div>
+      <div ng-if="row.isDeploymentInProgress()" class="list-view-pf-additional-info">
+        <div ng-if="row.apiObject.kind === 'DeploymentConfig'">
+          {{row.apiObject.spec.strategy.type}}&nbsp;<ellipsis-pulser color="dark" size="sm" display="inline" msg="deployment in progress"></ellipsis-pulser>
+        </div>
+        <div ng-if="row.apiObject.kind === 'Deployment'">
+          {{row.apiObject.spec.strategy.type | sentenceCase}}&nbsp;<ellipsis-pulser color="dark" size="sm" display="inline" msg="in progress"></ellipsis-pulser>
+        </div>
+        <div ng-if="row.current.kind === 'ReplicationController'" class="overview-row-inline-actions">
+          <a ng-if="row.current.kind === 'ReplicationController'" ng-href="{{row.current | navigateResourceURL}}?tab=logs">View Log</a>
+          <span ng-if="'replicationcontrollers' | canI : 'update'">
+            <span ng-if="'replicationcontrollers' | canI: 'update'" class="action-divider">|</span>
+            <a href="" ng-click="row.cancelDeployment()" role="button">Cancel</a>
+          </span>
+        </div>
+      </div>
+      <div ng-if="row.current && !row.isDeploymentInProgress() && !row.isExpanded()" class="list-view-pf-additional-info animate-if">
+        <div class="list-view-pf-additional-info-item">
+          <div ng-if="row.apiObject.kind === 'Pod'">
+            <pod-donut pods="[row.apiObject]" mini="true"></pod-donut>
+          </div>
+          <div ng-if="row.apiObject.kind !== 'Pod'">
+            <pod-donut pods="row.getPods(row.current)" mini="true"></pod-donut>
+          </div>
+        </div>
+        <div class="list-view-pf-additional-info-item animate-if truncate">
+          <span ng-if="row.apiObject.kind === 'Pod'">
+            <span class="pficon fa-fw pficon-image"></span>
+            <image-names
+              pod-template="row.apiObject"
+              pods="[row.apiObject]"></image-names>
+          </span>
+          <span ng-if="row.apiObject.kind !== 'Pod' && row.current">
+            <span class="pficon fa-fw pficon-image"></span>
+            <image-names
+              pod-template="row.current | podTemplate"
+              pods="row.getPods(row.current)"></image-names>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div ng-if="row.apiObject.kind === 'DeploymentConfig'" class="list-view-pf-actions">
+    <div uib-dropdown>
+      <a href=""
+         uib-dropdown-toggle
+         class="actions-dropdown-kebab"><i class="fa fa-ellipsis-v"></i><span class="sr-only">Actions</span></a>
+      <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu">
+        <li ng-if="'deploymentconfigs' | canI : 'update'" role="menuitem">
+          <a href=""
+            role="button"
+            ng-click="row.startDeployment()">Deploy</a>
+        </li>
+        <li ng-if="'deploymentconfigs' | canI : 'update'" role="menuitem">
+          <a ng-href="{{row.apiObject | editResourceURL}}" role="button">Edit</a>
+        </li>
+        <li ng-if="row.current" role="menuitem">
+          <a ng-href="{{row.current | navigateResourceURL}}?tab=logs" role="button">View Logs</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div ng-if="row.apiObject.kind === 'Pod'" class="list-view-pf-actions">
+    <div uib-dropdown>
+      <a href=""
+         uib-dropdown-toggle
+         class="actions-dropdown-kebab"><i class="fa fa-ellipsis-v"></i><span class="sr-only">Actions</span></a>
+      <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu">
+        <li role="menuitem">
+          <a ng-href="{{row.apiObject | editYamlURL}}" role="button">Edit YAML</a>
+        </li>
+        <li role="menuitem">
+          <a ng-href="{{row.apiObject | navigateResourceURL}}?tab=logs" role="button">View Logs</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div ng-if="row.apiObject.kind === 'ReplicationController' || row.apiObject.kind === 'Deployment' || row.apiObject.kind === 'ReplicaSet'" class="list-view-pf-actions">
+    <div uib-dropdown>
+      <a href=""
+         uib-dropdown-toggle
+         class="actions-dropdown-kebab"><i class="fa fa-ellipsis-v"></i><span class="sr-only">Actions</span></a>
+      <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu">
+        <li role="menuitem">
+          <a ng-href="{{row.apiObject | editYamlURL}}" role="button">Edit YAML</a>
+        </li>
+        <li ng-repeat="pod in row.getPods(row.current) | limitTo: 1 track by (pod | uid)" role="menuitem">
+          <a ng-href="{{pod | navigateResourceURL}}?tab=logs" role="button">View Logs</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div ng-if="row.isExpanded()" class="list-group-expanded-section expanded">
+  <div ng-repeat="pipeline in row.recentPipelines | orderObjectsByDate : true track by (pipeline | uid)"
+       class="row build-pipeline-wrapper animate-repeat animate-slide">
+    <div class="col-sm-12">
+      <build-pipeline build="pipeline" build-config-name-on-expanded="true"></build-pipeline>
+    </div>
+  </div>
+  <div ng-if="row.apiObject.kind === 'DeploymentConfig'">
+    <triggers
+        triggers="row.apiObject.spec.triggers"
+        builds-by-output-image="row.state.recentBuildsByOutputImage"
+        namespace="row.apiObject.metadata.namespace">
+    </triggers>
+  </div>
+  <div ng-if="row.current">
+    <alerts alerts="row.getNotifications()"></alerts>
+    <div class="row">
+      <div class="col-sm-4 col-md-4">
+        <pod-template
+          pod-template="row.current | podTemplate"
+          images-by-docker-reference="row.state.imagesByDockerReference"
+          builds="row.state.builds"></pod-template>
+      </div>
+      <div ng-if="row.state.showMetrics && !row.previous" class="col-sm-4 col-md-5 mar-bottom-lg">
+        <div ng-if="row.apiObject.kind === 'Pod'">
+          <div class="component-label">Usage (Last 15 Minutes)</div>
+          <deployment-metrics
+            pods="[row.apiObject]"
+            containers="row.apiObject.spec.containers"
+            profile="compact"
+            alerts="row.state.alerts"
+            class="overview-metrics">
+          </deployment-metrics>
+        </div>
+        <div ng-if="row.apiObject.kind !== 'Pod'">
+          <div class="component-label">Average Usage (Last 15 Minutes)</div>
+          <deployment-metrics
+            pods="row.getPods(row.current)"
+            containers="row.current.spec.template.spec.containers"
+            profile="compact"
+            alerts="row.sate.alerts"
+            class="overview-metrics">
+          </deployment-metrics>
+        </div>
+      </div>
+      <!-- FIXME: Improve styles -->
+      <div ng-if="row.previous" class="col-sm-3 col-md-3 mar-bottom-lg">
+        <deployment-donut
+            rc="row.previous"
+            deployment-config="row.apiObject"
+            pods="row.getPods(row.previous)"
+            hpa="row.getHPA()"
+            limit-ranges="row.state.limitRanges"
+            quotas="row.state.quotas"
+            cluster-quotas="row.state.clusterQuotas"
+            scalable="false"
+            alerts="row.state.alerts">
+        </deployment-donut>
+      </div>
+      <div ng-if="row.previous" class="col-sm-1 col-md-1">
+        <div class="deployment-connector-arrow" aria-hidden="true">
+          &rarr;
+        </div>
+      </div>
+      <div class="col-sm-4 col-md-3" ng-class="{ 'col-sm-3': row.previous }">
+        <div ng-if="row.apiObject.kind === 'Pod'">
+          <a ng-href="{{row.apiObject | navigateResourceURL}}">
+            <pod-donut pods="[row.apiObject]"></pod-donut>
+          </a>
+        </div>
+        <div ng-if="row.apiObject.kind !== 'Pod'">
+          <deployment-donut
+              rc="row.current"
+              deployment-config="row.apiObject"
+              pods="row.getPods(row.current)"
+              hpa="row.getHPA()"
+              limit-ranges="row.state.limitRanges"
+              quotas="row.state.quotas"
+              cluster-quotas="row.state.clusterQuotas"
+              scalable="row.isScalable()"
+              alerts="row.state.alerts">
+          </deployment-donut>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div ng-if="!row.current" class="empty-state-message">
+    <h2>No deployments.</h2>
+    <div ng-if="row.imageChangeTriggers.length">
+      A new deployment will start automatically when
+      <span ng-if="row.imageChangeTriggers.length === 1">
+        an image is available for
+        <a ng-href="{{row.urlForImageChangeTrigger(row.imageChangeTriggers[0])}}">
+          {{row.imageChangeTriggers[0].imageChangeParams.from | imageObjectRef : row.apiObject.metadata.namespace}}</a>.
+      </span>
+      <span ng-if="row.imageChangeParams.length > 1">
+        one of the images for this deployment config changes.
+      </span>
+    </div>
+    <div ng-if="!row.imageChangeTriggers.length">
+      <p>
+        No deployments for {{row.apiObject.kind | humanizeKind}}
+        <a ng-href="{{row.apiObject | navigateResourceURL}}">{{row.apiObject.metadata.name}}</a>.
+      </p>
+      <div ng-if="row.apiObject.kind === 'DeploymentConfig'">
+        <div ng-if="pipeline = row.state.pipelinesForDC[row.apiObject.metadata.name][0]">
+          <p>
+            This deployment config is part of pipeline
+            <a ng-href="{{pipeline | navigateResourceURL}}">{{pipeline.metadata.name}}</a>.
+          </p>
+          <div ng-if="('buildconfigs/instantiate' | canI : 'create')">
+            <button class="btn btn-primary" ng-click="row.startPipeline(pipeline)">
+              Start Pipeline
+            </button>
+          </div>
+        </div>
+        <div ng-if="!row.state.pipelinesForDC[row.apiObject.metadata.name].length">
+          <button ng-if="'deploymentconfigs' | canI : 'update'"
+                  class="btn btn-primary"
+                  ng-click="row.startDeployment()">
+            Start Deployment
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <overview-networking
+      services="row.state.servicesByObjectUID[row.apiObject.metadata.uid]"
+      routes-by-service="row.state.routesByService">
+  </overview-networking>
+</div>

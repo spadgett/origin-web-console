@@ -1,0 +1,10 @@
+<span ng-if="pipelineSummary.show" class="animate-if">
+  Pipelines
+  <span ng-repeat="phase in pipelineSummary.interestingPhases"
+        ng-if="pipelineSummary.countByPhase[phase]"
+        class="mar-left-sm">
+    <status-icon status="phase"></status-icon>
+    {{pipelineSummary.countByPhase[phase]}}
+    {{phase}}
+  </span>
+</span>

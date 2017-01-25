@@ -6,13 +6,19 @@ angular.module('openshiftConsole')
       restrict: 'E',
       scope: {
         route: '=',
+        small: '='
       },
       template: '<div ng-show="totalWeight" ng-attr-id="{{chartId}}"></div>',
       link: function($scope) {
-        var chart, config;
-        var mobile = window.matchMedia("(max-width: 400px)").matches;
-
         $scope.chartId = _.uniqueId('route-service-chart-');
+
+        var chart, config, height;
+        var mobile = window.matchMedia("(max-width: 400px)").matches;
+        if ($scope.small) {
+          height = mobile ? 100 : 80;
+        } else {
+          height = mobile ? 150 : 115;
+        }
 
         config = {
           bindto: '#' + $scope.chartId,
@@ -29,7 +35,7 @@ angular.module('openshiftConsole')
             }
           },
           size: {
-            height: mobile ? 150 : 115
+            height: height
           },
           tooltip: {
             format: {

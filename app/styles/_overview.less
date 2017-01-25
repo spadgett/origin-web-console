@@ -13,6 +13,159 @@
 @tile-min-height-lg:   352px;
 
 
+// NEW OVERVIEW STYLES
+.overview-new {
+  .loading-message,
+  .tasks,
+  .page-notifications .alert:first-child {
+    margin-top: 20px;
+  }
+  .middle .middle-container {
+    // FIXME: workaround issue where middle-container usage of flexbox causes content to not fill width
+    > div {
+      width: 100%;
+    }
+    .container-fluid {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+  }
+  .data-toolbar-filter {
+    display: flex;
+    .ui-select-container {
+      width: 100px;
+    }
+    .label-filter, .name-filter {
+      flex-grow: 1;
+    }
+    .name-filter {
+      form,
+      input {
+        width: 100%;
+      }
+      input {
+        // Extra padding from the filter type combo
+        padding-left: 5px;
+      }
+    }
+  }
+  .view-by-options {
+    @media (max-width: @screen-xs-max) {
+      margin-top: 10px;
+    }
+  }
+  .data-toolbar-label {
+    vertical-align: 8px;
+    margin-right: 5px;
+  }
+  .data-toolbar-dropdown {
+    display: inline-block;
+  }
+  h1, h2 {
+    .truncate();
+    // Don't clip descenders.
+    line-height: 1.3;
+    margin-top: 0;
+    min-width: 130px; // prevent name from complete truncation at mobile
+  }
+  .component-label {
+    .text-muted();
+    font-size: @component-label;
+    padding: 0 10px 4px 0;
+    text-transform: uppercase;
+  }
+  .list-view-pf {
+    .mar-bottom-xl();
+  }
+  .list-view-pf-actions .actions-dropdown-kebab {
+    font-size: 18px;
+    // Give a bigger click target (fill `list-view-pf-actions` width)
+    width: 100%;
+  }
+  .overview-row-inline-actions {
+    .mar-left-md();
+  }
+  .notification-icon {
+    display: inline-block;
+    margin: 0 5px;
+    .pficon {
+      margin-right: 5px;
+    }
+    &:first-child {
+      margin-left: 20px;
+    }
+  }
+  .pipeline-summary {
+    line-height: 1.4;
+    margin-top: 3px;
+  }
+  .build-pipeline-wrapper {
+    margin-bottom: 20px;
+  }
+  .deployment-donut > div[row] {
+    justify-content: center;
+  }
+  .overview-routes h3 {
+    .mar-top-xs();
+    line-height: 1.4;
+  }
+  .overview-routes + .overview-routes {
+    .mar-top-md();
+  }
+  .overview-route-link {
+    .truncate();
+    display: block;
+  }
+  .list-group-expanded-section.expanded .empty-state-message {
+    .text-center();
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+  .metrics-compact {
+    .metrics-sparkline {
+      border-bottom: 1px solid #ededed;
+      display: inline-block;
+      width: 200px;
+      vertical-align: -6px;
+      @media (min-width: @screen-lg-min) {
+        width: 250px;
+      }
+      @media (min-width: 1400px) {
+        width: 300px;
+      }
+    }
+    .metrics-usage {
+      display: inline-block;
+      margin-left: 10px;
+    }
+    .usage-value {
+      font-size: 22px;
+      font-weight: 300;
+      line-height: 1;
+      margin: 3px 0;
+      .fa {
+        .text-muted();
+        font-size: 10px;
+        vertical-align: 2px;
+      }
+    }
+    .usage-label {
+      .small();
+      .text-muted();
+      // Make sure the labels align with the bottom of the chart.
+      line-height: 1;
+      margin-bottom: -1px;
+    }
+    .c3-line {
+      stroke-width: 1px;
+    }
+  }
+  .deployment-connector-arrow {
+    .text-muted();
+    font-size: 300%;
+  }
+}
+
 .overview {
   font-weight: @overview-font-weight;
   .middle { // hack to quickly, safely fix bugs where all of the overview page isn't gray; TODO: fix using .surface-shaded
