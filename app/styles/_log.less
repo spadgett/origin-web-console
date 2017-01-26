@@ -11,20 +11,17 @@
     .text-muted();
     margin: 0 2px;
   }
-  .ui-select-container {
-    min-width: 150px;
-    max-width: 250px;
-    margin: 0 5px;
-  }
   .container-details {
-    display: inline-flex;
-    align-items: center;
-    flex-wrap: wrap;
+    label {
+      margin-right: 3px;
+    }
     .container-state {
       margin-right: 5px;
     }
   }
   .log-actions {
+    margin-top: 2px;
+    margin-bottom: 5px;
     form {
       display: inline-block;
     }
@@ -34,6 +31,9 @@
   }
   .log-timestamps {
     .text-muted();
+  }
+  .single-container .log-timestamps {
+    margin-top: 2px;
     display: block;
   }
   @media (min-width: @screen-sm-min) {
@@ -42,10 +42,14 @@
     }
     .log-timestamps {
       .small();
+    }
+    .single-container .log-timestamps {
       display: inline-block;
     }
     .log-actions {
       .pull-right();
+      margin-top: 0;
+      margin-bottom: 0;
       margin-left: 5px;
     }
   }

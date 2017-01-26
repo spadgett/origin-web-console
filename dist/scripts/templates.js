@@ -3397,19 +3397,25 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<uib-tab active=\"selectedTab.logs\" ng-if=\"'pods/log' | canI : 'get'\">\n" +
     "<uib-tab-heading>Logs</uib-tab-heading>\n" +
     "<log-viewer ng-if=\"selectedTab.logs\" follow-affix-top=\"390\" object=\"pod\" context=\"projectContext\" options=\"logOptions\" empty=\"logEmpty\" run=\"logCanRun\">\n" +
-    "<span class=\"container-details\">\n" +
-    "<label for=\"selectLogContainer\">Container:</label>\n" +
-    "<span ng-if=\"pod.spec.containers.length === 1\">\n" +
-    "{{pod.spec.containers[0].name}}\n" +
-    "</span>\n" +
-    "<ui-select ng-init=\"logOptions.container = pod.spec.containers[0].name\" ng-show=\"pod.spec.containers.length > 1\" ng-model=\"logOptions.container\" input-id=\"selectLogContainer\">\n" +
-    "<ui-select-match>{{$select.selected.name}}</ui-select-match>\n" +
+    "\n" +
+    "<div ng-if=\"pod.spec.containers.length > 1\" class=\"row\">\n" +
+    "<label for=\"selectLogContainer\" class=\"sr-only\">Select Container</label>\n" +
+    "<div class=\"pad-bottom-md col-sm-6 col-lg-4\">\n" +
+    "<ui-select ng-init=\"logOptions.container = pod.spec.containers[0].name\" ng-model=\"logOptions.container\" input-id=\"selectLogContainer\">\n" +
+    "<ui-select-match placeholder=\"Container Name\">{{$select.selected.name}}</ui-select-match>\n" +
     "<ui-select-choices repeat=\"container.name as container in pod.spec.containers\">\n" +
     "<div ng-bind-html=\"container.name | highlight : $select.search\"></div>\n" +
     "</ui-select-choices>\n" +
     "</ui-select>\n" +
-    "<span class=\"container-state\" ng-if=\"containerStateReason || containerStatusKey\">\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "<span class=\"container-details\" ng-class=\"{ 'single-container' : pod.spec.containers.length === 1 }\">\n" +
+    "<span ng-if=\"pod.spec.containers.length === 1\">\n" +
+    "<label for=\"selectLogContainer\">Container:</label>\n" +
+    "{{pod.spec.containers[0].name}}\n" +
     "<span class=\"dash\">&mdash;</span>\n" +
+    "</span>\n" +
+    "<span class=\"container-state\" ng-if=\"containerStateReason || containerStatusKey\">\n" +
     "<status-icon status=\"containerStateReason || (containerStatusKey | capitalize)\"></status-icon>\n" +
     "<span>{{containerStateReason || containerStatusKey | sentenceCase}}</span>\n" +
     "</span>\n" +
@@ -3436,14 +3442,12 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div class=\"row\">\n" +
     "<div class=\"pad-left-none pad-bottom-md col-sm-6 col-lg-4\">\n" +
     "<span ng-if=\"pod.spec.containers.length === 1\">\n" +
-    "<label for=\"selectLogContainer\">Container:</label>\n" +
+    "<label>Container:</label>\n" +
     "{{pod.spec.containers[0].name}}\n" +
     "</span>\n" +
     "<ui-select ng-model=\"selectedTerminalContainer\" on-select=\"onTerminalSelectChange(selectedTerminalContainer)\" ng-if=\"pod.spec.containers.length > 1\" class=\"mar-left-none pad-left-none pad-right-none\">\n" +
     "<ui-select-match class=\"truncate\" placeholder=\"Container Name\">\n" +
-    "<span class=\"pad-left-md\">\n" +
     "{{selectedTerminalContainer.containerName}}\n" +
-    "</span>\n" +
     "</ui-select-match>\n" +
     "<ui-select-choices repeat=\"term in containerTerminals | filter: $select.search\" ui-disable-choice=\"(term.containerState !== 'running') && !term.isUsed\">\n" +
     "<div row>\n" +
