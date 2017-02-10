@@ -15,6 +15,9 @@ angular.module('openshiftConsole')
       link: function(scope) {
         scope.id = _.uniqueId('edit-command-');
         scope.input = {};
+        scope.view = {
+          advancedMode: false
+        };
         var argsChanged, inputChanged, isMultiline = $filter('isMultiline');
 
         scope.$watch('args', function() {

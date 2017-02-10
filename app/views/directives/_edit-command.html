@@ -1,105 +1,121 @@
 <ng-form name="form">
-  <p ng-hide="input.args.length"><em>No {{type || 'command'}} set.</em></p>
-  <p ng-show="input.args.length" as-sortable ng-model="input.args" class="command-args">
-    <span ng-repeat="arg in input.args" as-sortable-item class="form-group">
-      <span class="input-group">
-        <!-- Args with no newlines. -->
+  <div ng-if="!view.advancedMode">
+    <input type="text"
+           ng-model="commandInput"
+           required
+           class="form-control"
+           autocorrect="off"
+           autocapitalize="off"
+           spellcheck="false">
+    <div class="help-block">
+      Enter the command. The command is considered successful if its exit code is 0.
+      If any command argument contains spaces or special characters, you can
+      <a href="" ng-click="view.advancedMode = true">enter each argument separately</a>.
+    </div>
+  </div>
+  <div ng-if="view.advancedMode">
+    <p ng-hide="input.args.length"><em>No {{type || 'command'}} set.</em></p>
+    <p ng-show="input.args.length" as-sortable ng-model="input.args" class="command-args">
+      <span ng-repeat="arg in input.args" as-sortable-item class="form-group">
+        <span class="input-group">
+          <!-- Args with no newlines. -->
+          <input type="text"
+                 ng-model="arg.value"
+                 ng-if="!arg.multiline"
+                 required
+                 class="form-control"
+                 autocorrect="off"
+                 autocapitalize="off"
+                 spellcheck="false">
+          <!-- Args with newlines. -->
+          <textarea ng-model="arg.value"
+                    ng-if="arg.multiline"
+                    rows="5"
+                    required
+                    class="form-control"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false">
+          </textarea>
+          <span as-sortable-item-handle class="input-group-addon action-button drag-handle">
+            <i class="fa fa-bars" aria-hidden="true"></i>
+          </span>
+          <a href="" ng-click="removeArg($index)" class="input-group-addon action-button remove-arg" title="Remove Item">
+            <span class="sr-only">Remove Item</span>
+            <i class="pficon pficon-close" aria-hidden="true"></i>
+          </a>
+        </span>
+      </span>
+    </p>
+    <div class="form-group">
+      <label class="sr-only" ng-attr-for="{{id}}-add-arg">
+        <span ng-if="placeholder">{{placeholder}}</span>
+        <span ng-if="!placeholder">Add argument</span>
+      </label>
+      <!-- Single-line entry -->
+      <span ng-show="!multiline" class="input-group">
         <input type="text"
-               ng-model="arg.value"
-               ng-if="!arg.multiline"
-               required
+               ng-model="nextArg"
+               name="nextArg"
+               ng-attr-id="{{id}}-add-arg"
+               on-enter="addArg()"
+               ng-attr-placeholder="{{placeholder || 'Add argument'}}"
                class="form-control"
                autocorrect="off"
                autocapitalize="off"
                spellcheck="false">
-        <!-- Args with newlines. -->
-        <textarea ng-model="arg.value"
-                  ng-if="arg.multiline"
-                  rows="5"
-                  required
+        <span class="input-group-btn">
+          <!-- Must be a link rather than a button so that enter submits the parent form when other
+               fields are focused. Add an enter key handler for the input when focused using the
+               on-enter directive. -->
+          <a class="btn btn-default"
+             href=""
+             ng-click="addArg()"
+             ng-disabled="!nextArg"
+             ng-attr-aria-disabled="!nextArg"
+             role="button">Add</a>
+        </span>
+      </span>
+      <!-- Multiline entry -->
+      <span ng-show="multiline">
+        <textarea ng-model="nextArg"
+                  name="nextArg"
+                  rows="10"
+                  ng-attr-id="{{id}}-add-arg"
+                  ng-attr-placeholder="{{placeholder || 'Add argument'}}"
                   class="form-control"
                   autocorrect="off"
                   autocapitalize="off"
                   spellcheck="false">
         </textarea>
-        <span as-sortable-item-handle class="input-group-addon action-button drag-handle">
-          <i class="fa fa-bars" aria-hidden="true"></i>
+        <div class="mar-top-md">
+          <a class="btn btn-default"
+             href=""
+             ng-click="addArg()"
+             ng-disabled="!nextArg"
+             ng-attr-aria-disabled="!nextArg"
+             role="button">Add</a>
+        </div>
+      </span>
+      <div class="help-block">
+        <span ng-if="description">{{description}}</span>
+        <span ng-if="!description">
+          Enter the command to run inside the container. The command is considered successful if its
+          exit code is 0. Drag and drop to reorder arguments.
         </span>
-        <a href="" ng-click="removeArg($index)" class="input-group-addon action-button remove-arg" title="Remove Item">
-          <span class="sr-only">Remove Item</span>
-          <i class="pficon pficon-close" aria-hidden="true"></i>
-        </a>
-      </span>
-    </span>
-  </p>
-  <div class="form-group">
-    <label class="sr-only" ng-attr-for="{{id}}-add-arg">
-      <span ng-if="placeholder">{{placeholder}}</span>
-      <span ng-if="!placeholder">Add argument</span>
-    </label>
-    <!-- Single-line entry -->
-    <span ng-show="!multiline" class="input-group">
-      <input type="text"
-             ng-model="nextArg"
-             name="nextArg"
-             ng-attr-id="{{id}}-add-arg"
-             on-enter="addArg()"
-             ng-attr-placeholder="{{placeholder || 'Add argument'}}"
-             class="form-control"
-             autocorrect="off"
-             autocapitalize="off"
-             spellcheck="false">
-      <span class="input-group-btn">
-        <!-- Must be a link rather than a button so that enter submits the parent form when other
-             fields are focused. Add an enter key handler for the input when focused using the
-             on-enter directive. -->
-        <a class="btn btn-default"
-           href=""
-           ng-click="addArg()"
-           ng-disabled="!nextArg"
-           ng-attr-aria-disabled="!nextArg"
-           role="button">Add</a>
-      </span>
-    </span>
-    <!-- Multiline entry -->
-    <span ng-show="multiline">
-      <textarea ng-model="nextArg"
-                name="nextArg"
-                rows="10"
-                ng-attr-id="{{id}}-add-arg"
-                ng-attr-placeholder="{{placeholder || 'Add argument'}}"
-                class="form-control"
-                autocorrect="off"
-                autocapitalize="off"
-                spellcheck="false">
-      </textarea>
-      <div class="mar-top-md">
-        <a class="btn btn-default"
-           href=""
-           ng-click="addArg()"
-           ng-disabled="!nextArg"
-           ng-attr-aria-disabled="!nextArg"
-           role="button">Add</a>
       </div>
-    </span>
-    <div class="help-block">
-      <span ng-if="description">{{description}}</span>
-      <span ng-if="!description">
-        Enter the command to run inside the container. The command is considered successful if its
-        exit code is 0. Drag and drop to reorder arguments.
+    </div>
+    <div class="mar-top-sm mar-bottom-md">
+      <a href="" ng-click="multiline = !multiline">Switch to {{multiline ? 'Single-line' : 'Multiline'}} Editor</a>
+      <span ng-show="input.args.length">
+        <span class="action-divider">|</span>
+        <a href="" ng-click="clear()" role="button">Clear {{ (type || 'Command') | upperFirst }}</a>
       </span>
     </div>
-  </div>
-  <div class="mar-top-sm mar-bottom-md">
-    <a href="" ng-click="multiline = !multiline">Switch to {{multiline ? 'Single-line' : 'Multiline'}} Editor</a>
-    <span ng-show="input.args.length">
-      <span class="action-divider">|</span>
-      <a href="" ng-click="clear()" role="button">Clear {{ (type || 'Command') | upperFirst }}</a>
-    </span>
-  </div>
-  <!-- Add a hidden input to help with form validation. -->
-  <input type="hidden" name="command" ng-model="input.args" ng-required="isRequired">
-  <div ng-if="form.command.$dirty && form.command.$error.required" class="has-error">
-    <span class="help-block">A command is required.</span>
+    <!-- Add a hidden input to help with form validation. -->
+    <input type="hidden" name="command" ng-model="input.args" ng-required="isRequired">
+    <div ng-if="form.command.$dirty && form.command.$error.required" class="has-error">
+      <span class="help-block">A command is required.</span>
+    </div>
   </div>
 </ng-form>
