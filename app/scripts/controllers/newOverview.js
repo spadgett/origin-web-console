@@ -31,6 +31,7 @@ function OverviewController($scope,
   var deploymentIsInProgress = $filter('deploymentIsInProgress');
   var imageObjectRef = $filter('imageObjectRef');
   var isJenkinsPipelineStrategy = $filter('isJenkinsPipelineStrategy');
+  var isNewerResource = $filter('isNewerResource');
   var label = $filter('label');
   var orderObjectsByDate = $filter('orderObjectsByDate');
   var getPodTemplate = $filter('podTemplate');
@@ -39,6 +40,7 @@ function OverviewController($scope,
 
   var imageStreams;
   var labelSuggestions = {};
+  var mostRecentByDC = {};
 
   // Common state that is shared by overview and overview-row. This avoids
   // having to the same values as attributes again and again for different
@@ -125,7 +127,7 @@ function OverviewController($scope,
     };
   });
 
-  var updateNotifications = function(apiObject) {
+  var updatePodWarnings = function(apiObject) {
     var uid = _.get(apiObject, 'metadata.uid');
     if (!uid) {
       return null;
@@ -139,12 +141,71 @@ function OverviewController($scope,
     overview.state.notificationsByObjectUID[uid] = ResourceAlertsService.getPodAlerts(pods, $routeParams.project);
   };
 
-  var updateAllNotifications = _.debounce(function() {
+  var updateDeploymentConfigWarnings = function(deploymentConfig) {
+    var notifications = {};
+    var uid = _.get(deploymentConfig, 'metadata.uid');
+    if (!uid) {
+      return;
+    }
+
+    overview.state.notificationsByObjectUID[uid] = {};
+    var name = _.get(deploymentConfig, 'metadata.name');
+    if (!name) {
+      return;
+    }
+
+    var mostRecentRC = mostRecentByDC[name];
+    notifications = ResourceAlertsService.getDeploymentStatusAlerts(deploymentConfig, mostRecentRC);
+
+    var visibleReplicationControllers = _.get(overview, ['rcByDC', name]);
+    _.each(visibleReplicationControllers, function(replicationController) {
+      var uid = _.get(replicationController, 'metadata.uid');
+      var rcNotifications = _.get(overview, ['state', 'notificationsByObjectUID', uid]);
+      _.assign(notifications, rcNotifications);
+    });
+
+    overview.state.notificationsByObjectUID[uid] = notifications;
+  };
+
+  var updateAllDeploymentConfigWarnings = function() {
+    _.each(overview.deploymentConfigs, updateDeploymentConfigWarnings);
+  };
+
+  var updateDeploymentWarnings = function(deployment) {
+    var notifications = {};
+    var uid = _.get(deployment, 'metadata.uid');
+    if (!uid) {
+      return;
+    }
+
+    overview.state.notificationsByObjectUID[uid] = {};
+    var name = _.get(deployment, 'metadata.name');
+    if (!name) {
+      return;
+    }
+
+    var visibleReplicaSets = _.get(overview, ['replicaSetsByDeployment', name]);
+    _.each(visibleReplicaSets, function(replicaSet) {
+      var uid = _.get(replicaSet, 'metadata.uid');
+      var rsNotifications = _.get(overview, ['state', 'notificationsByObjectUID', uid]);
+      _.assign(notifications, rsNotifications);
+    });
+
+    overview.state.notificationsByObjectUID[uid] = notifications;
+  };
+
+  var updateAllDeploymentWarnings = function() {
+    _.each(overview.deployments, updateDeploymentWarnings);
+  };
+
+  var updateAllPodWarnings = _.debounce(function() {
     $scope.$apply(function() {
-      _.each(overview.replicationControllers, updateNotifications);
-      _.each(overview.replicaSets, updateNotifications);
-      _.each(overview.statefulSets, updateNotifications);
-      _.each(overview.monopods, updateNotifications);
+      _.each(overview.replicationControllers, updatePodWarnings);
+      _.each(overview.replicaSets, updatePodWarnings);
+      _.each(overview.statefulSets, updatePodWarnings);
+      _.each(overview.monopods, updatePodWarnings);
+      updateAllDeploymentConfigWarnings();
+      updateAllDeploymentWarnings();
     });
   }, 500);
 
@@ -249,19 +310,25 @@ function OverviewController($scope,
     var vanillaRCs = [];
     overview.rcByDC = {};
     overview.activeByDC = {};
+    mostRecentByDC = {};
     _.each(overview.replicationControllers, function(replicationController) {
       var dcName = getDeploymentConfig(replicationController) || '';
       if (!dcName) {
         vanillaRCs.push(replicationController);
       }
 
-      if (!isReplicationControllerVisible(replicationController)) {
-        return;
+      // Keep track of  the most recent replication controller even if not
+      // visible to show failed/canceled deployment notifications.
+      var mostRecent = mostRecentByDC[dcName];
+      if (!mostRecent || isNewerResource(replicationController, mostRecent)) {
+        mostRecentByDC[dcName] = replicationController;
       }
 
-      _.set(overview.rcByDC,
-            [dcName, replicationController.metadata.name],
-            replicationController);
+      if (isReplicationControllerVisible(replicationController)) {
+        _.set(overview.rcByDC,
+              [dcName, replicationController.metadata.name],
+              replicationController);
+      }
     });
 
     // Sort the visible replication controllers.
@@ -271,6 +338,7 @@ function OverviewController($scope,
       overview.activeByDC[dcName] = _.head(ordered);
     });
     overview.vanillaRCs = _.sortBy(vanillaRCs, 'metadata.name');
+    updateAllDeploymentWarnings();
   };
 
   var isReplicaSetVisible = function(replicaSet, deployment) {
@@ -629,11 +697,11 @@ function OverviewController($scope,
         overview.pods = podsData.by("metadata.name");
         groupPods();
         updateReferencedImageStreams();
-        updateAllNotifications();
+        updateAllPodWarnings();
         updateLabelSuggestions(overview.pods);
         updateServices(overview.monopods);
         updateFilter();
-        _.each(overview.monopods, updateNotifications);
+        _.each(overview.monopods, updatePodWarnings);
         Logger.log("pods (subscribe)", overview.pods);
       }));
 
@@ -668,7 +736,7 @@ function OverviewController($scope,
         updateLabelSuggestions(overview.replicationControllers);
         updateServices(overview.vanillaRCs);
         updateFilter();
-        _.each(overview.replicationControllers, updateNotifications);
+        _.each(overview.replicationControllers, updatePodWarnings);
         Logger.log("replicationcontrollers (subscribe)", overview.replicationControllers);
       }));
 
@@ -676,6 +744,7 @@ function OverviewController($scope,
         overview.deploymentConfigs = dcData.by("metadata.name");
         updateLabelSuggestions(overview.deploymentConfigs);
         updateServices(overview.deploymentConfigs);
+        updateAllDeploymentWarnings();
         updateFilter();
         Logger.log("deploymentconfigs (subscribe)", overview.deploymentConfigs);
       }));
@@ -690,7 +759,7 @@ function OverviewController($scope,
         updateServices(overview.vanillaReplicaSets);
         updateLabelSuggestions(overview.replicaSets);
         updateFilter();
-        _.each(overview.replicaSets, updateNotifications);
+        _.each(overview.replicaSets, updatePodWarnings);
         Logger.log("replicasets (subscribe)", overview.replicaSets);
       }));
 

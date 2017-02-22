@@ -10,8 +10,7 @@ angular.module('openshiftConsole').component('overviewListRow', {
     previous: '<',
     state: '<',
     // TODO: Move into `state` object?
-    recentPipelines: '<',
-    hpa: '<'
+    recentPipelines: '<'
   },
   templateUrl: 'views/overview/_list-row.html'
 });
@@ -58,6 +57,42 @@ function OverviewListRow($filter,
     }
   };
 
+  var getNotifications = function(object) {
+    var uid = _.get(object, 'metadata.uid');
+    if (!uid) {
+      return null;
+    }
+    return _.get(row, ['state', 'notificationsByObjectUID', uid]);
+  };
+
+  // Return the same empty array each time. Otherwise, digest loop errors occur.
+  var NO_HPA = [];
+  var getHPA = function(object) {
+    if (!row.state.hpaByResource) {
+      return null;
+    }
+
+    var kind = _.get(object, 'kind');
+    var name = _.get(object, 'metadata.name');
+
+    // TODO: Handle groups and subresources
+    // var groupVersion = APIService.parseGroupVersion(object.apiVersion) || {};
+    // var group = groupVersion.group || '';
+
+    return _.get(row.state.hpaByResource, [kind, name], NO_HPA);
+  };
+
+  row.$doCheck = function() {
+    // Update notifications.
+    row.notifications = getNotifications(row.apiObject);
+
+    // Update HPA.
+    row.hpa = getHPA(row.apiObject);
+    if (row.current && _.isEmpty(row.hpa)) {
+      row.hpa = getHPA(row.current);
+    }
+  };
+
   var expandedKey = function(apiObject) {
     var uid = _.get(apiObject, 'metadata.uid');
     if (!uid) {
@@ -98,37 +133,6 @@ function OverviewListRow($filter,
   row.getPods = function(owner) {
     var uid = _.get(owner, 'metadata.uid');
     return _.get(row, ['state', 'podsByOwnerUID', uid]);
-  };
-
-  row.getNotifications = function() {
-    var uid = _.get(row, 'current.metadata.uid');
-    return _.get(row, ['state', 'notificationsByObjectUID', uid]);
-  };
-
-  // Return the same empty array each time. Otherwise, digest loop errors occur.
-  var NO_HPA = [];
-  var getHPA = function(object) {
-    if (!row.state.hpaByResource) {
-      return null;
-    }
-
-    var kind = _.get(object, 'kind');
-    var name = _.get(object, 'metadata.name');
-
-    // TODO: Handle groups and subresources
-    // var groupVersion = APIService.parseGroupVersion(object.apiVersion) || {};
-    // var group = groupVersion.group || '';
-
-    return _.get(row.state.hpaByResource, [kind, name], NO_HPA);
-  };
-
-  row.getHPA = function() {
-    var hpa = getHPA(row.apiObject);
-    if (!row.current || !_.isEmpty(hpa)) {
-      return hpa;
-    }
-
-    return getHPA(row.current);
   };
 
   row.isScalable = function() {

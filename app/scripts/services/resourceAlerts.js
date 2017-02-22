@@ -6,6 +6,8 @@ angular.module("openshiftConsole")
                     AlertMessageService,
                     Navigate,
                     QuotaService) {
+    var annotation = $filter('annotation');
+    var deploymentStatus = $filter('deploymentStatus');
     var getGroupedPodWarnings = $filter('groupedPodWarnings');
 
     var alertHiddenKey = function(alertID, namespace) {
@@ -111,9 +113,57 @@ angular.module("openshiftConsole")
       }
     };
 
+    var getDeploymentStatusAlerts = function(deploymentConfig, mostRecentRC) {
+      if (!deploymentConfig || !mostRecentRC) {
+        return {};
+      }
+
+      var alerts = {};
+      var dcName = _.get(deploymentConfig, 'metadata.name');
+
+      // Show messages about cancelled or failed deployments.
+      var logLink;
+      var status = deploymentStatus(mostRecentRC);
+      var version = annotation(mostRecentRC, 'deploymentVersion');
+      var displayName = version ? (dcName + ' #' + version) : mostRecentRC.metadata.name;
+      var rcLink = Navigate.resourceURL(mostRecentRC);
+      switch (status) {
+      case 'Cancelled':
+        alerts[mostRecentRC.metadata.uid + '-cancelled'] = {
+          type: 'info',
+          message: 'Deployment ' + displayName + ' was cancelled.',
+          // TODO: Add back start deployment link from previous overview (see serviceGroupNotifications.js)
+          links: [{
+            href: rcLink,
+            label: 'View Deployment'
+          }]
+        };
+        break;
+      case 'Failed':
+        logLink = URI(rcLink).addSearch({ tab: "logs" }).toString();
+        alerts[mostRecentRC.metadata.uid + '-failed'] = {
+          type: 'error',
+          message: 'Deployment ' + displayName + ' failed.',
+          reason: annotation(mostRecentRC, 'openshift.io/deployment.status-reason'),
+          links: [{
+            href: logLink,
+            label: 'View Log'
+          }, {
+            // Show all events since the event might not be on the replication controller itself.
+            href: 'project/' + mostRecentRC.metadata.namespace + '/browse/events',
+            label: 'View Events'
+          }]
+        };
+        break;
+      }
+
+      return alerts;
+    };
+
     return {
       getPodAlerts: getPodAlerts,
-      setGenericQuotaWarning: setGenericQuotaWarning
+      setGenericQuotaWarning: setGenericQuotaWarning,
+      getDeploymentStatusAlerts: getDeploymentStatusAlerts
     };
   });
 

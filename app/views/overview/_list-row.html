@@ -28,7 +28,7 @@
               </span><span ng-if="row.apiObject.kind === 'Deployment' && row.current">,
                 <a ng-href="{{row.current | navigateResourceURL}}">#{{row.current | annotation : 'deployment.kubernetes.io/revision'}}</a>
               </span>
-            <notification-icon alerts="row.getNotifications()"></notification-icon>
+            <notification-icon alerts="row.notifications"></notification-icon>
             <small ng-if="!row.isExpanded() && (row.recentPipelines | hashSize)" class="pipeline-summary">
               <pipeline-summary pipelines="row.recentPipelines"></pipeline-summary>
             </small>
@@ -128,6 +128,7 @@
   </div>
 </div>
 <div ng-if="row.isExpanded()" class="list-group-expanded-section expanded">
+  <alerts alerts="row.notifications"></alerts>
   <div ng-repeat="pipeline in row.recentPipelines | orderObjectsByDate : true track by (pipeline | uid)"
        class="row build-pipeline-wrapper animate-repeat animate-slide">
     <div class="col-sm-12">
@@ -142,7 +143,6 @@
     </triggers>
   </div>
   <div ng-if="row.current">
-    <alerts alerts="row.getNotifications()"></alerts>
     <div class="row">
       <div class="col-sm-4 col-md-4">
         <pod-template
@@ -178,7 +178,7 @@
             rc="row.previous"
             deployment-config="row.apiObject"
             pods="row.getPods(row.previous)"
-            hpa="row.getHPA()"
+            hpa="row.hpa"
             limit-ranges="row.state.limitRanges"
             quotas="row.state.quotas"
             cluster-quotas="row.state.clusterQuotas"
@@ -202,7 +202,7 @@
               rc="row.current"
               deployment-config="row.apiObject"
               pods="row.getPods(row.current)"
-              hpa="row.getHPA()"
+              hpa="row.hpa"
               limit-ranges="row.state.limitRanges"
               quotas="row.state.quotas"
               cluster-quotas="row.state.clusterQuotas"
