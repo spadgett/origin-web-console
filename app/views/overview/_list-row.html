@@ -148,13 +148,13 @@
             <build-pipeline build="pipeline" build-config-name-on-expanded="true"></build-pipeline>
           </div>
         </div>
-        <div ng-if="row.apiObject.kind === 'DeploymentConfig'">
-          <triggers
-            triggers="row.apiObject.spec.triggers"
-            builds-by-output-image="row.state.recentBuildsByOutputImage"
-            namespace="row.apiObject.metadata.namespace">
-          </triggers>
-        </div>
+        <!-- <div ng-if="row.apiObject.kind === 'DeploymentConfig'"> -->
+        <!--   <triggers -->
+        <!--     triggers="row.apiObject.spec.triggers" -->
+        <!--     builds-by-output-image="row.state.recentBuildsByOutputImage" -->
+        <!--     namespace="row.apiObject.metadata.namespace"> -->
+        <!--   </triggers> -->
+        <!-- </div> -->
         <div ng-if="row.current">
           <div class="row">
             <!-- FIXME: Improve styles -->

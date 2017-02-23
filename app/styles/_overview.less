@@ -84,6 +84,9 @@
     border-bottom-color: @list-pf-border-color;
     margin-bottom: 50px;
   }
+  .list-pf-container {
+    cursor: pointer;
+  }
   .list-pf-content .row h4:first-child {
     margin-top: 0;
   }
@@ -113,15 +116,6 @@
     display: inline-block;
     margin: 0 10px;
   }
-  .usage-value {
-    font-size: 22px;
-    font-weight: 300;
-    line-height: 1;
-  }
-  .usage-label {
-    .small();
-    .text-muted();
-  }
   .metrics-compact {
     .metrics-sparkline {
       border-bottom: 1px solid #ededed;
@@ -145,8 +139,6 @@
       margin-bottom: -1px;
     }
     .usage-value {
-      font-size: 22px;
-      font-weight: 300;
       line-height: 1;
       margin: 3px 0;
       .fa {
@@ -202,6 +194,15 @@
   }
   .triggers {
     margin-bottom: 20px;
+  }
+  .usage-value {
+    font-size: 22px;
+    font-weight: 300;
+    line-height: 1;
+  }
+  .usage-label {
+    .small();
+    .text-muted();
   }
   .view-by-options {
     @media (max-width: @screen-xs-max) {
