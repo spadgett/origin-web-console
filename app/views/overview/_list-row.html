@@ -54,7 +54,22 @@
             <pod-donut pods="row.getPods(row.current)" mini="true"></pod-donut>
           </div>
         </div>
-        <div class="additional-info-item animate-if truncate">
+        <div ng-if="row.state.showMetrics" class="additional-info-item truncate">
+          <span ng-if="row.apiObject.kind === 'Pod'">
+            <metrics-summary
+              pods="[row.apiObject]"
+              containers="row.apiObject.spec.containers">
+            </metrics-summary>
+          </span>
+          <span ng-if="row.apiObject.kind !== 'Pod' && row.current">
+            <metrics-summary
+              pods="row.getPods(row.current)"
+              containers="row.current.spec.template.spec.containers">
+            </metrics-summary>
+          </span>
+        </div>
+        <!-- Decide what to show when no metrics, if anything -->
+        <div ng-if="!row.state.showMetrics" class="additional-info-item truncate">
           <span ng-if="row.apiObject.kind === 'Pod'">
             <span class="pficon fa-fw pficon-image"></span>
             <image-names

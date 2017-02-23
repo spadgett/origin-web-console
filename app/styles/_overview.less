@@ -99,6 +99,20 @@
   .tasks {
     margin-top: 20px;
   }
+  .metrics-summary {
+    .text-center();
+    display: inline-block;
+    margin: 0 10px;
+  }
+  .usage-value {
+    font-size: 22px;
+    font-weight: 300;
+    line-height: 1;
+  }
+  .usage-label {
+    .small();
+    .text-muted();
+  }
   .metrics-compact {
     .metrics-sparkline {
       border-bottom: 1px solid #ededed;
@@ -120,11 +134,9 @@
       // Make sure the labels align with the bottom of the chart.
       line-height: 1;
       margin-bottom: -1px;
-      .small();
-      .text-muted();
     }
     .usage-value {
-      font-size: 22px;
+      font-size: @overview-metrics-value-font-size;
       font-weight: 300;
       line-height: 1;
       margin: 3px 0;
