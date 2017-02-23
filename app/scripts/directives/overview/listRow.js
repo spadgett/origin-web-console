@@ -135,6 +135,12 @@ function OverviewListRow($filter,
     return _.get(row, ['state', 'podsByOwnerUID', uid]);
   };
 
+  row.firstPod = function(owner) {
+    var pods = row.getPods(owner);
+    // Use `_.find` to get the first item.
+    return _.find(pods);
+  };
+
   row.isScalable = function() {
     if (!_.isEmpty(row.hpa)) {
       return false;
