@@ -1,3 +1,5 @@
+@list-pf-border-color: #dcdcdc;
+@list-pf-item-active-border-color: #bbb;
 @overview-border-light-gray: #ededed;
 @overview-border-gray: #d6d6d6;
 @overview-font-weight: 300;
@@ -15,26 +17,26 @@
 
 // NEW OVERVIEW STYLES
 .overview-new {
-  .loading-message,
-  .tasks,
-  .page-notifications .alert:first-child {
-    margin-top: 20px;
+  .build-pipeline {
+    border-color: @overview-border-gray;
   }
-  .middle .middle-container {
-    // FIXME: workaround issue where middle-container usage of flexbox causes content to not fill width
-    > div {
-      width: 100%;
-    }
-    .container-fluid {
-      padding-left: 20px;
-      padding-right: 20px;
-    }
+  .build-pipeline-wrapper {
+    margin-bottom: 20px;
+  }
+  .c3-line {
+    stroke-width: 1px;
+  }
+  .component-label {
+    font-size: @component-label;
+    padding: 0 10px 4px 0;
+    .text-muted();
+    text-transform: uppercase;
+  }
+  .data-toolbar-dropdown {
+    display: inline-block;
   }
   .data-toolbar-filter {
     display: flex;
-    .ui-select-container {
-      width: 100px;
-    }
     .label-filter, .name-filter {
       flex-grow: 1;
     }
@@ -48,85 +50,61 @@
         padding-left: 5px;
       }
     }
-  }
-  .view-by-options {
-    @media (max-width: @screen-xs-max) {
-      margin-top: 10px;
+    .ui-select-container {
+      width: 100px;
     }
   }
   .data-toolbar-label {
-    vertical-align: 8px;
     margin-right: 5px;
+    vertical-align: 8px;
   }
-  .data-toolbar-dropdown {
-    display: inline-block;
+  .deployment-connector-arrow {
+    font-size: 300%;
+    .text-muted();
+  }
+  .deployment-donut > div[row] {
+    justify-content: center;
   }
   h1, h2 {
-    .truncate();
     // Don't clip descenders.
-    line-height: 1.3;
-    margin-top: 0;
+    line-height: normal;
     min-width: 130px; // prevent name from complete truncation at mobile
+    .truncate();
   }
-  .component-label {
-    .text-muted();
-    font-size: @component-label;
-    padding: 0 10px 4px 0;
-    text-transform: uppercase;
+  h2 {
+    margin-top: 0;
   }
-  .list-view-pf {
-    .mar-bottom-xl();
+  .list-pf {
+    border-bottom-color: @list-pf-border-color;
+    margin-bottom: 50px;
+  }
+  .list-pf-expansion.in .empty-state-message {
+    margin-bottom: 30px;
+    margin-top: 30px;
+    .text-center();
+  }
+  .list-pf-item {
+    border-top-color: @list-pf-border-color;
+    &.active {
+      border-top-color: @list-pf-item-active-border-color;
+    }
   }
   .list-view-pf-actions .actions-dropdown-kebab {
     font-size: 18px;
     // Give a bigger click target (fill `list-view-pf-actions` width)
     width: 100%;
   }
-  .overview-row-inline-actions {
-    .mar-left-md();
-  }
-  .notification-icon {
-    display: inline-block;
-    margin: 0 5px;
-    .pficon {
-      margin-right: 5px;
-    }
-    &:first-child {
-      margin-left: 20px;
-    }
-  }
-  .pipeline-summary {
-    line-height: 1.4;
-    margin-top: 3px;
-  }
-  .build-pipeline-wrapper {
-    margin-bottom: 20px;
-  }
-  .deployment-donut > div[row] {
-    justify-content: center;
-  }
-  .overview-routes h3 {
-    .mar-top-xs();
-    line-height: 1.4;
-  }
-  .overview-routes + .overview-routes {
-    .mar-top-md();
-  }
-  .overview-route-link {
-    .truncate();
-    display: block;
-  }
-  .list-group-expanded-section.expanded .empty-state-message {
-    .text-center();
-    margin-top: 30px;
-    margin-bottom: 30px;
+  .loading-message,
+  .page-notifications .alert:first-child,
+  .tasks {
+    margin-top: 20px;
   }
   .metrics-compact {
     .metrics-sparkline {
       border-bottom: 1px solid #ededed;
       display: inline-block;
-      width: 200px;
       vertical-align: -6px;
+      width: 200px;
       @media (min-width: @screen-lg-min) {
         width: 250px;
       }
@@ -138,31 +116,76 @@
       display: inline-block;
       margin-left: 10px;
     }
+    .usage-label {
+      // Make sure the labels align with the bottom of the chart.
+      line-height: 1;
+      margin-bottom: -1px;
+      .small();
+      .text-muted();
+    }
     .usage-value {
       font-size: 22px;
       font-weight: 300;
       line-height: 1;
       margin: 3px 0;
       .fa {
-        .text-muted();
         font-size: 10px;
+        .text-muted();
         vertical-align: 2px;
       }
     }
-    .usage-label {
-      .small();
-      .text-muted();
-      // Make sure the labels align with the bottom of the chart.
-      line-height: 1;
-      margin-bottom: -1px;
+  }
+  .middle .middle-container {
+    // FIXME: workaround issue where middle-container usage of flexbox causes content to not fill width
+    > div {
+      width: 100%;
     }
-    .c3-line {
-      stroke-width: 1px;
+    .container-fluid {
+      padding-left: 20px;
+      padding-right: 20px;
     }
   }
-  .deployment-connector-arrow {
-    .text-muted();
-    font-size: 300%;
+  .notification-icon {
+    display: inline-block;
+    margin: 0 5px;
+    &:first-child {
+      margin-left: 20px;
+    }
+    .pficon {
+      margin-right: 5px;
+    }
+  }
+  overview-list-row + overview-list-row .list-pf-item.active {
+    // avoid double borders when list-pf-item is open
+    margin-top: -1px;
+  }
+  .overview-route-link {
+    display: block;
+    .truncate();
+  }
+  .overview-routes {
+    + .overview-routes {
+      .mar-top-md();
+    }
+    h3 {
+      line-height: 1.4;
+      .mar-top-xs();
+    }
+  }
+  .overview-row-inline-actions {
+    .mar-left-md();
+  }
+  .pipeline-summary {
+    line-height: 1.4;
+    margin-top: 3px;
+  }
+  .triggers {
+    margin-bottom: 20px;
+  }
+  .view-by-options {
+    @media (max-width: @screen-xs-max) {
+      margin-top: 10px;
+    }
   }
 }
 
