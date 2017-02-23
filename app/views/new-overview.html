@@ -81,13 +81,13 @@
                 </ui-select>
               </div>
             </div>
+            <div ng-if="overview.filterActive" class="filter-status">
+              Showing <strong>{{overview.filteredSize}}</strong> of <strong>{{overview.size}}</strong> items
+            </div>
           </div>
         </div>
         <div class="middle-content">
           <div class="container-fluid">
-            <div ng-if="overview.filterActive">
-              Showing <strong>{{overview.filteredSize}}</strong> of <strong>{{overview.size}}</strong> items
-            </div>
             <div ng-if="overview.everythingFiltered">
               <div class="empty-state-message text-center h2">
                 The filter is hiding all resources.
