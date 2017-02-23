@@ -56,24 +56,24 @@
                       <div class="search-pf-input-group">
                         <label for="name-filter" class="sr-only">Filter by name</label>
                         <input
-                            type="text"
-                            ng-model="overview.filterText"
-                            placeholder="Filter by name"
-                            autocorrect="off"
-                            autocapitalize="off"
-                            spellcheck="false">
+                          type="text"
+                          ng-model="overview.filterText"
+                          placeholder="Filter by name"
+                          autocorrect="off"
+                          autocapitalize="off"
+                          spellcheck="false">
                         <button
-                            type="button"
-                            class="clear"
-                            aria-hidden="true"
-                            ng-if="overview.filterText"
-                            ng-click="overview.filterText = ''">
-                            <span class="pficon pficon-close"></span>
+                          type="button"
+                          class="clear"
+                          aria-hidden="true"
+                          ng-if="overview.filterText"
+                          ng-click="overview.filterText = ''">
+                          <span class="pficon pficon-close"></span>
                         </button>
                       </div>
                     </div>
-                  </div>
-                </form>
+                  </form>
+                </div>
               </div>
               <div class="vertical-divider"></div>
               <div class="view-by-options">
@@ -99,13 +99,13 @@
                 <a href="" ng-click="overview.clearFilter()">Clear Filter</a>
               </div>
             </div>
-            <div ng-if="!overview.everythingFiltered" class="row">
-              <div ng-if="overview.viewBy === 'app'" ng-repeat="app in overview.apps" class="col-md-12" ng-class="{ 'mar-top-lg': !app }">
+            <div ng-if="!overview.everythingFiltered">
+              <div ng-if="overview.viewBy === 'app'" ng-repeat="app in overview.apps">
                 <h2 ng-if="app">
                   <div class="component-label">Application</div>
                   <span ng-bind-html="app | highlightKeywords : overview.state.filterKeywords"></span>
                 </h2>
-                <div class="list-view-pf" ng-class="{ 'mar-top-xl': !app }">
+                <div class="list-pf">
                   <overview-list-row
                        ng-repeat="deploymentConfig in overview.filteredDCByApp[app] track by (deploymentConfig | uid)"
                        ng-init="dcName = deploymentConfig.metadata.name"
@@ -145,7 +145,7 @@
                   </overview-list-row>
                 </div>
               </div>
-              <div ng-if="overview.viewBy === 'resource'" class="container-fluid">
+              <div ng-if="overview.viewBy === 'resource'">
                 <div ng-if="overview.filteredDeploymentConfigs | hashSize">
                   <h2>
                     <span ng-if="overview.deployments | hashSize">
@@ -155,7 +155,7 @@
                       Deployments
                     </span>
                   </h2>
-                  <div class="list-view-pf">
+                  <div class="list-pf">
                     <overview-list-row
                          ng-repeat="deploymentConfig in overview.filteredDeploymentConfigs track by (deploymentConfig | uid)"
                          ng-init="dcName = deploymentConfig.metadata.name"
@@ -169,7 +169,7 @@
                 </div>
                 <div ng-if="overview.filteredDeployments | hashSize">
                   <h2>Deployments</h2>
-                  <div class="list-view-pf">
+                  <div class="list-pf">
                     <overview-list-row
                          ng-repeat="deployment in overview.filteredDeployments track by (deployment | uid)"
                          api-object="deployment"
@@ -181,7 +181,7 @@
                 </div>
                 <div ng-if="overview.filteredReplicationControllers | hashSize">
                   <h2>Replication Controllers</h2>
-                  <div class="list-view-pf">
+                  <div class="list-pf">
                     <overview-list-row
                          ng-repeat="replicationController in overview.filteredReplicationControllers track by (replicationController | uid)"
                          api-object="replicationController"
@@ -191,7 +191,7 @@
                 </div>
                 <div ng-if="overview.filteredReplicaSets | hashSize">
                   <h2>Replica Sets</h2>
-                  <div class="list-view-pf">
+                  <div class="list-pf">
                     <overview-list-row
                          ng-repeat="replicaSet in overview.filteredReplicaSets track by (replicaSet | uid)"
                          api-object="replicaSet"
@@ -201,7 +201,7 @@
                 </div>
                 <div ng-if="overview.filteredStatefulSets | hashSize">
                   <h2>Stateful Sets</h2>
-                  <div class="list-view-pf">
+                  <div class="list-pf">
                     <overview-list-row
                          ng-repeat="statefulSet in overview.filteredStatefulSets track by (statefulSet | uid)"
                          api-object="statefulSet"
@@ -211,7 +211,7 @@
                 </div>
                 <div ng-if="overview.filteredMonopods | hashSize">
                   <h2>Pods</h2>
-                  <div class="list-view-pf">
+                  <div class="list-pf">
                     <overview-list-row
                          ng-repeat="pod in overview.filteredMonopods track by (pod | uid)"
                          api-object="pod"
@@ -220,7 +220,7 @@
                   </div>
                 </div>
               </div>
-              <div ng-if="overview.viewBy === 'pipeline'" class="container-fluid">
+              <div ng-if="overview.viewBy === 'pipeline'">
                 <!-- TODO: Reuse pipelines empty state message from pipelines.html -->
                 <div ng-if="!(overview.dcByPipeline | hashSize)" class="empty-state-message text-center">
                   <h2>No pipelines.</h2>
@@ -258,7 +258,7 @@
                         <build-pipeline build="pipeline" build-config-name-on-expanded="true"></build-pipeline>
                       </div>
                     </div>
-                    <div ng-if="deploymentConfigNames.length" class="list-view-pf">
+                    <div ng-if="deploymentConfigNames.length" class="list-pf">
                       <overview-list-row
                            ng-repeat="dcName in deploymentConfigNames"
                            api-object="overview.deploymentConfigs[dcName]"
