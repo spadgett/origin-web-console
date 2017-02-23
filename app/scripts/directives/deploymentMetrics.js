@@ -414,10 +414,14 @@ angular.module('openshiftConsole')
         function updateData(metricType, podName, podData) {
           scope.noData = false;
 
-          // Throw out the last data point, which is a partial bucket.
-          var current = _.initial(podData);
+          var current;
           var previous = _.get(data, [metricType, podName]);
-          if (!previous) {
+          if (previous) {
+            // FIXME: This might not be necessary. Need to test before merging this change.
+            // Throw out the last data point, which might be a partial bucket.
+            current = _.initial(podData);
+          } else {
+            current = podData;
             _.set(data, [metricType, podName], current);
             return;
           }
