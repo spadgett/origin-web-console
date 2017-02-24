@@ -265,9 +265,9 @@
           routes-by-service="row.state.routesByService">
         </overview-networking>
         <!-- TODO: Fix class name -->
-        <div ng-if="row.recentPipelines.length || row.buildConfigs.length" class="networking-section">
-          <div class="component-label">Builds</div>
-          <div ng-if="row.recentPipelines.length" class="build-pipelines">
+        <div ng-if="row.recentPipelines.length" class="networking-section">
+          <div class="component-label">Pipelines</div>
+          <div class="build-pipelines">
             <div ng-repeat="pipeline in row.recentPipelines | orderObjectsByDate : true track by (pipeline | uid)"
                  class="row build-pipeline-wrapper animate-repeat animate-slide">
               <div class="col-sm-12">
@@ -275,6 +275,10 @@
               </div>
             </div>
           </div>
+        </div>
+        <!-- TODO: Fix class name -->
+        <div ng-if="row.buildConfigs.length" class="networking-section">
+          <div class="component-label">Builds</div>
           <!-- FIXME -->
           <div ng-repeat="buildConfig in row.buildConfigs track by (buildConfig | uid)" class="row">
             <div class="col-sm-12">
