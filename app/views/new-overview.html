@@ -247,10 +247,12 @@
                     <div ng-if="!(overview.recentPipelinesByBC[pipelineName] | hashSize)" class="mar-bottom-lg">
                       No pipeline runs.
                     </div>
-                    <div ng-repeat="pipeline in overview.recentPipelinesByBC[pipelineName] | orderObjectsByDate : true track by (pipeline | uid)"
-                         class="row build-pipeline-wrapper animate-repeat animate-slide">
-                      <div class="col-sm-12">
-                        <build-pipeline build="pipeline" build-config-name-on-expanded="true"></build-pipeline>
+                    <div ng-if="overview.recentPipelinesByBC[pipelineName] | hashSize" class="build-pipelines">
+                      <div ng-repeat="pipeline in overview.recentPipelinesByBC[pipelineName] | orderObjectsByDate : true track by (pipeline | uid)"
+                           class="row build-pipeline-wrapper animate-repeat animate-slide">
+                        <div class="col-sm-12">
+                          <build-pipeline build="pipeline" build-config-name-on-expanded="true"></build-pipeline>
+                        </div>
                       </div>
                     </div>
                     <div ng-if="deploymentConfigNames.length" class="list-pf">
