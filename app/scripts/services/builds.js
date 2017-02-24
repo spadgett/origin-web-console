@@ -53,6 +53,7 @@ angular.module("openshiftConsole")
       return true;
     };
 
+    // TODO: Generalize for other kinds since the annotation is generic.
     var usesDeploymentConfigs = function(buildConfig) {
       var uses = annotation(buildConfig, 'pipeline.alpha.openshift.io/uses');
       if (!uses) {

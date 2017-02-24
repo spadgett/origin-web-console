@@ -20,7 +20,8 @@
   .build-pipeline {
     border-color: @overview-border-gray;
   }
-  .build-pipeline-wrapper {
+  .build-pipelines {
+    margin-top: 10px;
     margin-bottom: 20px;
   }
   .c3-line {
@@ -86,6 +87,8 @@
   }
   .list-pf-container {
     cursor: pointer;
+    // Prevent the row from shrinking slightly on expand.
+    min-height: 81px;
   }
   .list-pf-content .row h4:first-child {
     margin-top: 0;
@@ -93,6 +96,8 @@
   .list-pf-expansion.in .empty-state-message {
     margin-bottom: 30px;
     margin-top: 30px;
+    // Avoid breaking long identifiers like image stream names in empty state message.
+    max-width: none;
     .text-center();
   }
   .list-pf-item {

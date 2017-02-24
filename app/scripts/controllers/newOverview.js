@@ -42,10 +42,10 @@ function OverviewController($scope,
   var labelSuggestions = {};
   var mostRecentByDC = {};
 
-  // Common state that is shared by overview and overview-row. This avoids
+  // Common state that is shared by overview and overview-list-row. This avoids
   // having to the same values as attributes again and again for different
   // types.
-  overview.state = {
+  var state = overview.state = {
     alerts: {},
     builds: {},
     clusterQuotas: {},
@@ -56,13 +56,12 @@ function OverviewController($scope,
     pipelinesForDC: {},
     podsByOwnerUID: {},
     quotas: {},
-    recentBuildsByOutputImage: {},
     routesByService: {},
     servicesByObjectUID: {}
   };
 
   AlertMessageService.getAlerts().forEach(function(alert) {
-    overview.common.alerts[alert.name] = alert.data;
+    state.alerts[alert.name] = alert.data;
   });
   AlertMessageService.clearAlerts();
 
@@ -97,16 +96,16 @@ function OverviewController($scope,
   });
 
   MetricsService.isAvailable(true).then(function(available) {
-    overview.state.showMetrics = available;
+    state.showMetrics = available;
   });
 
   $scope.$on('metrics-connection-failed', function(e, data) {
     var hidden = AlertMessageService.isAlertPermanentlyHidden('metrics-connection-failed');
-    if (hidden || overview.state.alerts['metrics-connection-failed']) {
+    if (hidden || state.alerts['metrics-connection-failed']) {
       return;
     }
 
-    overview.state.alerts['metrics-connection-failed'] = {
+    state.alerts['metrics-connection-failed'] = {
       type: 'warning',
       message: 'An error occurred getting metrics.',
       links: [{
@@ -138,7 +137,7 @@ function OverviewController($scope,
       return null;
     }
 
-    overview.state.notificationsByObjectUID[uid] = ResourceAlertsService.getPodAlerts(pods, $routeParams.project);
+    state.notificationsByObjectUID[uid] = ResourceAlertsService.getPodAlerts(pods, $routeParams.project);
   };
 
   var updateDeploymentConfigWarnings = function(deploymentConfig) {
@@ -148,7 +147,7 @@ function OverviewController($scope,
       return;
     }
 
-    overview.state.notificationsByObjectUID[uid] = {};
+    state.notificationsByObjectUID[uid] = {};
     var name = _.get(deploymentConfig, 'metadata.name');
     if (!name) {
       return;
@@ -164,7 +163,7 @@ function OverviewController($scope,
       _.assign(notifications, rcNotifications);
     });
 
-    overview.state.notificationsByObjectUID[uid] = notifications;
+    state.notificationsByObjectUID[uid] = notifications;
   };
 
   var updateAllDeploymentConfigWarnings = function() {
@@ -178,7 +177,7 @@ function OverviewController($scope,
       return;
     }
 
-    overview.state.notificationsByObjectUID[uid] = {};
+    state.notificationsByObjectUID[uid] = {};
     var name = _.get(deployment, 'metadata.name');
     if (!name) {
       return;
@@ -191,7 +190,7 @@ function OverviewController($scope,
       _.assign(notifications, rsNotifications);
     });
 
-    overview.state.notificationsByObjectUID[uid] = notifications;
+    state.notificationsByObjectUID[uid] = notifications;
   };
 
   var updateAllDeploymentWarnings = function() {
@@ -276,8 +275,8 @@ function OverviewController($scope,
 
   var groupPods = function() {
     var podOwners = getPodOwners();
-    overview.state.podsByOwnerUID = LabelsService.groupBySelector(overview.pods, podOwners, { key: 'metadata.uid' });
-    overview.monopods = _.filter(overview.state.podsByOwnerUID[''], showMonopod);
+    state.podsByOwnerUID = LabelsService.groupBySelector(overview.pods, podOwners, { key: 'metadata.uid' });
+    overview.monopods = _.filter(state.podsByOwnerUID[''], showMonopod);
   };
 
   var isReplicationControllerVisible = function(replicationController) {
@@ -415,7 +414,7 @@ function OverviewController($scope,
         }
       });
       // TODO: Remove deleted objects from the map?
-      overview.state.servicesByObjectUID[uid] = _.sortBy(services, 'metadata.name');
+      state.servicesByObjectUID[uid] = _.sortBy(services, 'metadata.name');
     });
   };
 
@@ -440,10 +439,10 @@ function OverviewController($scope,
   };
 
   var groupRoutes = function() {
-    overview.state.routesByService = {};
+    state.routesByService = {};
     var addToService = function(route, serviceName) {
-      overview.state.routesByService[serviceName] = overview.state.routesByService[serviceName] || [];
-      overview.state.routesByService[serviceName].push(route);
+      state.routesByService[serviceName] = state.routesByService[serviceName] || [];
+      state.routesByService[serviceName].push(route);
     };
 
     _.each(overview.routes, function(route) {
@@ -458,11 +457,11 @@ function OverviewController($scope,
       });
     });
 
-    _.mapValues(overview.state.routesByService, RoutesService.sortRoutesByScore);
+    _.mapValues(state.routesByService, RoutesService.sortRoutesByScore);
   };
 
   var groupHPAs = function() {
-    overview.state.hpaByResource = {};
+    state.hpaByResource = {};
     _.each(overview.horizontalPodAutoscalers, function(hpa) {
       var name = hpa.spec.scaleRef.name, kind = hpa.spec.scaleRef.kind;
       if (!name || !kind) {
@@ -477,10 +476,10 @@ function OverviewController($scope,
       // }
       // hpaByResource[group][kind][name].push(hpa);
 
-      if (!_.has(overview.state.hpaByResource, [kind, name])) {
-        _.set(overview.state.hpaByResource, [kind, name], []);
+      if (!_.has(state.hpaByResource, [kind, name])) {
+        _.set(state.hpaByResource, [kind, name], []);
       }
-      overview.state.hpaByResource[kind][name].push(hpa);
+      state.hpaByResource[kind][name].push(hpa);
     });
   };
 
@@ -502,45 +501,74 @@ function OverviewController($scope,
     });
   };
 
-  var groupBuildByOutputImage = function(build) {
-    var outputImage = _.get(build, 'spec.output.to');
-    var buildOutputImage = imageObjectRef(outputImage, build.metadata.namespace);
-    overview.state.recentBuildsByOutputImage[buildOutputImage] = overview.state.recentBuildsByOutputImage[buildOutputImage] || [];
-    overview.state.recentBuildsByOutputImage[buildOutputImage].push(build);
+  var buildConfigsByOutputImage = {};
+  var groupBuildConfigsByOutputImage = function() {
+    buildConfigsByOutputImage = {};
+    _.each(overview.buildConfigs, function(buildConfig) {
+      var outputImage = _.get(buildConfig, 'spec.output.to');
+      var ref = imageObjectRef(outputImage, buildConfig.metadata.namespace);
+      buildConfigsByOutputImage[ref] = buildConfigsByOutputImage[ref] || [];
+      buildConfigsByOutputImage[ref].push(buildConfig);
+    });
   };
 
-  var groupBuilds = function() {
-    if(!overview.state.builds || !overview.buildConfigs) {
-      return;
-    }
-    // reset these maps
-    overview.recentPipelinesByBC = {};
-    overview.recentPipelinesByDC = {};
+  var groupBuildConfigsByDeploymentConfig = function() {
+    // Group pipelines.
     overview.dcByPipeline = {};
-    overview.state.recentBuildsByOutputImage = {};
-    _.each(BuildsService.interestingBuilds(overview.state.builds), function(build) {
-      if(isJenkinsPipelineStrategy(build)) {
-        groupPipelineByDC(build);
-      } else {
-        groupBuildByOutputImage(build);
-      }
-    });
-
+    state.pipelinesForDC = {};
     _.each(overview.buildConfigs, function(buildConfig) {
       if (!isJenkinsPipelineStrategy(buildConfig)) {
         return;
       }
 
+      // TODO: Handle other types.
       var dcNames = BuildsService.usesDeploymentConfigs(buildConfig);
       _.set(overview, ['dcByPipeline', buildConfig.metadata.name], dcNames);
+      _.each(dcNames, function(dcName) {
+        state.pipelinesForDC[dcName] = state.pipelinesForDC[dcName] || [];
+        state.pipelinesForDC[dcName].push(buildConfig);
+      });
     });
 
-    overview.state.pipelinesForDC = {};
-    _.each(overview.buildConfigs, function(buildConfig) {
-      _.each(BuildsService.usesDeploymentConfigs(buildConfig), function(dcName) {
-        overview.state.pipelinesForDC[dcName] = overview.state.pipelinesForDC[dcName] || [];
-        overview.state.pipelinesForDC[dcName].push(buildConfig);
+    // Group other build configs.
+    state.buildConfigsByObjectUID = {};
+    _.each(overview.deploymentConfigs, function(deploymentConfig) {
+      var buildConfigs = [];
+      var triggers = _.get(deploymentConfig, 'spec.triggers');
+      _.each(triggers, function(trigger) {
+        var from = _.get(trigger, 'imageChangeParams.from');
+        if (!from) {
+          return;
+        }
+
+        var ref = imageObjectRef(from, deploymentConfig.metadata.namespace);
+        var buildConfigsForRef = buildConfigsByOutputImage[ref];
+        if (!_.isEmpty(buildConfigsForRef)) {
+          buildConfigs = buildConfigs.concat(buildConfigsForRef);
+        }
       });
+
+      buildConfigs = _.sortBy(buildConfigs, 'metadata.name');
+      _.set(state, ['buildConfigsByObjectUID', deploymentConfig.metadata.uid], buildConfigs);
+    });
+  };
+
+  var groupBuilds = function() {
+    if(!state.builds || !overview.buildConfigs) {
+      return;
+    }
+    // reset these maps
+    overview.recentPipelinesByBC = {};
+    overview.recentPipelinesByDC = {};
+    state.recentBuildsByBuildConfig = {};
+    _.each(BuildsService.interestingBuilds(state.builds), function(build) {
+      var bcName = buildConfigForBuild(build);
+      if(isJenkinsPipelineStrategy(build)) {
+        groupPipelineByDC(build);
+      } else {
+        state.recentBuildsByBuildConfig[bcName] = state.recentBuildsByBuildConfig[bcName] || [];
+        state.recentBuildsByBuildConfig[bcName].push(build);
+      }
     });
   };
 
@@ -578,7 +606,7 @@ function OverviewController($scope,
                  overview.statefulSets &&
                  overview.pods;
 
-    overview.state.expandAll = loaded && overview.size === 1;
+    state.expandAll = loaded && overview.size === 1;
 
     overview.renderOptions.showGetStarted = loaded && projectEmpty;
     overview.renderOptions.showLoading = !loaded && projectEmpty;
@@ -587,10 +615,10 @@ function OverviewController($scope,
   };
 
   var updateQuotaWarnings = function() {
-    ResourceAlertsService.setGenericQuotaWarning(overview.state.quotas,
-                                                 overview.state.clusterQuotaData,
+    ResourceAlertsService.setGenericQuotaWarning(state.quotas,
+                                                 state.clusterQuotaData,
                                                  $routeParams.project,
-                                                 overview.state.alerts);
+                                                 state.alerts);
   };
 
   var filterByLabel = function(items) {
@@ -600,7 +628,7 @@ function OverviewController($scope,
   var filterByName = function(items) {
     return KeywordService.filterForKeywords(items,
                                             ['metadata.name', 'metadata.labels.app'],
-                                            overview.state.filterKeywords);
+                                            state.filterKeywords);
   };
 
   var filterItems = function(items) {
@@ -619,7 +647,7 @@ function OverviewController($scope,
     case 'label':
       return !LabelFilter.getLabelSelector().isEmpty();
     case 'name':
-      return !_.isEmpty(overview.state.filterKeywords);
+      return !_.isEmpty(state.filterKeywords);
     }
   };
 
@@ -647,7 +675,7 @@ function OverviewController($scope,
     if (text === previous) {
       return;
     }
-    overview.state.filterKeywords = KeywordService.generateKeywords(text);
+    state.filterKeywords = KeywordService.generateKeywords(text);
     $scope.$apply(updateFilter);
   }, 50, { maxWait: 250 }));
 
@@ -688,8 +716,8 @@ function OverviewController($scope,
         }
 
         ImageStreamResolver.fetchReferencedImageStreamImages(overview.pods,
-                                                             overview.state.imagesByDockerReference,
-                                                             overview.state.imageStreamImageRefByDockerReference,
+                                                             state.imagesByDockerReference,
+                                                             state.imageStreamImageRefByDockerReference,
                                                              context);
       };
 
@@ -712,14 +740,16 @@ function OverviewController($scope,
       }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
 
       watches.push(DataService.watch("builds", context, function(buildData) {
-        overview.state.builds = buildData.by("metadata.name");
+        state.builds = buildData.by("metadata.name");
         groupBuilds();
-        Logger.log("builds (subscribe)", overview.state.builds);
+        Logger.log("builds (subscribe)", state.builds);
       }));
 
       watches.push(DataService.watch("buildConfigs", context, function(buildConfigData) {
         overview.buildConfigs = buildConfigData.by("metadata.name");
         groupBuilds();
+        groupBuildConfigsByOutputImage();
+        groupBuildConfigsByDeploymentConfig();
         Logger.log("buildconfigs (subscribe)", overview.buildConfigs);
       }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
 
@@ -746,6 +776,7 @@ function OverviewController($scope,
         updateServices(overview.deploymentConfigs);
         updateAllDeploymentWarnings();
         updateFilter();
+        groupBuildConfigsByDeploymentConfig();
         Logger.log("deploymentconfigs (subscribe)", overview.deploymentConfigs);
       }));
 
@@ -798,25 +829,25 @@ function OverviewController($scope,
 
       // Always poll quotas instead of watching, its not worth the overhead of maintaining websocket connections
       watches.push(DataService.watch('resourcequotas', context, function(quotaData) {
-        overview.state.quotas = quotaData.by("metadata.name");
+        state.quotas = quotaData.by("metadata.name");
         updateQuotaWarnings();
       }, {poll: true, pollInterval: 60 * 1000}));
 
       watches.push(DataService.watch('appliedclusterresourcequotas', context, function(clusterQuotaData) {
-        overview.state.clusterQuotas = clusterQuotaData.by("metadata.name");
+        state.clusterQuotas = clusterQuotaData.by("metadata.name");
         updateQuotaWarnings();
       }, {poll: true, pollInterval: 60 * 1000}));
 
       // List limit ranges in this project to determine if there is a default
       // CPU request for autoscaling.
       DataService.list("limitranges", context, function(response) {
-        overview.state.limitRanges = response.by("metadata.name");
+        state.limitRanges = response.by("metadata.name");
       });
 
       watches.push(DataService.watch("imagestreams", context, function(imageStreamData) {
         imageStreams = imageStreamData.by("metadata.name");
         ImageStreamResolver.buildDockerRefMapForImageStreams(imageStreams,
-                                                             overview.state.imageStreamImageRefByDockerReference);
+                                                             state.imageStreamImageRefByDockerReference);
         updateReferencedImageStreams();
         Logger.log("imagestreams (subscribe)", imageStreams);
       }, {poll: limitWatches, pollInterval: 60 * 1000}));

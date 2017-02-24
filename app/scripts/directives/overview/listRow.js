@@ -22,6 +22,8 @@ function OverviewListRow($filter,
                          Navigate) {
   var row = this;
   var deploymentIsInProgress = $filter('deploymentIsInProgress');
+  var getErrorDetails = $filter('getErrorDetails');
+  var isJenkinsPipelineStrategy = $filter('isJenkinsPipelineStrategy');
 
   var updateTriggers = function(apiObject) {
     var triggers = _.get(apiObject, 'spec.triggers', []);
@@ -91,6 +93,12 @@ function OverviewListRow($filter,
     if (row.current && _.isEmpty(row.hpa)) {
       row.hpa = getHPA(row.current);
     }
+
+    // Update build configs.
+    var uid = _.get(row, 'apiObject.metadata.uid');
+    if (uid) {
+      row.buildConfigs = _.get(row, ['state', 'buildConfigsByObjectUID', uid], []);
+    }
   };
 
   var expandedKey = function(apiObject) {
@@ -158,14 +166,15 @@ function OverviewListRow($filter,
     return deploymentIsInProgress(row.current);
   };
 
-  row.startPipeline = function(pipeline) {
+  row.startBuild = function(buildConfig) {
     BuildsService
-      .startBuild(pipeline.metadata.name, { namespace: pipeline.metadata.namespace })
+      .startBuild(buildConfig.metadata.name, { namespace: buildConfig.metadata.namespace })
       .then(_.noop, function(result) {
-        row.state.alerts["start-pipeline"] = {
+        var buildType = isJenkinsPipelineStrategy(buildConfig) ? 'pipeline' : 'build';
+        row.state.alerts["start-build"] = {
           type: "error",
-          message: "An error occurred while starting the pipeline.",
-          details: $filter('getErrorDetails')(result)
+          message: "An error occurred while starting the " + buildType + ".",
+          details: getErrorDetails(result)
         };
       });
   };
