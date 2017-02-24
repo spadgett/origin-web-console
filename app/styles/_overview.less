@@ -44,6 +44,11 @@
     .label-filter, .name-filter {
       flex-grow: 1;
     }
+    .label-filter .label-filter-key .selectize-input.not-full {
+      // FIXME: temp workaround for problem created by
+      // https://github.com/openshift/origin-web-console/pull/1216
+      width: auto;
+    }
     .name-filter {
       form,
       input {
