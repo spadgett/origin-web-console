@@ -88,12 +88,17 @@
   .list-pf-content .row h4:first-child {
     margin-top: 0;
   }
-  .list-pf-expansion.in .empty-state-message {
-    margin-bottom: 30px;
-    margin-top: 30px;
-    // Avoid breaking long identifiers like image stream names in empty state message.
-    max-width: none;
-    .text-center();
+  .list-pf-expansion.in {
+    .empty-state-message {
+      margin-bottom: 30px;
+      margin-top: 30px;
+      // Avoid breaking long identifiers like image stream names in empty state message.
+      max-width: none;
+      .text-center();
+    }
+    .list-pf-content {
+      max-width: 100%;
+    }
   }
   .list-pf-item {
     border-top-color: @list-pf-border-color;
@@ -181,8 +186,9 @@
     margin-top: -1px;
   }
   .overview-route-link {
-    display: block;
+    .mar-right-md();
     .truncate();
+    display: block;
   }
   .overview-routes {
     + .overview-routes {
