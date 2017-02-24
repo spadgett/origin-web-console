@@ -284,12 +284,12 @@
             <div class="col-sm-12">
               <div style="border-top: 1px solid #eaeaea;" class="pad-bottom-lg"></div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
               <h3 class="mar-top-xs">
                 <a ng-href="{{buildConfig | navigateResourceURL}}">{{buildConfig.metadata.name}}</a>
               </h3>
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-9">
               <div ng-if="!(row.state.recentBuildsByBuildConfig[buildConfig.metadata.name] | hashSize)">
                 No builds.
                 <!-- <a href="" ng-if="('buildconfigs/instantiate' | canI : 'create')" ng-click="startBuild(buildConfig)" class="small mar-left-sm">Start Build</a> -->
