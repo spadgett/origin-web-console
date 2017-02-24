@@ -85,11 +85,6 @@
     border-bottom-color: @list-pf-border-color;
     margin-bottom: 50px;
   }
-  .list-pf-container {
-    cursor: pointer;
-    // Prevent the row from shrinking slightly on expand.
-    min-height: 81px;
-  }
   .list-pf-content .row h4:first-child {
     margin-top: 0;
   }
@@ -104,6 +99,11 @@
     border-top-color: @list-pf-border-color;
     &.active {
       border-top-color: @list-pf-item-active-border-color;
+    }
+    > .list-pf-container {
+      cursor: pointer;
+      // Prevent the row from shrinking slightly on expand.
+      min-height: 81px;
     }
   }
   .list-view-pf-actions .actions-dropdown-kebab {

@@ -1,7 +1,5 @@
-<div class="list-pf-item"
-     ng-click="row.toggleExpand($event)"
-     ng-class="{ active: row.isExpanded() }">
-  <div class="list-pf-container" tabindex="0">
+<div class="list-pf-item" ng-class="{ active: row.isExpanded() }">
+  <div class="list-pf-container" ng-click="row.toggleExpand($event)">
     <div class="list-pf-chevron">
       <span ng-if="row.isExpanded()">
         <span class="fa fa-angle-down"></span>
@@ -144,7 +142,7 @@
     </div><!-- /list-pf-actions-->
   </div><!-- /list-pf-container -->
   <div class="list-pf-expansion collapse" ng-if="row.isExpanded()" ng-class="{ in: row.isExpanded() }">
-    <div class="list-pf-container" tabindex="0">
+    <div class="list-pf-container">
       <div class="list-pf-content">
         <alerts alerts="row.notifications"></alerts>
         <div ng-if="row.current">
