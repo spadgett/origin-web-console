@@ -43,7 +43,8 @@
           </span>
         </div>
       </div>
-      <div ng-if="row.current && !row.isDeploymentInProgress() && !row.isExpanded()" class="list-pf-details animate-if">
+      <!-- TODO: Support mobile -->
+      <div ng-if="row.current && !row.isDeploymentInProgress() && !row.isExpanded()" class="list-pf-details animate-if hidden-xs hidden-sm">
         <div class="additional-info-item">
           <div ng-if="row.apiObject.kind === 'Pod'">
             <pod-donut pods="[row.apiObject]" mini="true"></pod-donut>
@@ -186,7 +187,8 @@
                 </deployment-donut>
               </div>
             </div>
-            <div ng-if="row.state.showMetrics && !row.previous" class="col-sm-4 col-md-5">
+            <!-- TODO: Support mobile -->
+            <div ng-if="row.state.showMetrics && !row.previous" class="col-md-5 hidden-xs hidden-sm">
               <div ng-if="row.apiObject.kind === 'Pod'">
                 <h4>Usage <small>Last 15 Minutes</small></h4>
                 <deployment-metrics
@@ -208,7 +210,7 @@
                 </deployment-metrics>
               </div>
             </div>
-            <div class="col-sm-4 col-md-4">
+            <div class="col-sm-8 col-md-4">
               <!-- TODO: markup semantics suggest div.component-label in <pod-template> should be an h4,
                          but only here on the overview -->
               <pod-template
