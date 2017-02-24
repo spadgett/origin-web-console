@@ -23,10 +23,10 @@
         </span><span ng-if="row.apiObject.kind === 'Deployment' && row.current">,
           <a ng-href="{{row.current | navigateResourceURL}}">#{{row.current | annotation : 'deployment.kubernetes.io/revision'}}</a>
         </span>
-        <notification-icon alerts="row.notifications"></notification-icon>
         <small ng-if="!row.isExpanded() && (row.recentPipelines | hashSize)" class="pipeline-summary">
           <pipeline-summary pipelines="row.recentPipelines"></pipeline-summary>
         </small>
+        <notification-icon alerts="row.notifications"></notification-icon>
       </h3>
       <div ng-if="row.isDeploymentInProgress()" class="list-pf-details">
         <div ng-if="row.apiObject.kind === 'DeploymentConfig'">
