@@ -7,11 +7,13 @@
     aria-hidden="true"></span>
   <span class="notification-icon-label">
     {{notification.countByType.error}}
-    <span ng-if="notification.countByType.error === 1">
-      Error
-    </span>
-    <span ng-if="notification.countByType.error !== 1">
-      Errors
+    <span class="hidden-xs">
+      <span ng-if="notification.countByType.error === 1">
+        Error
+      </span>
+      <span ng-if="notification.countByType.error !== 1">
+        Errors
+      </span>
     </span>
   </span>
 </div>
@@ -24,11 +26,13 @@
     aria-hidden="true"></span>
   <span class="notification-icon-label">
     {{notification.countByType.warning}}
-    <span ng-if="notification.countByType.warning === 1">
-      Warning
-    </span>
-    <span ng-if="notification.countByType.warning !== 1">
-      Warnings
+    <span class="hidden-xs">
+      <span ng-if="notification.countByType.warning === 1">
+        Warning
+      </span>
+      <span ng-if="notification.countByType.warning !== 1">
+        Warnings
+      </span>
     </span>
   </span>
 </div>
