@@ -99,6 +99,11 @@ function OverviewListRow($filter,
     if (uid) {
       row.buildConfigs = _.get(row, ['state', 'buildConfigsByObjectUID', uid], []);
     }
+
+    var kind = _.get(row, 'apiObject.kind');
+    if (kind === 'DeploymentConfig') {
+      row.pipelines = _.get(row, ['state', 'pipelinesForDC', row.apiObject.metadata.name], []);
+    }
   };
 
   var expandedKey = function(apiObject) {
