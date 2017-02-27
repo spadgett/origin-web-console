@@ -512,6 +512,17 @@ function OverviewController($scope,
     });
   };
 
+  var updateRecentBuildsForDC = function(deploymentConfig, buildConfigs) {
+    var builds = [];
+    _.each(buildConfigs, function(buildConfig) {
+      var recentForConfig = _.get(state, ['recentBuildsByBuildConfig', buildConfig.metadata.name], []);
+      builds = builds.concat(recentForConfig);
+    });
+
+    builds = orderObjectsByDate(builds, true);
+    _.set(state, ['recentBuildsByDeploymentConfig', deploymentConfig.metadata.name], builds);
+  };
+
   var groupBuildConfigsByDeploymentConfig = function() {
     // Group pipelines.
     overview.dcByPipeline = {};
@@ -550,6 +561,14 @@ function OverviewController($scope,
 
       buildConfigs = _.sortBy(buildConfigs, 'metadata.name');
       _.set(state, ['buildConfigsByObjectUID', deploymentConfig.metadata.uid], buildConfigs);
+      updateRecentBuildsForDC(deploymentConfig, buildConfigs);
+    });
+  };
+
+  var groupRecentBuildsByDeploymentConfig = function() {
+    _.each(overview.deploymentConfigs, function(deploymentConfig) {
+      var buildConfigs = _.get(state, ['buildConfigsByObjectUID', deploymentConfig.metadata.uid], []);
+      updateRecentBuildsForDC(deploymentConfig, buildConfigs);
     });
   };
 
@@ -747,9 +766,9 @@ function OverviewController($scope,
 
       watches.push(DataService.watch("buildConfigs", context, function(buildConfigData) {
         overview.buildConfigs = buildConfigData.by("metadata.name");
-        groupBuilds();
         groupBuildConfigsByOutputImage();
         groupBuildConfigsByDeploymentConfig();
+        groupBuilds();
         Logger.log("buildconfigs (subscribe)", overview.buildConfigs);
       }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
 
@@ -777,6 +796,7 @@ function OverviewController($scope,
         updateAllDeploymentWarnings();
         updateFilter();
         groupBuildConfigsByDeploymentConfig();
+        groupRecentBuildsByDeploymentConfig();
         Logger.log("deploymentconfigs (subscribe)", overview.deploymentConfigs);
       }));
 
