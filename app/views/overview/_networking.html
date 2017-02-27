@@ -1,10 +1,6 @@
-<div ng-if="networking.services | hashSize" class="networking-section">
+<div ng-if="networking.services | hashSize" class="expanded-section">
   <div class="component-label">Networking</div>
   <div ng-repeat="service in networking.services" class="row">
-    <!-- FIXME -->
-    <div class="col-sm-12">
-      <div style="border-top: 1px solid #eaeaea;" class="pad-bottom-lg"></div>
-    </div>
     <div class="col-sm-3">
       <div class="component-label">Service &ndash; Internal Traffic</div>
       <h3 class="mar-top-xs">
