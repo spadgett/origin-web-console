@@ -1,7 +1,7 @@
 <div ng-if="networking.services | hashSize" class="expanded-section">
   <div class="component-label">Networking</div>
   <div ng-repeat="service in networking.services" class="row">
-    <div class="col-sm-3">
+    <div class="col-sm-4 col-md-3">
       <div class="component-label">Service &ndash; Internal Traffic</div>
       <h3 class="mar-top-xs">
         <a ng-href="{{service | navigateResourceURL}}">{{service.metadata.name}}</a>
@@ -23,7 +23,7 @@
         </span>
       </span>
     </div>
-    <div class="col-sm-9">
+    <div class="col-sm-8 col-md-9">
       <div class="component-label">Routes &ndash; External Traffic</div>
       <div ng-if="networking.routesByService[service.metadata.name] | hashSize" class="row">
         <div ng-repeat="route in networking.routesByService[service.metadata.name] | limitTo : 2 track by (route | uid)" class="overview-routes">

@@ -23,13 +23,15 @@
         </span><span ng-if="row.apiObject.kind === 'Deployment' && row.current">,
           <a ng-href="{{row.current | navigateResourceURL}}">#{{row.current | annotation : 'deployment.kubernetes.io/revision'}}</a>
         </span>
-        <small ng-if="!row.isExpanded() && (row.recentPipelines | hashSize)" class="pipeline-summary">
-          <build-summary builds="row.recentPipelines" build-label="Pipelines"></build-summary>
-        </small>
-        <small ng-if="!row.isExpanded() && (row.recentBuilds | hashSize)" class="pipeline-summary">
-          <build-summary builds="row.recentBuilds" build-label="Builds"></build-summary>
-        </small>
         <notification-icon alerts="row.notifications"></notification-icon>
+        <div class="small text-muted mar-top-xs">
+          <span ng-if="!row.isExpanded() && (row.recentPipelines | hashSize)" class="pipeline-summary">
+            <build-summary builds="row.recentPipelines" build-label="Pipelines"></build-summary>
+          </span>
+          <span ng-if="!row.isExpanded() && (row.recentBuilds | hashSize)" class="pipeline-summary">
+            <build-summary builds="row.recentBuilds" build-label="Builds"></build-summary>
+          </span>
+        </div>
       </h3>
       <div ng-if="row.isDeploymentInProgress()" class="list-pf-details">
         <div ng-if="row.apiObject.kind === 'DeploymentConfig'">
@@ -57,18 +59,18 @@
           </div>
         </div>
         <div ng-if="row.state.showMetrics" class="additional-info-item truncate metrics-collapsed">
-          <span ng-if="row.apiObject.kind === 'Pod'">
+          <div ng-if="row.apiObject.kind === 'Pod'">
             <metrics-summary
               pods="[row.apiObject]"
               containers="row.apiObject.spec.containers">
             </metrics-summary>
-          </span>
-          <span ng-if="row.apiObject.kind !== 'Pod' && row.current">
+          </div>
+          <div ng-if="row.apiObject.kind !== 'Pod' && row.current">
             <metrics-summary
               pods="row.getPods(row.current)"
               containers="row.current.spec.template.spec.containers">
             </metrics-summary>
-          </span>
+          </div>
         </div>
         <!-- Decide what to show when no metrics, if anything -->
         <div ng-if="!row.state.showMetrics" class="additional-info-item truncate">
@@ -156,8 +158,7 @@
         <alerts alerts="row.notifications"></alerts>
         <div ng-if="row.current">
           <div class="row">
-            <!-- FIXME: Improve styles -->
-            <div ng-if="row.previous" class="col-sm-3 col-md-3">
+            <div ng-if="row.previous" class="col-sm-5 col-md-3">
               <deployment-donut
                 rc="row.previous"
                 deployment-config="row.apiObject"
@@ -170,12 +171,12 @@
                 alerts="row.state.alerts">
               </deployment-donut>
             </div>
-            <div ng-if="row.previous" class="col-sm-1 col-md-1">
+            <div ng-if="row.previous" class="col-sm-2 col-md-1">
               <div class="deployment-connector-arrow" aria-hidden="true">
                 &rarr;
               </div>
             </div>
-            <div class="col-sm-4 col-md-3" ng-class="{ 'col-sm-3': row.previous }">
+            <div class="col-sm-4 col-md-3" ng-class="{ 'col-sm-5': row.previous }">
               <div ng-if="row.apiObject.kind === 'Pod'">
                 <a ng-href="{{row.apiObject | navigateResourceURL}}">
                   <pod-donut pods="[row.apiObject]"></pod-donut>
@@ -196,7 +197,7 @@
               </div>
             </div>
             <!-- TODO: Support mobile -->
-            <div ng-if="row.state.showMetrics && !row.previous" class="col-md-5 hidden-xs hidden-sm">
+            <div ng-if="row.state.showMetrics && !row.previous" class="col-md-4 col-lg-3 hidden-xs hidden-sm">
               <div ng-if="row.apiObject.kind === 'Pod'">
                 <h4>Usage <small>Last 15 Minutes</small></h4>
                 <deployment-metrics
@@ -218,7 +219,7 @@
                 </deployment-metrics>
               </div>
             </div>
-            <div class="col-sm-8 col-md-4">
+            <div class="col-sm-8 col-md-5 col-lg-6" ng-class="{ 'hidden-sm col-md-4 col-lg-4': row.previous }">
               <!-- TODO: markup semantics suggest div.component-label in <pod-template> should be an h4,
                          but only here on the overview -->
               <pod-template
@@ -287,12 +288,12 @@
         <div ng-if="row.buildConfigs.length" class="expanded-section">
           <div class="component-label">Builds</div>
           <div ng-repeat="buildConfig in row.buildConfigs track by (buildConfig | uid)" class="row">
-            <div class="col-sm-3">
+            <div class="col-sm-4 col-md-3">
               <h3 class="mar-top-xs">
                 <a ng-href="{{buildConfig | navigateResourceURL}}">{{buildConfig.metadata.name}}</a>
               </h3>
             </div>
-            <div class="col-sm-9">
+            <div class="col-sm-8 col-md-9">
               <div ng-if="!(row.state.recentBuildsByBuildConfig[buildConfig.metadata.name] | hashSize)">
                 No builds.
                 <!-- <a href="" ng-if="('buildconfigs/instantiate' | canI : 'create')" ng-click="startBuild(buildConfig)" class="small mar-left-sm">Start Build</a> -->
