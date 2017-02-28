@@ -35,20 +35,20 @@
       </h3>
       <div ng-if="row.isDeploymentInProgress()" class="list-pf-details">
         <div ng-if="row.apiObject.kind === 'DeploymentConfig'">
-          {{row.apiObject.spec.strategy.type}}&nbsp;<ellipsis-pulser color="dark" size="sm" display="inline" msg="deployment in progress"></ellipsis-pulser>
-        </div>
-        <div ng-if="row.apiObject.kind === 'Deployment'">
-          {{row.apiObject.spec.strategy.type | sentenceCase}}&nbsp;<ellipsis-pulser color="dark" size="sm" display="inline" msg="in progress"></ellipsis-pulser>
-        </div>
-        <div ng-if="row.current.kind === 'ReplicationController'" class="overview-row-inline-actions">
-          <a ng-if="row.current.kind === 'ReplicationController'" ng-href="{{row.current | navigateResourceURL}}?tab=logs">View Log</a>
+          <span class="mar-right-sm">
+            {{row.apiObject.spec.strategy.type}} deployment
+            {{row.current | deploymentStatus | lowercase}}&thinsp;<ellipsis-pulser color="dark" size="sm" display="inline" msg=""></ellipsis-pulser>
+          </span>
+          <a ng-href="{{row.current | navigateResourceURL}}?tab=logs">View Log</a>
           <span ng-if="'replicationcontrollers' | canI : 'update'">
             <span ng-if="'replicationcontrollers' | canI: 'update'" class="action-divider">|</span>
             <a href="" ng-click="row.cancelDeployment()" role="button">Cancel</a>
           </span>
         </div>
+        <div ng-if="row.apiObject.kind === 'Deployment'">
+          {{row.apiObject.spec.strategy.type | sentenceCase}}&nbsp;<ellipsis-pulser color="dark" size="sm" display="inline" msg="in progress"></ellipsis-pulser>
+        </div>
       </div>
-      <!-- TODO: Support mobile -->
       <div ng-if="row.current && !row.isDeploymentInProgress() && !row.isExpanded()" class="list-pf-details animate-if hidden-xs hidden-sm">
         <div class="additional-info-item">
           <div ng-if="row.apiObject.kind === 'Pod'">
