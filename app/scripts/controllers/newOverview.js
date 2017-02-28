@@ -132,9 +132,11 @@ function OverviewController($scope,
       return null;
     }
 
-    var pods = _.get(overview, ['state', 'podsByOwnerUID', uid]);
-    if (!pods) {
-      return null;
+    var pods;
+    if (apiObject.kind === 'Pod') {
+      pods = [apiObject];
+    } else {
+      pods = _.get(overview, ['state', 'podsByOwnerUID', uid]);
     }
 
     state.notificationsByObjectUID[uid] = ResourceAlertsService.getPodAlerts(pods, $routeParams.project);
