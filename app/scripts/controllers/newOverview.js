@@ -289,16 +289,6 @@ function OverviewController($scope,
     if (!dcName) {
       return true;
     }
-    // Wait for deployment configs to load.
-    if (!overview.deploymentConfigs) {
-      return false;
-    }
-    // If the deployment config has been deleted and the deployment has no replicas, hide it.
-    // Otherwise all old deployments for a deleted deployment config will be visible.
-    var deploymentConfig = overview.deploymentConfigs[dcName];
-    if (!deploymentConfig) {
-      return false;
-    }
     return deploymentIsInProgress(replicationController);
   };
 
