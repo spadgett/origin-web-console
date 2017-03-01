@@ -74,9 +74,6 @@
     font-size: 300%;
     .text-muted();
   }
-  .deployment-donut > div[row] {
-    justify-content: center;
-  }
   h1, h2 {
     // Don't clip descenders.
     line-height: normal;
@@ -97,6 +94,9 @@
     max-width: 500px;
   }
   .list-pf-expansion.in {
+    .deployment-donut > div[row] {
+      justify-content: center;
+    }
     .empty-state-message {
       margin-bottom: 30px;
       margin-top: 30px;
@@ -106,6 +106,9 @@
     }
     .list-pf-content {
       max-width: 100%;
+    }
+    .pod-donut {
+      .text-center();
     }
   }
   .list-pf-item {
