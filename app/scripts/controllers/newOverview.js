@@ -380,7 +380,7 @@ function OverviewController($scope,
 
     // Since the visible replication controllers for each deployment config
     // have changed, update the deployment config warnings.
-    updateAllDeploymentWarnings();
+    updateAllDeploymentConfigWarnings();
   };
 
   // Determine if a replica set is visible, either as part of a deployment or
@@ -439,7 +439,9 @@ function OverviewController($scope,
     });
     overview.vanillaReplicaSets = _.sortBy(overview.replicaSetsByDeployment[''], 'metadata.name');
 
-    // FIXME: update deployment warnings?
+    // Since the visible replica sets for each deployment have changed, update
+    // the deployment warnings.
+    updateAllDeploymentWarnings();
   };
 
   // Find the services that direct traffic to each API object.
