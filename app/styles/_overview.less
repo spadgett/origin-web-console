@@ -118,6 +118,8 @@
     }
     > .list-pf-container {
       cursor: pointer;
+      // Prevent the row from shrinking slightly on expand.
+      min-height: 80px;
     }
   }
   .list-view-pf-actions .actions-dropdown-kebab {
@@ -220,7 +222,7 @@
     margin-bottom: 20px;
   }
   .usage-value {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 300;
     line-height: 1;
   }
