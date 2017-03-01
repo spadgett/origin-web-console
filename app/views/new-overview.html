@@ -2,12 +2,12 @@
 <project-page class="overview-new">
   <div class="middle-section">
     <div class="middle-container">
-      <div class="container-fluid page-notifications">
-        <tasks></tasks>
-        <alerts alerts="overview.state.alerts"></alerts>
-      </div>
       <!-- Empty states -->
       <div ng-if="overview.renderOptions.showGetStarted">
+        <div class="container-fluid">
+          <tasks></tasks>
+          <alerts alerts="overview.state.alerts"></alerts>
+        </div>
         <!-- Getting started -->
         <div class="empty-state-message text-center">
           <div ng-if="project.metadata.name | canIAddToProject">
@@ -88,6 +88,10 @@
           </div>
         </div>
         <div class="middle-content">
+          <div class="container-fluid">
+            <tasks></tasks>
+            <alerts alerts="overview.state.alerts"></alerts>
+          </div>
           <div class="container-fluid">
             <div ng-if="overview.everythingFiltered">
               <div class="empty-state-message text-center h2">
