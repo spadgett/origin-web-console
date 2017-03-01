@@ -26,6 +26,9 @@ function OverviewController($scope,
   var limitWatches = $filter('isIE')() || $filter('isEdge')();
   var DEFAULT_POLL_INTERVAL = 60 * 1000; // milliseconds
 
+  $scope.projectName = $routeParams.project;
+
+  // Filters used by this controller.
   var annotation = $filter('annotation');
   var buildConfigForBuild = $filter('buildConfigForBuild');
   var deploymentIsInProgress = $filter('deploymentIsInProgress');
@@ -36,15 +39,16 @@ function OverviewController($scope,
   var orderObjectsByDate = $filter('orderObjectsByDate');
   var getPodTemplate = $filter('podTemplate');
 
-  $scope.projectName = $routeParams.project;
-
   var imageStreams;
   var labelSuggestions = {};
   var mostRecentByDC = {};
 
-  // Common state that is shared by overview and overview-list-row. This avoids
-  // having to the same values as attributes again and again for different
-  // types.
+  // `overview.state` tracks common state that is shared by overview and
+  // `overview-list-row`. This avoids having to the same values as attributes
+  // again and again for different types, but lets us update these maps in one
+  // place as needed from watch callbacks here in the overview controller.
+  //
+  // NOTE: Do not change or remove properties without updating overview-list-row.
   var state = overview.state = {
     alerts: {},
     builds: {},
@@ -57,7 +61,9 @@ function OverviewController($scope,
     podsByOwnerUID: {},
     quotas: {},
     routesByService: {},
-    servicesByObjectUID: {}
+    servicesByObjectUID: {},
+    // Set to true below when metrics are available.
+    showMetrics: false
   };
 
   AlertMessageService.getAlerts().forEach(function(alert) {
@@ -65,7 +71,11 @@ function OverviewController($scope,
   });
   AlertMessageService.clearAlerts();
 
-  overview.renderOptions = {};
+  overview.renderOptions = {
+    showGetStarted: false,
+    showLoading: true
+  };
+
   overview.filterByOptions = [{
     id: 'name',
     label: 'Name'
@@ -86,7 +96,7 @@ function OverviewController($scope,
     label: 'Pipeline'
   }];
 
-  // Track view-by state in localStorage
+  // Track view-by state in localStorage.
   var viewByKey = $routeParams.project + '/view-by';
   overview.viewBy = localStorage.getItem(viewByKey) || 'app';
   $scope.$watch(function() {
@@ -95,10 +105,13 @@ function OverviewController($scope,
     localStorage.setItem(viewByKey, value);
   });
 
+  // Check if a metrics URL has been configured for overview metrics.
+  // TODO: Let users disable metrics through a constant?
   MetricsService.isAvailable(true).then(function(available) {
     state.showMetrics = available;
   });
 
+  // Show a page-level alert when we fail to connect to Hawkular metrics.
   $scope.$on('metrics-connection-failed', function(e, data) {
     var hidden = AlertMessageService.isAlertPermanentlyHidden('metrics-connection-failed');
     if (hidden || state.alerts['metrics-connection-failed']) {
@@ -126,6 +139,12 @@ function OverviewController($scope,
     };
   });
 
+  // Set pod warnings for pods owned by `apiObject`, which can be a set like
+  // a replication controller or replica set, or just a pod itself.
+  //
+  // Updates `state.notificationsByObjectUID`
+  //   key: object UID
+  //   value: alerts object
   var updatePodWarnings = function(apiObject) {
     var uid = _.get(apiObject, 'metadata.uid');
     if (!uid) {
@@ -142,6 +161,12 @@ function OverviewController($scope,
     state.notificationsByObjectUID[uid] = ResourceAlertsService.getPodAlerts(pods, $routeParams.project);
   };
 
+  // Set warnings for a deployment config, including warnings for any active
+  // replication controllers and cancelled and failed deployments.
+  //
+  // Updates `state.notificationsByObjectUID`
+  //   key: object UID
+  //   value: alerts object
   var updateDeploymentConfigWarnings = function(deploymentConfig) {
     var notifications = {};
     var uid = _.get(deploymentConfig, 'metadata.uid');
@@ -168,10 +193,16 @@ function OverviewController($scope,
     state.notificationsByObjectUID[uid] = notifications;
   };
 
+  // Update warnings for all deployment configs.
   var updateAllDeploymentConfigWarnings = function() {
     _.each(overview.deploymentConfigs, updateDeploymentConfigWarnings);
   };
 
+  // Set warnings for a Kubernetes deployment, including any active replica sets.
+  //
+  // Updates `state.notificationsByObjectUID`
+  //   key: object UID
+  //   value: alerts object
   var updateDeploymentWarnings = function(deployment) {
     var notifications = {};
     var uid = _.get(deployment, 'metadata.uid');
@@ -195,11 +226,13 @@ function OverviewController($scope,
     state.notificationsByObjectUID[uid] = notifications;
   };
 
+  // Update warnings for all Kubernetes deployments.
   var updateAllDeploymentWarnings = function() {
     _.each(overview.deployments, updateDeploymentWarnings);
   };
 
-  var updateAllPodWarnings = _.debounce(function() {
+  // Update warnings for all kinds.
+  var updateWarnings = _.debounce(function() {
     $scope.$apply(function() {
       _.each(overview.replicationControllers, updatePodWarnings);
       _.each(overview.replicaSets, updatePodWarnings);
@@ -210,10 +243,14 @@ function OverviewController($scope,
     });
   }, 500);
 
+  // Group a collection of resources by app label. Returns a map where the key
+  // is the app label value and the value is an array of object, sorted by
+  // `metadata.name`.
   var groupByApp = function(collection) {
     return AppsService.groupByApp(collection, 'metadata.name');
   };
 
+  // Group each resource kind by app and update the list of app label values.
   var updateApps = function() {
     overview.filteredDCByApp = groupByApp(overview.filteredDeploymentConfigs);
     overview.filteredRCByApp = groupByApp(overview.filteredReplicationControllers);
@@ -231,11 +268,14 @@ function OverviewController($scope,
     AppsService.sortAppNames(overview.apps);
   };
 
+  // Update the label filter suggestions for a list of objects.
   var updateLabelSuggestions = function(objects) {
     LabelFilter.addLabelSuggestionsFromResources(objects, labelSuggestions);
     LabelFilter.setLabelSuggestions(labelSuggestions);
   };
 
+  // Get all resources that own pods (replication controllers, replica sets,
+  // and stateful sets).
   var getPodOwners = function() {
     var replicationControllers = _.toArray(overview.replicationControllers);
     var replicaSets = _.toArray(overview.replicaSets);
@@ -244,25 +284,24 @@ function OverviewController($scope,
     return replicationControllers.concat(replicaSets, statefulSets);
   };
 
-  // Filter out monopods we know we don't want to see
+  // Filter out monopods we know we don't want to see.
   var showMonopod = function(pod) {
-    // Hide pods in the Succeeded & Terminated phases since these
-    // are run once pods that are done.
+    // Hide pods in the succeeded and failed phases since these are run once
+    // pods that are done.
     if (pod.status.phase === 'Succeeded' ||
         pod.status.phase === 'Failed') {
-      // TODO we may want to show pods for X amount of time after they have completed
+      // TODO: We may want to show pods for X amount of time after they have completed.
       return false;
     }
 
-    // Hide our deployer pods since it is obvious the deployment is
-    // happening when the new deployment appears.
+    // Hide our deployer pods since it is obvious the deployment is happening
+    // when the new deployment appears.
     if (label(pod, "openshift.io/deployer-pod-for.name")) {
       return false;
     }
 
-    // Hide our build pods since we are already showing details for
-    // currently running or recently run builds under the appropriate
-    // areas.
+    // Hide our build pods since we are already showing details for currently
+    // running or recently run builds under the appropriate areas.
     if (annotation(pod, "openshift.io/build.name")) {
       return false;
     }
@@ -275,12 +314,15 @@ function OverviewController($scope,
     return true;
   };
 
+  // Group all pods by owner, tracked in the `state.podsByOwnerUID` map.
   var groupPods = function() {
     var podOwners = getPodOwners();
     state.podsByOwnerUID = LabelsService.groupBySelector(overview.pods, podOwners, { key: 'metadata.uid' });
     overview.monopods = _.filter(state.podsByOwnerUID[''], showMonopod);
   };
 
+  // Determine if a replication controller is visible, either as part of a
+  // deployment config or a standalone replication controller.
   var isReplicationControllerVisible = function(replicationController) {
     if (_.get(replicationController, 'status.replicas')) {
       return true;
@@ -292,10 +334,14 @@ function OverviewController($scope,
     return deploymentIsInProgress(replicationController);
   };
 
+  // Get the deployment config name for a replication controller by reading the
+  // "openshift.io/deployment-config.name" annotation.
   var getDeploymentConfig = function(replicationController) {
     return annotation(replicationController, 'deploymentConfig');
   };
 
+  // Group replication controllers by deployment config and filter the visible
+  // replication controllers.
   var groupReplicationControllers = function() {
     // TODO: Handle deleted deployment configs and orphaned RCs.
     var vanillaRCs = [];
@@ -329,9 +375,14 @@ function OverviewController($scope,
       overview.activeByDC[dcName] = _.head(ordered);
     });
     overview.vanillaRCs = _.sortBy(vanillaRCs, 'metadata.name');
+
+    // Since the visible replication controllers for each deployment config
+    // have changed, update the deployment config warnings.
     updateAllDeploymentWarnings();
   };
 
+  // Determine if a replica set is visible, either as part of a deployment or
+  // as a standalone replica set.
   var isReplicaSetVisible = function(replicaSet, deployment) {
     // If the replica set has pods, show it.
     if (_.get(replicaSet, 'status.replicas')) {
@@ -355,10 +406,13 @@ function OverviewController($scope,
     return DeploymentsService.getRevision(deployment) === revision;
   };
 
+  // Sort replica sets in descending order by their revision number.
+  // FIXME: This needs to treat the revisions as numbers, not strings.
   var orderByRevision = function(replicaSets) {
     return _.sortByOrder(replicaSets, [ DeploymentsService.getRevision ], [ 'desc' ]);
   };
 
+  // Group replica sets by deployment and filter the visible replica sets.
   var groupReplicaSets = function() {
     if (!overview.replicaSets || !overview.deployments) {
       return;
@@ -388,8 +442,15 @@ function OverviewController($scope,
       // });
     });
     overview.vanillaReplicaSets = _.sortBy(overview.replicaSetsByDeployment[''], 'metadata.name');
+
+    // FIXME: update deployment warnings?
   };
 
+  // Find the services that direct traffic to each API object.
+  //
+  // Updates `state.servicesByObjectUID`
+  //   key: object UID
+  //   value: array of sorted services
   var selectorsByService = {};
   var updateServices = function(objects) {
     if (!objects || !overview.services) {
@@ -410,6 +471,11 @@ function OverviewController($scope,
     });
   };
 
+  // Update the list of services for all API objects.
+  //
+  // Updates `state.servicesByObjectUID`
+  //   key: object UID
+  //   value: array of sorted services
   var groupServices = function() {
     if (!overview.services) {
       return;
@@ -430,6 +496,14 @@ function OverviewController($scope,
     _.each(toUpdate, updateServices);
   };
 
+  // Group routes by the services they route to (either as a primary service or
+  // alternate backend).
+  //
+  // Updates `state.routesByService`
+  //   key: service name
+  //   value: array of routes, sorted by RoutesService.sortRoutesByScore
+  //
+  // TODO: Move to a service.
   var groupRoutes = function() {
     state.routesByService = {};
     var addToService = function(route, serviceName) {
@@ -452,6 +526,13 @@ function OverviewController($scope,
     _.mapValues(state.routesByService, RoutesService.sortRoutesByScore);
   };
 
+  // Group HPAs by the object they scale.
+  //
+  // Updates `state.hpaByResource`
+  //   key: hpaByResource[kind][name]
+  //   value: array of HPA objects
+  //
+  // TODO: Move to a service.
   var groupHPAs = function() {
     state.hpaByResource = {};
     _.each(overview.horizontalPodAutoscalers, function(hpa) {
@@ -475,6 +556,15 @@ function OverviewController($scope,
     });
   };
 
+  // Adds a recent pipeline build to the following maps:
+  //
+  // `overview.recentPipelinesByBC`
+  //   key: build config name
+  //   value: array of pipeline builds
+  //
+  // `overview.recentPipelinesByDC`
+  //   key: deployment config name
+  //   value: array of pipeline builds
   var groupPipelineByDC = function(build) {
     var bcName = buildConfigForBuild(build);
     var buildConfig = overview.buildConfigs[bcName];
@@ -493,6 +583,8 @@ function OverviewController($scope,
     });
   };
 
+  // Group build configs by their output image. This lets us match them to
+  // deployment config image change triggers.
   var buildConfigsByOutputImage = {};
   var groupBuildConfigsByOutputImage = function() {
     buildConfigsByOutputImage = {};
@@ -504,6 +596,11 @@ function OverviewController($scope,
     });
   };
 
+  // Find all recent builds for `deploymentConfig` from each of `buildConfigs`.
+  //
+  // Updates `state.recentBuildsByDeploymentConfig`
+  //   key: deployment config name
+  //   value: array of builds, sorted in descending order by creation date
   var updateRecentBuildsForDC = function(deploymentConfig, buildConfigs) {
     var builds = [];
     _.each(buildConfigs, function(buildConfig) {
@@ -515,6 +612,23 @@ function OverviewController($scope,
     _.set(state, ['recentBuildsByDeploymentConfig', deploymentConfig.metadata.name], builds);
   };
 
+  // Find the build configs that relate to each deployment config.
+  //
+  // Find build configs that use the pipeline strategy and have a
+  // "pipeline.alpha.openshift.io/uses" annotation pointing to a deployment
+  // config.
+  //
+  // Updates `state.pipelinesForDC`
+  //   key: deployment config name
+  //   value: array of pipeline build configs
+  //          TODO: sort by name?
+  //
+  // Find build configs with an output image that matches the deployment config
+  // image change trigger.
+  //
+  // Updates `state.buildConfigsByObjectUID`
+  //   key: deployment config UID
+  //   value: array of build configs, sorted by name
   var groupBuildConfigsByDeploymentConfig = function() {
     // Group pipelines.
     overview.dcByPipeline = {};
@@ -715,162 +829,160 @@ function OverviewController($scope,
   };
 
   var watches = [];
-  ProjectsService
-    .get($routeParams.project)
-    .then(_.spread(function(project, context) {
-      $scope.project = project;
-      overview.projectContext = context;
+  ProjectsService.get($routeParams.project).then(_.spread(function(project, context) {
+    $scope.project = project;
+    overview.projectContext = context;
 
-      var updateReferencedImageStreams = function() {
-        if (!overview.pods) {
-          return;
-        }
+    var updateReferencedImageStreams = function() {
+      if (!overview.pods) {
+        return;
+      }
 
-        ImageStreamResolver.fetchReferencedImageStreamImages(overview.pods,
-                                                             state.imagesByDockerReference,
-                                                             state.imageStreamImageRefByDockerReference,
-                                                             context);
-      };
+      ImageStreamResolver.fetchReferencedImageStreamImages(overview.pods,
+                                                           state.imagesByDockerReference,
+                                                           state.imageStreamImageRefByDockerReference,
+                                                           context);
+    };
 
-      watches.push(DataService.watch("pods", context, function(podsData) {
-        overview.pods = podsData.by("metadata.name");
-        groupPods();
-        updateReferencedImageStreams();
-        updateAllPodWarnings();
-        updateLabelSuggestions(overview.pods);
-        updateServices(overview.monopods);
-        updateFilter();
-        _.each(overview.monopods, updatePodWarnings);
-        Logger.log("pods (subscribe)", overview.pods);
-      }));
-
-      watches.push(DataService.watch("services", context, function(serviceData) {
-        overview.services = serviceData.by("metadata.name");
-        groupServices();
-        Logger.log("services (subscribe)", overview.services);
-      }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
-
-      watches.push(DataService.watch("builds", context, function(buildData) {
-        state.builds = buildData.by("metadata.name");
-        groupBuilds();
-        Logger.log("builds (subscribe)", state.builds);
-      }));
-
-      watches.push(DataService.watch("buildConfigs", context, function(buildConfigData) {
-        overview.buildConfigs = buildConfigData.by("metadata.name");
-        groupBuildConfigsByOutputImage();
-        groupBuildConfigsByDeploymentConfig();
-        groupBuilds();
-        Logger.log("buildconfigs (subscribe)", overview.buildConfigs);
-      }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
-
-      watches.push(DataService.watch("routes", context, function(routesData) {
-        overview.routes = routesData.by("metadata.name");
-        groupRoutes();
-        Logger.log("routes (subscribe)", overview.routes);
-      }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
-
-      watches.push(DataService.watch("replicationcontrollers", context, function(rcData) {
-        overview.replicationControllers = rcData.by("metadata.name");
-        groupPods();
-        groupReplicationControllers();
-        updateLabelSuggestions(overview.replicationControllers);
-        updateServices(overview.vanillaRCs);
-        updateFilter();
-        _.each(overview.replicationControllers, updatePodWarnings);
-        Logger.log("replicationcontrollers (subscribe)", overview.replicationControllers);
-      }));
-
-      watches.push(DataService.watch("deploymentconfigs", context, function(dcData) {
-        overview.deploymentConfigs = dcData.by("metadata.name");
-        updateLabelSuggestions(overview.deploymentConfigs);
-        updateServices(overview.deploymentConfigs);
-        updateAllDeploymentWarnings();
-        updateFilter();
-        groupBuildConfigsByDeploymentConfig();
-        groupRecentBuildsByDeploymentConfig();
-        Logger.log("deploymentconfigs (subscribe)", overview.deploymentConfigs);
-      }));
-
-      watches.push(DataService.watch({
-        group: "extensions",
-        resource: "replicasets"
-      }, context, function(replicaSetData) {
-        overview.replicaSets = replicaSetData.by('metadata.name');
-        groupPods();
-        groupReplicaSets();
-        updateServices(overview.vanillaReplicaSets);
-        updateLabelSuggestions(overview.replicaSets);
-        updateFilter();
-        _.each(overview.replicaSets, updatePodWarnings);
-        Logger.log("replicasets (subscribe)", overview.replicaSets);
-      }));
-
-      watches.push(DataService.watch({
-        group: "apps",
-        resource: "statefulsets"
-      }, context, function(statefulSetData) {
-        overview.statefulSets = statefulSetData.by('metadata.name');
-        groupPods();
-        updateServices(overview.monopods);
-        updateLabelSuggestions(overview.statefulSets);
-        updateFilter();
-        Logger.log("statefulsets (subscribe)", overview.statefulSets);
-      }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
-
-      watches.push(DataService.watch({
-        group: "extensions",
-        resource: "deployments"
-      }, context, function(deploymentData) {
-        overview.deployments = deploymentData.by('metadata.name');
-        groupReplicaSets();
-        updateServices(overview.deployments);
-        updateLabelSuggestions(overview.deployments);
-        updateFilter();
-        Logger.log("deployments (subscribe)", overview.deployments);
-      }));
-
-      watches.push(DataService.watch({
-        group: "extensions",
-        resource: "horizontalpodautoscalers"
-      }, context, function(hpaData) {
-        overview.horizontalPodAutoscalers = hpaData.by("metadata.name");
-        groupHPAs();
-        Logger.log("autoscalers (subscribe)", overview.horizontalPodAutoscalers);
-      }, {poll: limitWatches, pollInterval: 60 * 1000}));
-
-      // Always poll quotas instead of watching, its not worth the overhead of maintaining websocket connections
-      watches.push(DataService.watch('resourcequotas', context, function(quotaData) {
-        state.quotas = quotaData.by("metadata.name");
-        updateQuotaWarnings();
-      }, {poll: true, pollInterval: 60 * 1000}));
-
-      watches.push(DataService.watch('appliedclusterresourcequotas', context, function(clusterQuotaData) {
-        state.clusterQuotas = clusterQuotaData.by("metadata.name");
-        updateQuotaWarnings();
-      }, {poll: true, pollInterval: 60 * 1000}));
-
-      // List limit ranges in this project to determine if there is a default
-      // CPU request for autoscaling.
-      DataService.list("limitranges", context, function(response) {
-        state.limitRanges = response.by("metadata.name");
-      });
-
-      watches.push(DataService.watch("imagestreams", context, function(imageStreamData) {
-        imageStreams = imageStreamData.by("metadata.name");
-        ImageStreamResolver.buildDockerRefMapForImageStreams(imageStreams,
-                                                             state.imageStreamImageRefByDockerReference);
-        updateReferencedImageStreams();
-        Logger.log("imagestreams (subscribe)", imageStreams);
-      }, {poll: limitWatches, pollInterval: 60 * 1000}));
-
-      DataService.get("templates", Constants.SAMPLE_PIPELINE_TEMPLATE.name, {namespace: Constants.SAMPLE_PIPELINE_TEMPLATE.namespace}, { errorNotification: false }).then(
-        function(template) {
-          overview.samplePipelineURL = Navigate.createFromTemplateURL(template, $scope.projectName);
-        });
-
-      $scope.$on('$destroy', function(){
-        DataService.unwatchAll(watches);
-      });
+    watches.push(DataService.watch("pods", context, function(podsData) {
+      overview.pods = podsData.by("metadata.name");
+      groupPods();
+      updateReferencedImageStreams();
+      updateWarnings();
+      updateLabelSuggestions(overview.pods);
+      updateServices(overview.monopods);
+      updateFilter();
+      _.each(overview.monopods, updatePodWarnings);
+      Logger.log("pods (subscribe)", overview.pods);
     }));
+
+    watches.push(DataService.watch("services", context, function(serviceData) {
+      overview.services = serviceData.by("metadata.name");
+      groupServices();
+      Logger.log("services (subscribe)", overview.services);
+    }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
+
+    watches.push(DataService.watch("builds", context, function(buildData) {
+      state.builds = buildData.by("metadata.name");
+      groupBuilds();
+      Logger.log("builds (subscribe)", state.builds);
+    }));
+
+    watches.push(DataService.watch("buildConfigs", context, function(buildConfigData) {
+      overview.buildConfigs = buildConfigData.by("metadata.name");
+      groupBuildConfigsByOutputImage();
+      groupBuildConfigsByDeploymentConfig();
+      groupBuilds();
+      Logger.log("buildconfigs (subscribe)", overview.buildConfigs);
+    }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
+
+    watches.push(DataService.watch("routes", context, function(routesData) {
+      overview.routes = routesData.by("metadata.name");
+      groupRoutes();
+      Logger.log("routes (subscribe)", overview.routes);
+    }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
+
+    watches.push(DataService.watch("replicationcontrollers", context, function(rcData) {
+      overview.replicationControllers = rcData.by("metadata.name");
+      groupPods();
+      groupReplicationControllers();
+      updateLabelSuggestions(overview.replicationControllers);
+      updateServices(overview.vanillaRCs);
+      updateFilter();
+      _.each(overview.replicationControllers, updatePodWarnings);
+      Logger.log("replicationcontrollers (subscribe)", overview.replicationControllers);
+    }));
+
+    watches.push(DataService.watch("deploymentconfigs", context, function(dcData) {
+      overview.deploymentConfigs = dcData.by("metadata.name");
+      updateLabelSuggestions(overview.deploymentConfigs);
+      updateServices(overview.deploymentConfigs);
+      updateAllDeploymentWarnings();
+      updateFilter();
+      groupBuildConfigsByDeploymentConfig();
+      groupRecentBuildsByDeploymentConfig();
+      Logger.log("deploymentconfigs (subscribe)", overview.deploymentConfigs);
+    }));
+
+    watches.push(DataService.watch({
+      group: "extensions",
+      resource: "replicasets"
+    }, context, function(replicaSetData) {
+      overview.replicaSets = replicaSetData.by('metadata.name');
+      groupPods();
+      groupReplicaSets();
+      updateServices(overview.vanillaReplicaSets);
+      updateLabelSuggestions(overview.replicaSets);
+      updateFilter();
+      _.each(overview.replicaSets, updatePodWarnings);
+      Logger.log("replicasets (subscribe)", overview.replicaSets);
+    }));
+
+    watches.push(DataService.watch({
+      group: "apps",
+      resource: "statefulsets"
+    }, context, function(statefulSetData) {
+      overview.statefulSets = statefulSetData.by('metadata.name');
+      groupPods();
+      updateServices(overview.monopods);
+      updateLabelSuggestions(overview.statefulSets);
+      updateFilter();
+      Logger.log("statefulsets (subscribe)", overview.statefulSets);
+    }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
+
+    watches.push(DataService.watch({
+      group: "extensions",
+      resource: "deployments"
+    }, context, function(deploymentData) {
+      overview.deployments = deploymentData.by('metadata.name');
+      groupReplicaSets();
+      updateServices(overview.deployments);
+      updateLabelSuggestions(overview.deployments);
+      updateFilter();
+      Logger.log("deployments (subscribe)", overview.deployments);
+    }));
+
+    watches.push(DataService.watch({
+      group: "extensions",
+      resource: "horizontalpodautoscalers"
+    }, context, function(hpaData) {
+      overview.horizontalPodAutoscalers = hpaData.by("metadata.name");
+      groupHPAs();
+      Logger.log("autoscalers (subscribe)", overview.horizontalPodAutoscalers);
+    }, {poll: limitWatches, pollInterval: 60 * 1000}));
+
+    // Always poll quotas instead of watching, its not worth the overhead of maintaining websocket connections
+    watches.push(DataService.watch('resourcequotas', context, function(quotaData) {
+      state.quotas = quotaData.by("metadata.name");
+      updateQuotaWarnings();
+    }, {poll: true, pollInterval: 60 * 1000}));
+
+    watches.push(DataService.watch('appliedclusterresourcequotas', context, function(clusterQuotaData) {
+      state.clusterQuotas = clusterQuotaData.by("metadata.name");
+      updateQuotaWarnings();
+    }, {poll: true, pollInterval: 60 * 1000}));
+
+    // List limit ranges in this project to determine if there is a default
+    // CPU request for autoscaling.
+    DataService.list("limitranges", context, function(response) {
+      state.limitRanges = response.by("metadata.name");
+    });
+
+    watches.push(DataService.watch("imagestreams", context, function(imageStreamData) {
+      imageStreams = imageStreamData.by("metadata.name");
+      ImageStreamResolver.buildDockerRefMapForImageStreams(imageStreams,
+                                                           state.imageStreamImageRefByDockerReference);
+      updateReferencedImageStreams();
+      Logger.log("imagestreams (subscribe)", imageStreams);
+    }, {poll: limitWatches, pollInterval: 60 * 1000}));
+
+    DataService.get("templates", Constants.SAMPLE_PIPELINE_TEMPLATE.name, {namespace: Constants.SAMPLE_PIPELINE_TEMPLATE.namespace}, { errorNotification: false }).then(
+      function(template) {
+        overview.samplePipelineURL = Navigate.createFromTemplateURL(template, $scope.projectName);
+      });
+
+    $scope.$on('$destroy', function(){
+      DataService.unwatchAll(watches);
+    });
+  }));
 }
