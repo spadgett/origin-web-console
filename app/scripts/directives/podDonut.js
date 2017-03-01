@@ -59,11 +59,11 @@ angular.module('openshiftConsole')
             label: {
               show: false
             },
-            width: $scope.mini ? 4 : 10
+            width: $scope.mini ? 5 : 10
           },
           size: {
-            height: $scope.mini ? 40 : 150,
-            width: $scope.mini ? 40 : 150
+            height: $scope.mini ? 45 : 150,
+            width: $scope.mini ? 45 : 150
           },
           legend: {
             show: false
@@ -115,6 +115,15 @@ angular.module('openshiftConsole')
             }
           }
         };
+
+        if ($scope.mini) {
+          config.padding = {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+          };
+        }
 
         function updateChart(countByPhase) {
           var data = {
