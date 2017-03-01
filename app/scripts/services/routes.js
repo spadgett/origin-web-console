@@ -130,7 +130,33 @@ angular.module("openshiftConsole")
       return (rightScore > leftScore) ? rhs : lhs;
     };
 
-    var groupByService = function(routes) {
+    var groupByServiceAndAlternateBackends = function(routes) {
+      var routesByService = {};
+      var addToService = function(route, serviceName) {
+        routesByService[serviceName] = routesByService[serviceName] || [];
+        routesByService[serviceName].push(route);
+      };
+
+      _.each(routes, function(route) {
+        addToService(route, route.spec.to.name);
+        var alternateBackends = _.get(route, 'spec.alternateBackends', []);
+        _.each(alternateBackends, function(alternateBackend) {
+          if (alternateBackend.kind !== 'Service') {
+            return;
+          }
+
+          addToService(route, alternateBackend.name);
+        });
+      });
+
+      return routesByService;
+    };
+
+    var groupByService = function(routes, includeAlternateBackends) {
+      if (includeAlternateBackends) {
+        return groupByServiceAndAlternateBackends(routes);
+      }
+
       return _.groupBy(routes, 'spec.to.name');
     };
 

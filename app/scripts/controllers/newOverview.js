@@ -503,28 +503,9 @@ function OverviewController($scope,
   // Updates `state.routesByService`
   //   key: service name
   //   value: array of routes, sorted by RoutesService.sortRoutesByScore
-  //
-  // TODO: Move to a service.
   var groupRoutes = function() {
-    state.routesByService = {};
-    var addToService = function(route, serviceName) {
-      state.routesByService[serviceName] = state.routesByService[serviceName] || [];
-      state.routesByService[serviceName].push(route);
-    };
-
-    _.each(overview.routes, function(route) {
-      addToService(route, route.spec.to.name);
-      var alternateBackends = _.get(route, 'spec.alternateBackends', []);
-      _.each(alternateBackends, function(alternateBackend) {
-        if (alternateBackend.kind !== 'Service') {
-          return;
-        }
-
-        addToService(route, alternateBackend.name);
-      });
-    });
-
-    _.mapValues(state.routesByService, RoutesService.sortRoutesByScore);
+    var routesByService = RoutesService.groupByService(overview.routes, true);
+    state.routesByService = _.mapValues(routesByService, RoutesService.sortRoutesByScore);
   };
 
   // Group HPAs by the object they scale.
