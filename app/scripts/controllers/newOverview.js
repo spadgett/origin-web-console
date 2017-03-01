@@ -408,12 +408,6 @@ function OverviewController($scope,
     return DeploymentsService.getRevision(deployment) === revision;
   };
 
-  // Sort replica sets in descending order by their revision number.
-  // FIXME: This needs to treat the revisions as numbers, not strings.
-  var orderByRevision = function(replicaSets) {
-    return _.sortByOrder(replicaSets, [ DeploymentsService.getRevision ], [ 'desc' ]);
-  };
-
   // Group replica sets by deployment and filter the visible replica sets.
   var groupReplicaSets = function() {
     if (!overview.replicaSets || !overview.deployments) {
@@ -433,7 +427,7 @@ function OverviewController($scope,
       var visibleRelicaSets = _.filter(replicaSets, function(replicaSet) {
         return isReplicaSetVisible(replicaSet, deployment);
       });
-      var ordered = orderByRevision(visibleRelicaSets);
+      var ordered = DeploymentsService.sortByRevision(visibleRelicaSets);
       overview.replicaSetsByDeployment[deploymentName] = ordered;
       // TODO: Need to check if this really works for failed / canceled rollouts.
       // It might need to be reworked.
