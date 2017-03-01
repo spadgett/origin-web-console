@@ -12,6 +12,7 @@ function OverviewController($scope,
                             Constants,
                             DataService,
                             DeploymentsService,
+                            HPAService,
                             ImageStreamResolver,
                             KeywordService,
                             LabelFilter,
@@ -513,29 +514,8 @@ function OverviewController($scope,
   // Updates `state.hpaByResource`
   //   key: hpaByResource[kind][name]
   //   value: array of HPA objects
-  //
-  // TODO: Move to a service.
   var groupHPAs = function() {
-    state.hpaByResource = {};
-    _.each(overview.horizontalPodAutoscalers, function(hpa) {
-      var name = hpa.spec.scaleRef.name, kind = hpa.spec.scaleRef.kind;
-      if (!name || !kind) {
-        return;
-      }
-
-      // TODO: Handle groups and subresources in hpa.spec.scaleRef
-      // var groupVersion = APIService.parseGroupVersion(hpa.spec.scaleRef.apiVersion) || {};
-      // var group = groupVersion.group || '';
-      // if (!_.has(hpaByResource, [group, kind, name])) {
-      //   _.set(hpaByResource, [group, kind, name], []);
-      // }
-      // hpaByResource[group][kind][name].push(hpa);
-
-      if (!_.has(state.hpaByResource, [kind, name])) {
-        _.set(state.hpaByResource, [kind, name], []);
-      }
-      state.hpaByResource[kind][name].push(hpa);
-    });
+    state.hpaByResource = HPAService.groupHPAs(overview.horizontalPodAutoscalers);
   };
 
   // Adds a recent pipeline build to the following maps:
