@@ -105,39 +105,40 @@ function OverviewController($scope,
     localStorage.setItem(viewByKey, value);
   });
 
-  // Check if a metrics URL has been configured for overview metrics.
-  // TODO: Let users disable metrics through a constant?
-  MetricsService.isAvailable(true).then(function(available) {
-    state.showMetrics = available;
-  });
+  if (!window.OPENSHIFT_CONSTANTS.DISABLE_OVERVIEW_METRICS) {
+    // Check if a metrics URL has been configured for overview metrics.
+    MetricsService.isAvailable(true).then(function(available) {
+      state.showMetrics = available;
+    });
 
-  // Show a page-level alert when we fail to connect to Hawkular metrics.
-  $scope.$on('metrics-connection-failed', function(e, data) {
-    var hidden = AlertMessageService.isAlertPermanentlyHidden('metrics-connection-failed');
-    if (hidden || state.alerts['metrics-connection-failed']) {
-      return;
-    }
+    // Show a page-level alert when we fail to connect to Hawkular metrics.
+    $scope.$on('metrics-connection-failed', function(e, data) {
+      var hidden = AlertMessageService.isAlertPermanentlyHidden('metrics-connection-failed');
+      if (hidden || state.alerts['metrics-connection-failed']) {
+        return;
+      }
 
-    state.alerts['metrics-connection-failed'] = {
-      type: 'warning',
-      message: 'An error occurred getting metrics.',
-      links: [{
-        href: data.url,
-        label: 'Open Metrics URL',
-        target: '_blank'
-      }, {
-        href: '',
-        label: "Don't Show Me Again",
-        onClick: function() {
-          // Hide the alert on future page loads.
-          AlertMessageService.permanentlyHideAlert('metrics-connection-failed');
+      state.alerts['metrics-connection-failed'] = {
+        type: 'warning',
+        message: 'An error occurred getting metrics.',
+        links: [{
+          href: data.url,
+          label: 'Open Metrics URL',
+          target: '_blank'
+        }, {
+          href: '',
+          label: "Don't Show Me Again",
+          onClick: function() {
+            // Hide the alert on future page loads.
+            AlertMessageService.permanentlyHideAlert('metrics-connection-failed');
 
-          // Return true close the existing alert.
-          return true;
-        }
-      }]
-    };
-  });
+            // Return true close the existing alert.
+            return true;
+          }
+        }]
+      };
+    });
+  }
 
   // Set pod warnings for pods owned by `apiObject`, which can be a set like
   // a replication controller or replica set, or just a pod itself.
