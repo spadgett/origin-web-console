@@ -142,9 +142,11 @@
     margin: 0 10px;
   }
   .metrics-compact {
+    white-space : nowrap;
     .metrics-sparkline {
       border-bottom: 1px solid #ededed;
       display: inline-block;
+      height: 28px;
       vertical-align: -6px;
       width: 100px;
       @media (min-width: 1400px) {
@@ -163,11 +165,6 @@
     .usage-value {
       line-height: 1;
       margin: 3px 0;
-      .fa {
-        font-size: 10px;
-        .text-muted();
-        vertical-align: 2px;
-      }
     }
   }
   .middle .middle-container {
