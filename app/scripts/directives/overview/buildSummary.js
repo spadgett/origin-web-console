@@ -13,7 +13,7 @@ angular.module('openshiftConsole').component('buildSummary', {
 function BuildSummary($scope) {
   var buildSummary = this;
 
-  buildSummary.interestingPhases = ['New', 'Pending', 'Running', 'Error'];
+  buildSummary.interestingPhases = ['New', 'Pending', 'Running', 'Failed', 'Error'];
   var isInteresting = function(build) {
     var phase = _.get(build, 'status.phase');
     return _.includes(buildSummary.interestingPhases, phase);

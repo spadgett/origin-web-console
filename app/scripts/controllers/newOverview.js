@@ -653,6 +653,8 @@ function OverviewController($scope,
         state.recentBuildsByBuildConfig[bcName].push(build);
       }
     });
+
+    groupRecentBuildsByDeploymentConfig();
   };
 
   var size = function() {
