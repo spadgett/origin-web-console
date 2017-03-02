@@ -3,10 +3,17 @@
   <span ng-repeat="phase in buildSummary.interestingPhases"
         ng-if="buildSummary.countByPhase[phase]"
         class="mar-left-sm">
-    <span dynamic-content="{{phase}}" data-toggle="tooltip" data-trigger="hover">
-      <status-icon status="phase"></status-icon>
+    <span dynamic-content="{{phase}}" data-toggle="tooltip" data-trigger="hover" aria-hidden="true">
+      <span ng-switch="phase" class="hide-ng-leave">
+        <span ng-switch-when="Failed" class="status-icon">
+          <i class="pficon pficon-error-circle-o text-danger"></i>
+        </span>
+        <span ng-switch-default>
+          <status-icon status="phase"></status-icon>
+        </span>
+      </span>
     </span>
     {{buildSummary.countByPhase[phase]}}
-    <!-- {{phase}} -->
+    <span class="sr-only">{{phase}}</span>
   </span>
 </span>

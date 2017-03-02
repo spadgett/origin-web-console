@@ -9,30 +9,30 @@
       </span>
     </div>
     <div class="list-pf-content">
-      <h3 class="list-pf-name">
-        <div class="component-label">
-          <span ng-if="row.apiObject.kind === 'DeploymentConfig'">
-            Deployment
+      <div class="list-pf-name">
+        <h3>
+          <div class="component-label">
+            <span ng-if="row.apiObject.kind === 'DeploymentConfig'">
+              Deployment
+            </span>
+            <span ng-if="row.apiObject.kind !== 'DeploymentConfig'">
+              {{row.apiObject.kind | humanizeKind}}
+            </span>
+          </div>
+          <a ng-href="{{row.apiObject | navigateResourceURL}}"><span ng-bind-html="row.apiObject.metadata.name | highlightKeywords : row.state.filterKeywords"></span></a><span ng-if="row.apiObject.kind === 'DeploymentConfig' && row.current">,
+            <a ng-href="{{row.current | navigateResourceURL}}">#{{row.apiObject.status.latestVersion}}</a>
+          </span><span ng-if="row.apiObject.kind === 'Deployment' && row.current">,
+            <a ng-href="{{row.current | navigateResourceURL}}">#{{row.current | annotation : 'deployment.kubernetes.io/revision'}}</a>
           </span>
-          <span ng-if="row.apiObject.kind !== 'DeploymentConfig'">
-            {{row.apiObject.kind | humanizeKind}}
-          </span>
-        </div>
-        <a ng-href="{{row.apiObject | navigateResourceURL}}"><span ng-bind-html="row.apiObject.metadata.name | highlightKeywords : row.state.filterKeywords"></span></a><span ng-if="row.apiObject.kind === 'DeploymentConfig' && row.current">,
-          <a ng-href="{{row.current | navigateResourceURL}}">#{{row.apiObject.status.latestVersion}}</a>
-        </span><span ng-if="row.apiObject.kind === 'Deployment' && row.current">,
-          <a ng-href="{{row.current | navigateResourceURL}}">#{{row.current | annotation : 'deployment.kubernetes.io/revision'}}</a>
+          <notification-icon alerts="row.notifications"></notification-icon>
+        </h3>
+        <span ng-if="!row.isExpanded() && (row.recentPipelines | hashSize)" class="build-count">
+          <build-summary builds="row.recentPipelines" build-label="Pipelines"></build-summary>
         </span>
-        <notification-icon alerts="row.notifications"></notification-icon>
-        <div class="small text-muted mar-top-xs">
-          <span ng-if="!row.isExpanded() && (row.recentPipelines | hashSize)" class="pipeline-summary">
-            <build-summary builds="row.recentPipelines" build-label="Pipelines"></build-summary>
-          </span>
-          <span ng-if="!row.isExpanded() && (row.recentBuilds | hashSize)" class="pipeline-summary">
-            <build-summary builds="row.recentBuilds" build-label="Builds"></build-summary>
-          </span>
-        </div>
-      </h3>
+        <span ng-if="!row.isExpanded() && (row.recentBuilds | hashSize)" class="build-count">
+          <build-summary builds="row.recentBuilds" build-label="Builds"></build-summary>
+        </span>
+      </div>
       <div ng-if="row.apiObject.kind === 'DeploymentConfig' && !row.current && !row.isExpanded()" class="list-pf-details hidden-xs">
         <span>
           No deployments for <a ng-href="{{row.apiObject | navigateResourceURL}}">{{row.apiObject.metadata.name}}</a>.

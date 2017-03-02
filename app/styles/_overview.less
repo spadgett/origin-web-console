@@ -122,6 +122,10 @@
       min-height: 80px;
     }
   }
+  .list-pf-name h3 {
+    display: inline-block;
+    margin: 0;
+  }
   .list-view-pf-actions .actions-dropdown-kebab {
     font-size: 18px;
     // Give a bigger click target (fill `list-view-pf-actions` width)
@@ -216,9 +220,15 @@
   .overview-row-inline-actions {
     .mar-left-md();
   }
-  .pipeline-summary {
+  .build-count {
+    display: block;
     line-height: 1.4;
+    font-size: 12px;
     margin-top: 3px;
+    @media (min-width: @screen-md-min) {
+      display: inline-block;
+      margin-left: 10px;
+    }
   }
   .triggers {
     margin-bottom: 20px;
