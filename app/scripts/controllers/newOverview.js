@@ -272,6 +272,10 @@ function OverviewController($scope,
 
   // Update the label filter suggestions for a list of objects.
   var updateLabelSuggestions = function(objects) {
+    if (_.isEmpty(objects)) {
+      return;
+    }
+
     LabelFilter.addLabelSuggestionsFromResources(objects, labelSuggestions);
     LabelFilter.setLabelSuggestions(labelSuggestions);
   };
@@ -809,7 +813,7 @@ function OverviewController($scope,
       groupPods();
       updateReferencedImageStreams();
       updateWarnings();
-      updateLabelSuggestions(overview.pods);
+      updateLabelSuggestions(overview.monopods);
       updateServices(overview.monopods);
       updateFilter();
       _.each(overview.monopods, updatePodWarnings);
@@ -846,7 +850,7 @@ function OverviewController($scope,
       overview.replicationControllers = rcData.by("metadata.name");
       groupPods();
       groupReplicationControllers();
-      updateLabelSuggestions(overview.replicationControllers);
+      updateLabelSuggestions(overview.vanillaRCs);
       updateServices(overview.vanillaRCs);
       updateFilter();
       _.each(overview.replicationControllers, updatePodWarnings);
@@ -872,7 +876,7 @@ function OverviewController($scope,
       groupPods();
       groupReplicaSets();
       updateServices(overview.vanillaReplicaSets);
-      updateLabelSuggestions(overview.replicaSets);
+      updateLabelSuggestions(overview.vanillaReplicaSets);
       updateFilter();
       _.each(overview.replicaSets, updatePodWarnings);
       Logger.log("replicasets (subscribe)", overview.replicaSets);
