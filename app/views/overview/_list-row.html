@@ -304,7 +304,14 @@
                 <!-- <a href="" ng-if="('buildconfigs/instantiate' | canI : 'create')" ng-click="startBuild(buildConfig)" class="small mar-left-sm">Start Build</a> -->
               </div>
               <div ng-repeat="build in row.state.recentBuildsByBuildConfig[buildConfig.metadata.name] track by (build | uid)" class="mar-bottom-sm animate-repeat">
-                <status-icon status="build.status.phase"></status-icon>
+                <span ng-switch="build.status.phase" class="hide-ng-leave">
+                  <span ng-switch-when="Failed" class="status-icon">
+                    <i class="pficon pficon-error-circle-o text-danger"></i>
+                  </span>
+                  <span ng-switch-default>
+                    <status-icon status="build.status.phase"></status-icon>
+                  </span>
+                </span>
                 Build
                 <a ng-href="{{build | navigateResourceURL}}"><span
                     ng-if="build | annotation : 'buildNumber'">#{{build | annotation : 'buildNumber'}}<span
