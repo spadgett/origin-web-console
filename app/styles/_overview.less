@@ -17,6 +17,26 @@
 
 // NEW OVERVIEW STYLES
 .overview-new {
+  .build-count {
+    display: block;
+    line-height: 1.4;
+    font-size: @font-size-base;
+    margin-top: 3px;
+    .icon-count {
+      margin-left: 5px;
+      margin-right: 10px;
+      &, [data-toggle="tooltip"] {
+        cursor: help;
+      }
+      + .icon-count {
+        margin-left: 0;
+      }
+    }
+    @media (min-width: @screen-md-min) {
+      display: inline-block;
+      margin-left: 10px;
+    }
+  }
   .build-pipeline {
     border-color: @overview-border-gray;
   }
@@ -32,9 +52,6 @@
     padding: 0 10px 4px 0;
     .text-muted();
     text-transform: uppercase;
-  }
-  .data-toolbar {
-    margin-top: 5px;
   }
   .data-toolbar-dropdown {
     display: inline-block;
@@ -223,25 +240,9 @@
   .overview-row-inline-actions {
     .mar-left-md();
   }
-  .build-count {
-    display: block;
-    line-height: 1.4;
-    font-size: @font-size-base;
-    margin-top: 3px;
-    .icon-count {
-      margin-left: 5px;
-      margin-right: 10px;
-      &, [data-toggle="tooltip"] {
-        cursor: help;
-      }
-      + .icon-count {
-        margin-left: 0;
-      }
-    }
-    @media (min-width: @screen-md-min) {
-      display: inline-block;
-      margin-left: 10px;
-    }
+  .toolbar-container {
+    margin-top: 10px;
+    margin-bottom: 5px;
   }
   .triggers {
     margin-bottom: 20px;
