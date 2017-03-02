@@ -3,7 +3,9 @@
   <span ng-repeat="phase in buildSummary.interestingPhases"
         ng-if="buildSummary.countByPhase[phase]"
         class="mar-left-sm">
-    <status-icon status="phase"></status-icon>
+    <span dynamic-content="{{phase}}" data-toggle="tooltip" data-trigger="hover">
+      <status-icon status="phase"></status-icon>
+    </span>
     {{buildSummary.countByPhase[phase]}}
     <!-- {{phase}} -->
   </span>
