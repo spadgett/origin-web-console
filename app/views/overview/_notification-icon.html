@@ -1,18 +1,20 @@
 <div ng-if="notification.byType.error" class="notification-icon animate-if">
   <span
-    class="pficon pficon-error-circle-o warnings-popover"
     dynamic-content="{{notification.byType.error}}"
     data-toggle="tooltip"
-    data-trigger="hover"
-    aria-hidden="true"></span>
-  <span class="notification-icon-label">
-    {{notification.countByType.error}}
-    <span class="hidden-xs">
-      <span ng-if="notification.countByType.error === 1">
-        Error
-      </span>
-      <span ng-if="notification.countByType.error !== 1">
-        Errors
+    data-trigger="hover">
+    <span
+      class="pficon pficon-error-circle-o warnings-popover"
+      aria-hidden="true"></span>
+    <span class="notification-icon-label">
+      {{notification.countByType.error}}
+      <span class="hidden-xs">
+        <span ng-if="notification.countByType.error === 1">
+          Error
+        </span>
+        <span ng-if="notification.countByType.error !== 1">
+          Errors
+        </span>
       </span>
     </span>
   </span>

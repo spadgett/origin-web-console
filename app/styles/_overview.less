@@ -192,6 +192,9 @@
     .text-center();
     display: inline-block;
     margin: 0 5px;
+    &, [data-toggle="tooltip"] {
+      cursor: help;
+    }
     &:first-child {
       margin-left: 40px;
     }
@@ -225,6 +228,12 @@
     line-height: 1.4;
     font-size: @font-size-base;
     margin-top: 3px;
+    .icon-count {
+      .mar-left-sm();
+      &, [data-toggle="tooltip"] {
+        cursor: help;
+      }
+    }
     @media (min-width: @screen-md-min) {
       display: inline-block;
       margin-left: 10px;
