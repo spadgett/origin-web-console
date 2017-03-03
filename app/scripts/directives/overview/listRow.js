@@ -9,8 +9,7 @@ angular.module('openshiftConsole').component('overviewListRow', {
     // Previous deployment (if a deployment is in progress)
     previous: '<',
     state: '<',
-    // TODO: Move into `state` object?
-    recentPipelines: '<'
+    hidePipelines: '<'
   },
   templateUrl: 'views/overview/_list-row.html'
 });
@@ -100,10 +99,13 @@ function OverviewListRow($filter,
       row.buildConfigs = _.get(row, ['state', 'buildConfigsByObjectUID', uid], []);
     }
 
+    var name;
     var kind = _.get(row, 'apiObject.kind');
     if (kind === 'DeploymentConfig') {
-      row.pipelines = _.get(row, ['state', 'pipelinesForDC', row.apiObject.metadata.name], []);
-      row.recentBuilds = _.get(row, ['state', 'recentBuildsByDeploymentConfig', row.apiObject.metadata.name], []);
+      name = _.get(row, 'apiObject.metadata.name');
+      row.pipelines = _.get(row, ['state', 'pipelinesForDeploymentConfig', name]);
+      row.recentBuilds = _.get(row, ['state', 'recentBuildsByDeploymentConfig', name]);
+      row.recentPipelines = _.get(row, ['state', 'recentPipelinesByDeploymentConfig', name]);
     }
   };
 
@@ -191,6 +193,7 @@ function OverviewListRow($filter,
     }, { alerts: row.state.alerts });
   };
 
+  // TODO: Pulled from dc.js, but we should probably make the dialog generic and reuse for the deployment config page.
   row.cancelDeployment = function() {
     var replicationController = row.current;
     if (!replicationController) {

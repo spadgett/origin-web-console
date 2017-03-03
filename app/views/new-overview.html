@@ -112,8 +112,7 @@
                        api-object="deploymentConfig"
                        current="overview.currentByDeploymentConfig[dcName]"
                        previous="overview.getPreviousReplicationController(deploymentConfig)"
-                       state="overview.state"
-                       recent-pipelines="overview.recentPipelinesByDC[dcName]">
+                       state="overview.state">
                   </overview-list-row>
                   <overview-list-row
                        ng-repeat="deployment in overview.filteredDeploymentsByApp[app] track by (deployment | uid)"
@@ -162,8 +161,7 @@
                          api-object="deploymentConfig"
                          current="overview.currentByDeploymentConfig[dcName]"
                          previous="overview.getPreviousReplicationController(deploymentConfig)"
-                         state="overview.state"
-                         recent-pipelines="overview.recentPipelinesByDC[dcName]">
+                         state="overview.state">
                     </overview-list-row>
                   </div>
                 </div>
@@ -266,7 +264,8 @@
                            api-object="overview.deploymentConfigs[dcName]"
                            current="overview.currentByDeploymentConfig[dcName]"
                            previous="overview.getPreviousReplicationController(deploymentConfig)"
-                           state="overview.state">
+                           state="overview.state"
+                           hide-pipelines="true">
                       </overview-list-row>
                     </div>
                   </div>

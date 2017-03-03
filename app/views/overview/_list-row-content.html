@@ -16,7 +16,7 @@
     <notification-icon alerts="row.notifications"></notification-icon>
   </h3>
   <span class="build-count">
-    <span ng-if="!row.isExpanded() && (row.recentPipelines | hashSize)">
+    <span ng-if="!row.isExpanded() && !row.hidePipelines && (row.recentPipelines | hashSize)">
       <build-summary builds="row.recentPipelines" build-label="Pipelines"></build-summary>
     </span>
     <span ng-if="!row.isExpanded() && (row.recentBuilds | hashSize)">

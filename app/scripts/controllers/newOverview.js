@@ -61,9 +61,10 @@ function OverviewController($scope,
     imagesByDockerReference: {},
     limitRanges: {},
     notificationsByObjectUID: {},
-    pipelinesForDC: {},
+    pipelinesForDeploymentConfig: {},
     podsByOwnerUID: {},
     quotas: {},
+    recentPipelinesByDeploymentConfig: {},
     routesByService: {},
     servicesByObjectUID: {},
     // Set to true below when metrics are available.
@@ -601,7 +602,7 @@ function OverviewController($scope,
 
   // Adds a recent pipeline build to the following maps:
   //
-  // `overview.recentPipelinesByBC`
+  // `state.recentPipelinesByDeploymentConfig``
   //   key: build config name
   //   value: array of pipeline builds
   //
@@ -621,8 +622,8 @@ function OverviewController($scope,
     // Index running pipelines by DC name.
     var dcNames = BuildsService.usesDeploymentConfigs(buildConfig);
     _.each(dcNames, function(dcName) {
-      overview.recentPipelinesByDC[dcName] = overview.recentPipelinesByDC[dcName] || [];
-      overview.recentPipelinesByDC[dcName].push(build);
+      state.recentPipelinesByDeploymentConfig[dcName] = state.recentPipelinesByDeploymentConfig[dcName] || [];
+      state.recentPipelinesByDeploymentConfig[dcName].push(build);
     });
   };
 
@@ -673,13 +674,13 @@ function OverviewController($scope,
   // "pipeline.alpha.openshift.io/uses" annotation pointing to a deployment
   // config.
   //
-  // Updates `state.pipelinesForDC`
+  // Updates `state.pipelinesForDeploymentConfig`
   //   key: deployment config name
   //   value: array of pipeline build configs
   //          TODO: sort by name?
   var groupPipelineBuildConfigsByDeploymentConfig = function() {
     overview.dcByPipeline = {};
-    state.pipelinesForDC = {};
+    state.pipelinesForDeploymentConfig = {};
     _.each(overview.buildConfigs, function(buildConfig) {
       if (!isJenkinsPipelineStrategy(buildConfig)) {
         return;
@@ -690,8 +691,8 @@ function OverviewController($scope,
       var bcName = getName(buildConfig);
       _.set(overview, ['dcByPipeline', bcName], dcNames);
       _.each(dcNames, function(dcName) {
-        state.pipelinesForDC[dcName] = state.pipelinesForDC[dcName] || [];
-        state.pipelinesForDC[dcName].push(buildConfig);
+        state.pipelinesForDeploymentConfig[dcName] = state.pipelinesForDeploymentConfig[dcName] || [];
+        state.pipelinesForDeploymentConfig[dcName].push(buildConfig);
       });
     });
   };
@@ -745,8 +746,8 @@ function OverviewController($scope,
     }
     // reset these maps
     overview.recentPipelinesByBC = {};
-    overview.recentPipelinesByDC = {};
     state.recentBuildsByBuildConfig = {};
+    state.recentPipelinesByDeploymentConfig = {};
     _.each(BuildsService.interestingBuilds(state.builds), function(build) {
       var bcName = getBuildConfigName(build);
       if(isJenkinsPipelineStrategy(build)) {
