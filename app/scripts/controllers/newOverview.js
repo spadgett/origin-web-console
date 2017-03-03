@@ -1,6 +1,6 @@
 'use strict';
 
-// TODO: Rename controller when old overview is removed.
+// TODO: Rename file and controller when old overview is removed.
 angular.module('openshiftConsole').controller('NewOverviewController', OverviewController);
 
 function OverviewController($scope,
@@ -679,7 +679,7 @@ function OverviewController($scope,
   //   value: array of pipeline build configs
   //          TODO: sort by name?
   var groupPipelineBuildConfigsByDeploymentConfig = function() {
-    overview.dcByPipeline = {};
+    overview.deploymentConfigsByPipeline = {};
     state.pipelinesForDeploymentConfig = {};
     _.each(overview.buildConfigs, function(buildConfig) {
       if (!isJenkinsPipelineStrategy(buildConfig)) {
@@ -687,9 +687,10 @@ function OverviewController($scope,
       }
 
       // TODO: Handle other types.
+      // Preserve the order they appear in the annotation.
       var dcNames = BuildsService.usesDeploymentConfigs(buildConfig);
       var bcName = getName(buildConfig);
-      _.set(overview, ['dcByPipeline', bcName], dcNames);
+      _.set(overview, ['deploymentConfigsByPipeline', bcName], dcNames);
       _.each(dcNames, function(dcName) {
         state.pipelinesForDeploymentConfig[dcName] = state.pipelinesForDeploymentConfig[dcName] || [];
         state.pipelinesForDeploymentConfig[dcName].push(buildConfig);

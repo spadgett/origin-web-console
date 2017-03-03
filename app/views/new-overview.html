@@ -220,7 +220,7 @@
               </div>
               <div ng-if="overview.viewBy === 'pipeline'">
                 <!-- TODO: Reuse pipelines empty state message from pipelines.html -->
-                <div ng-if="!(overview.dcByPipeline | hashSize)" class="empty-state-message text-center">
+                <div ng-if="!(overview.deploymentConfigsByPipeline | hashSize)" class="empty-state-message text-center">
                   <h2>No pipelines.</h2>
                   <div ng-if="project.metadata.name | canIAddToProject">
                     <p>
@@ -241,8 +241,8 @@
                     <ng-include src="'views/_request-access.html'"></ng-include>
                   </div>
                 </div>
-                <div ng-if="overview.dcByPipeline | hashSize">
-                  <div ng-repeat="(pipelineName, deploymentConfigNames) in overview.dcByPipeline" class="mar-bottom-lg">
+                <div ng-if="overview.deploymentConfigsByPipeline | hashSize">
+                  <div ng-repeat="(pipelineName, deploymentConfigNames) in overview.deploymentConfigsByPipeline" class="mar-bottom-lg">
                     <h2>
                       <div class="component-label">Pipeline</div>
                       {{pipelineName}}
