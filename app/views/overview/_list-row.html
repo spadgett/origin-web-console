@@ -276,56 +276,24 @@
             </div>
           </div>
         </div>
+
+        <!-- Networking Section -->
         <overview-networking
           services="row.state.servicesByObjectUID[row.apiObject.metadata.uid]"
           routes-by-service="row.state.routesByService">
         </overview-networking>
-        <!-- TODO: Fix class name -->
-        <div ng-if="row.recentPipelines.length" class="expanded-section">
-          <div class="component-label">Pipelines</div>
-          <div class="build-pipelines">
-            <div ng-repeat="pipeline in row.recentPipelines | orderObjectsByDate : true track by (pipeline | uid)"
-                 class="row build-pipeline-wrapper animate-repeat animate-slide">
-              <div class="col-sm-12">
-                <build-pipeline build="pipeline" build-config-name-on-expanded="true"></build-pipeline>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div ng-if="row.buildConfigs.length" class="expanded-section">
-          <div class="component-label">Builds</div>
-          <div ng-repeat="buildConfig in row.buildConfigs track by (buildConfig | uid)" class="row">
-            <div class="col-sm-4 col-md-3">
-              <h3 class="mar-top-xs">
-                <a ng-href="{{buildConfig | navigateResourceURL}}">{{buildConfig.metadata.name}}</a>
-              </h3>
-            </div>
-            <div class="col-sm-8 col-md-9">
-              <div ng-if="!(row.state.recentBuildsByBuildConfig[buildConfig.metadata.name] | hashSize)">
-                No builds.
-                <!-- <a href="" ng-if="('buildconfigs/instantiate' | canI : 'create')" ng-click="startBuild(buildConfig)" class="small mar-left-sm">Start Build</a> -->
-              </div>
-              <div ng-repeat="build in row.state.recentBuildsByBuildConfig[buildConfig.metadata.name] track by (build | uid)" class="mar-bottom-sm animate-repeat">
-                <span ng-switch="build.status.phase" class="hide-ng-leave">
-                  <span ng-switch-when="Failed" class="status-icon">
-                    <i class="pficon pficon-error-circle-o text-danger"></i>
-                  </span>
-                  <span ng-switch-default>
-                    <status-icon status="build.status.phase"></status-icon>
-                  </span>
-                </span>
-                Build
-                <a ng-href="{{build | navigateResourceURL}}"><span
-                    ng-if="build | annotation : 'buildNumber'">#{{build | annotation : 'buildNumber'}}<span
-                    ng-if="!(build | annotation : 'buildNumber')">{{build.metadata.name}}</span></a>
-                {{build.status.phase}}
-                <span ng-if="'builds/log' | canI : 'get'" class="small mar-left-sm">
-                  <a ng-if="!!['New', 'Pending'].indexOf(build.status.phase) && (build | buildLogURL)" ng-href="{{build | buildLogURL}}">View Log</a>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+
+        <!-- Pipelines Section -->
+        <overview-pipelines
+          recent-pipelines="row.recentPipelines">
+        </overview-pipelines>
+
+        <!-- Builds Section -->
+        <overview-builds
+          build-configs="row.buildConfigs"
+          recent-builds-by-build-config="row.state.recentBuildsByBuildConfig">
+        </overview-builds>
+
       </div><!-- /list-pf-content -->
     </div> <!-- /list-pf-container -->
   </div><!-- /list-pf-expansion -->

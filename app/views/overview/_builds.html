@@ -1,0 +1,34 @@
+<div ng-if="overviewBuilds.buildConfigs.length" class="expanded-section">
+  <div class="h4">Builds</div>
+  <div ng-repeat="buildConfig in overviewBuilds.buildConfigs track by (buildConfig | uid)" class="row">
+    <div class="col-sm-4 col-md-3">
+      <h3 class="mar-top-xs">
+        <a ng-href="{{buildConfig | navigateResourceURL}}">{{buildConfig.metadata.name}}</a>
+      </h3>
+    </div>
+    <div class="col-sm-8 col-md-9">
+      <div ng-if="!(overviewBuilds.recentBuildsByBuildConfig[buildConfig.metadata.name] | hashSize)">
+        No builds.
+        <!-- <a href="" ng-if="('buildconfigs/instantiate' | canI : 'create')" ng-click="startBuild(buildConfig)" class="small mar-left-sm">Start Build</a> -->
+      </div>
+      <div ng-repeat="build in overviewBuilds.recentBuildsByBuildConfig[buildConfig.metadata.name] track by (build | uid)" class="mar-bottom-sm animate-repeat">
+        <span ng-switch="build.status.phase" class="hide-ng-leave">
+          <span ng-switch-when="Failed" class="status-icon">
+            <i class="pficon pficon-error-circle-o text-danger"></i>
+          </span>
+          <span ng-switch-default>
+            <status-icon status="build.status.phase"></status-icon>
+          </span>
+        </span>
+        Build
+        <a ng-href="{{build | navigateResourceURL}}"><span
+            ng-if="build | annotation : 'buildNumber'">#{{build | annotation : 'buildNumber'}}<span
+            ng-if="!(build | annotation : 'buildNumber')">{{build.metadata.name}}</span></a>
+        {{build.status.phase}}
+        <span ng-if="'builds/log' | canI : 'get'" class="small mar-left-sm">
+          <a ng-if="!!['New', 'Pending'].indexOf(build.status.phase) && (build | buildLogURL)" ng-href="{{build | buildLogURL}}">View Log</a>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -40,10 +40,6 @@
   .build-pipeline {
     border-color: @overview-border-gray;
   }
-  .build-pipelines {
-    margin-top: 10px;
-    margin-bottom: 20px;
-  }
   .c3-line {
     stroke-width: 1px;
   }
@@ -204,6 +200,12 @@
       border-top: 1px solid @list-pf-border-color;
       margin: 0 20px 10px;
     }
+    h3 {
+      .truncate();
+      line-height: 1.4;
+      margin-top: 0;
+      margin-bottom: 5px;
+    }
   }
   .notification-icon {
     .text-center();
@@ -223,18 +225,9 @@
     // avoid double borders when list-pf-item is open
     margin-top: -1px;
   }
-  .overview-route-link {
-    .mar-right-md();
-    .truncate();
-    display: block;
-  }
   .overview-routes {
     + .overview-routes {
       .mar-top-md();
-    }
-    h3 {
-      line-height: 1.4;
-      .mar-top-xs();
     }
   }
   .overview-row-inline-actions {
