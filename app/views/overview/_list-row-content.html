@@ -17,10 +17,10 @@
   </h3>
   <span class="build-count">
     <span ng-if="!row.isExpanded() && !row.hidePipelines && (row.recentPipelines | hashSize)">
-      <build-summary builds="row.recentPipelines" build-label="Pipelines"></build-summary>
+      <build-counts builds="row.recentPipelines" build-label="Pipelines"></build-counts>
     </span>
     <span ng-if="!row.isExpanded() && (row.recentBuilds | hashSize)">
-      <build-summary builds="row.recentBuilds" build-label="Builds"></build-summary>
+      <build-counts builds="row.recentBuilds" build-label="Builds"></build-counts>
     </span>
   </span>
 </div>

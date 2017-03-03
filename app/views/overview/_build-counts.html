@@ -1,9 +1,9 @@
-<span ng-if="buildSummary.show" class="animate-if">
-  {{buildSummary.buildLabel || 'Builds'}}
-  <span ng-repeat="phase in buildSummary.interestingPhases"
-        ng-if="buildSummary.countByPhase[phase]"
+<span ng-if="buildCounts.show" class="animate-if">
+  {{buildCounts.buildLabel || 'Builds'}}
+  <span ng-repeat="phase in buildCounts.interestingPhases"
+        ng-if="buildCounts.countByPhase[phase]"
         class="icon-count">
-    <span dynamic-content="{{buildSummary.countByPhase[phase]}} {{phase}}"
+    <span dynamic-content="{{buildCounts.countByPhase[phase]}} {{phase}}"
           data-toggle="tooltip"
           data-trigger="hover"
           aria-hidden="true">
@@ -15,7 +15,7 @@
           <status-icon status="phase"></status-icon>
         </span>
       </span>
-      {{buildSummary.countByPhase[phase]}}
+      {{buildCounts.countByPhase[phase]}}
       <span class="sr-only">{{phase}}</span>
     </span>
   </span>
