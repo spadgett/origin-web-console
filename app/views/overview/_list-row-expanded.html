@@ -1,0 +1,101 @@
+<div class="list-pf-container">
+  <div class="list-pf-content">
+    <alerts alerts="row.notifications"></alerts>
+    <div ng-if="row.current">
+      <div class="row">
+        <div ng-if="row.previous" class="col-sm-5 col-md-3">
+          <deployment-donut
+            rc="row.previous"
+            deployment-config="row.apiObject"
+            pods="row.getPods(row.previous)"
+            hpa="row.hpa"
+            limit-ranges="row.state.limitRanges"
+            quotas="row.state.quotas"
+            cluster-quotas="row.state.clusterQuotas"
+            scalable="false"
+            alerts="row.state.alerts">
+          </deployment-donut>
+        </div>
+        <div ng-if="row.previous" class="col-sm-2 col-md-1">
+          <div class="deployment-connector-arrow" aria-hidden="true">
+            &rarr;
+          </div>
+        </div>
+        <div class="col-sm-4 col-md-3" ng-class="{ 'col-sm-5': row.previous }">
+          <div ng-if="row.apiObject.kind === 'Pod'">
+            <a ng-href="{{row.apiObject | navigateResourceURL}}">
+              <pod-donut pods="[row.apiObject]"></pod-donut>
+            </a>
+          </div>
+          <div ng-if="row.apiObject.kind !== 'Pod'">
+            <deployment-donut
+              rc="row.current"
+              deployment-config="row.apiObject"
+              pods="row.getPods(row.current)"
+              hpa="row.hpa"
+              limit-ranges="row.state.limitRanges"
+              quotas="row.state.quotas"
+              cluster-quotas="row.state.clusterQuotas"
+              scalable="row.isScalable()"
+              alerts="row.state.alerts">
+            </deployment-donut>
+          </div>
+        </div>
+        <!-- TODO: Support mobile -->
+        <div ng-if="row.state.showMetrics && !row.previous" class="col-md-4 col-lg-3 hidden-xs hidden-sm">
+          <div ng-if="row.apiObject.kind === 'Pod'">
+            <h4>Usage <small>Last 15 Minutes</small></h4>
+            <deployment-metrics
+              pods="[row.apiObject]"
+              containers="row.apiObject.spec.containers"
+              profile="compact"
+              alerts="row.state.alerts"
+              class="overview-metrics">
+            </deployment-metrics>
+          </div>
+          <div ng-if="row.apiObject.kind !== 'Pod'">
+            <h4>Average Usage <small>Last 15 Minutes</small></h4>
+            <deployment-metrics
+              pods="row.getPods(row.current)"
+              containers="row.current.spec.template.spec.containers"
+              profile="compact"
+              alerts="row.sate.alerts"
+              class="overview-metrics">
+            </deployment-metrics>
+          </div>
+        </div>
+        <div class="col-sm-8 col-md-5 col-lg-6" ng-class="{ 'hidden-sm col-md-4 col-lg-4': row.previous }">
+          <!-- TODO: markup semantics suggest div.component-label in <pod-template> should be an h4,
+                     but only here on the overview -->
+          <pod-template
+            pod-template="row.current | podTemplate"
+            images-by-docker-reference="row.state.imagesByDockerReference"
+            builds="row.state.builds"></pod-template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State Message -->
+    <div ng-if="!row.current" class="empty-state-message">
+      <div ng-include src=" 'views/overview/_list-row-empty-state.html' "></div>
+    </div>
+
+    <!-- Networking Section -->
+    <overview-networking
+      services="row.state.servicesByObjectUID[row.apiObject.metadata.uid]"
+      routes-by-service="row.state.routesByService">
+    </overview-networking>
+
+    <!-- Pipelines Section -->
+    <overview-pipelines
+      recent-pipelines="row.recentPipelines">
+    </overview-pipelines>
+
+    <!-- Builds Section -->
+    <overview-builds
+      build-configs="row.buildConfigs"
+      recent-builds-by-build-config="row.state.recentBuildsByBuildConfig">
+    </overview-builds>
+
+  </div><!-- /list-pf-content -->
+</div> <!-- /list-pf-container -->

@@ -1,0 +1,86 @@
+<div class="list-pf-name">
+  <h3>
+    <div class="component-label">
+      <span ng-if="row.apiObject.kind === 'DeploymentConfig'">
+        Deployment
+      </span>
+      <span ng-if="row.apiObject.kind !== 'DeploymentConfig'">
+        {{row.apiObject.kind | humanizeKind}}
+      </span>
+    </div>
+    <a ng-href="{{row.apiObject | navigateResourceURL}}"><span ng-bind-html="row.apiObject.metadata.name | highlightKeywords : row.state.filterKeywords"></span></a><span ng-if="row.apiObject.kind === 'DeploymentConfig' && row.current">,
+      <a ng-href="{{row.current | navigateResourceURL}}">#{{row.apiObject.status.latestVersion}}</a>
+    </span><span ng-if="row.apiObject.kind === 'Deployment' && row.current">,
+      <a ng-href="{{row.current | navigateResourceURL}}">#{{row.current | annotation : 'deployment.kubernetes.io/revision'}}</a>
+    </span>
+    <notification-icon alerts="row.notifications"></notification-icon>
+  </h3>
+  <span class="build-count">
+    <span ng-if="!row.isExpanded() && (row.recentPipelines | hashSize)">
+      <build-summary builds="row.recentPipelines" build-label="Pipelines"></build-summary>
+    </span>
+    <span ng-if="!row.isExpanded() && (row.recentBuilds | hashSize)">
+      <build-summary builds="row.recentBuilds" build-label="Builds"></build-summary>
+    </span>
+  </span>
+</div>
+<div ng-if="row.apiObject.kind === 'DeploymentConfig' && !row.current && !row.isExpanded()" class="list-pf-details hidden-xs hidden-sm">
+  <span>
+    No deployments for <a ng-href="{{row.apiObject | navigateResourceURL}}">{{row.apiObject.metadata.name}}</a>.
+  </span>
+</div>
+<div ng-if="row.isDeploymentInProgress()" class="list-pf-details">
+  <div ng-if="row.apiObject.kind === 'DeploymentConfig'">
+    <span class="mar-right-sm">
+      {{row.apiObject.spec.strategy.type}} deployment
+      {{row.current | deploymentStatus | lowercase}}&thinsp;<ellipsis-pulser color="dark" size="sm" display="inline" msg=""></ellipsis-pulser>
+    </span>
+    <a ng-href="{{row.current | navigateResourceURL}}?tab=logs">View Log</a>
+    <span ng-if="'replicationcontrollers' | canI : 'update'">
+      <span ng-if="'replicationcontrollers' | canI: 'update'" class="action-divider">|</span>
+      <a href="" ng-click="row.cancelDeployment()" role="button">Cancel</a>
+    </span>
+  </div>
+  <div ng-if="row.apiObject.kind === 'Deployment'">
+    {{row.apiObject.spec.strategy.type | sentenceCase}}&nbsp;<ellipsis-pulser color="dark" size="sm" display="inline" msg="in progress"></ellipsis-pulser>
+  </div>
+</div>
+<div ng-if="row.current && !row.isDeploymentInProgress() && !row.isExpanded()" class="list-pf-details animate-if hidden-xs hidden-sm">
+  <div class="additional-info-item">
+    <div ng-if="row.apiObject.kind === 'Pod'">
+      <pod-donut pods="[row.apiObject]" mini="true"></pod-donut>
+    </div>
+    <div ng-if="row.apiObject.kind !== 'Pod'">
+      <pod-donut pods="row.getPods(row.current)" mini="true"></pod-donut>
+    </div>
+  </div>
+  <div ng-if="row.state.showMetrics" class="additional-info-item truncate metrics-collapsed">
+    <div ng-if="row.apiObject.kind === 'Pod'">
+      <metrics-summary
+        pods="[row.apiObject]"
+        containers="row.apiObject.spec.containers">
+      </metrics-summary>
+    </div>
+    <div ng-if="row.apiObject.kind !== 'Pod' && row.current">
+      <metrics-summary
+        pods="row.getPods(row.current)"
+        containers="row.current.spec.template.spec.containers">
+      </metrics-summary>
+    </div>
+  </div>
+  <!-- Decide what to show when no metrics, if anything -->
+  <div ng-if="!row.state.showMetrics" class="additional-info-item truncate">
+    <span ng-if="row.apiObject.kind === 'Pod'">
+      <span class="pficon fa-fw pficon-image"></span>
+      <image-names
+        pod-template="row.apiObject"
+        pods="[row.apiObject]"></image-names>
+    </span>
+    <span ng-if="row.apiObject.kind !== 'Pod' && row.current">
+      <span class="pficon fa-fw pficon-image"></span>
+      <image-names
+        pod-template="row.current | podTemplate"
+        pods="row.getPods(row.current)"></image-names>
+    </span>
+  </div>
+</div>
