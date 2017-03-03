@@ -4,37 +4,33 @@
     data-toggle="tooltip"
     data-trigger="hover">
     <span
-      class="pficon pficon-error-circle-o warnings-popover"
+      class="pficon pficon-error-circle-o"
       aria-hidden="true"></span>
     <span class="notification-icon-label">
       {{notification.countByType.error}}
-      <span class="hidden-xs">
-        <span ng-if="notification.countByType.error === 1">
-          Error
-        </span>
-        <span ng-if="notification.countByType.error !== 1">
-          Errors
-        </span>
+      <span ng-if="notification.countByType.error === 1">
+        Error
+      </span>
+      <span ng-if="notification.countByType.error !== 1">
+        Errors
       </span>
     </span>
   </span>
 </div>
 <div ng-if="notification.byType.warning" class="notification-icon animate-if">
   <span
-    class="pficon pficon-warning-triangle-o warnings-popover"
+    class="pficon pficon-warning-triangle-o"
     dynamic-content="{{notification.byType.warning}}"
     data-toggle="tooltip"
     data-trigger="hover"
     aria-hidden="true"></span>
   <span class="notification-icon-label">
     {{notification.countByType.warning}}
-    <span class="hidden-xs">
-      <span ng-if="notification.countByType.warning === 1">
-        Warning
-      </span>
-      <span ng-if="notification.countByType.warning !== 1">
-        Warnings
-      </span>
+    <span ng-if="notification.countByType.warning === 1">
+      Warning
+    </span>
+    <span ng-if="notification.countByType.warning !== 1">
+      Warnings
     </span>
   </span>
 </div>

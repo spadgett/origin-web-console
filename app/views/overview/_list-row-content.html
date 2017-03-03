@@ -13,16 +13,18 @@
     </span><span ng-if="row.apiObject.kind === 'Deployment' && row.current">,
       <a ng-href="{{row.current | navigateResourceURL}}">#{{row.current | annotation : 'deployment.kubernetes.io/revision'}}</a>
     </span>
-    <notification-icon alerts="row.notifications"></notification-icon>
   </h3>
-  <span class="build-count">
-    <span ng-if="!row.isExpanded() && !row.hidePipelines && (row.recentPipelines | hashSize)">
-      <build-counts builds="row.recentPipelines" build-label="Pipelines"></build-counts>
+  <div class="status-icons">
+    <notification-icon alerts="row.notifications"></notification-icon>
+    <span class="build-count">
+      <span ng-if="!row.isExpanded() && !row.hidePipelines && (row.recentPipelines | hashSize)">
+        <build-counts builds="row.recentPipelines" build-label="Pipelines"></build-counts>
+      </span>
+      <span ng-if="!row.isExpanded() && (row.recentBuilds | hashSize)">
+        <build-counts builds="row.recentBuilds" build-label="Builds"></build-counts>
+      </span>
     </span>
-    <span ng-if="!row.isExpanded() && (row.recentBuilds | hashSize)">
-      <build-counts builds="row.recentBuilds" build-label="Builds"></build-counts>
-    </span>
-  </span>
+  </div>
 </div>
 <div ng-if="row.apiObject.kind === 'DeploymentConfig' && !row.current && !row.isExpanded()" class="list-pf-details hidden-xs hidden-sm">
   <span>

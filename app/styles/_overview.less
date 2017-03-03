@@ -22,8 +22,12 @@
     line-height: 1.4;
     font-size: @font-size-base;
     margin-top: 3px;
+    .builds-label {
+      margin-right: 5px;
+    }
     .icon-count {
-      margin-left: 5px;
+      // FIXME: not working
+      .nowrap();
       margin-right: 10px;
       &, [data-toggle="tooltip"] {
         cursor: help;
@@ -233,10 +237,7 @@
       cursor: help;
     }
     &:first-child {
-      margin-left: 40px;
-    }
-    .notification-icon-label {
-      font-size: @font-size-base;
+      margin-left: 0;
     }
   }
   overview-list-row + overview-list-row .list-pf-item.active {
@@ -250,6 +251,15 @@
   }
   .overview-row-inline-actions {
     .mar-left-md();
+  }
+  .status-icons {
+    display: block;
+    @media (min-width: @screen-md-min) {
+      .text-center();
+      display: inline-block;
+      margin-left: 40px;
+      max-width: 200px;
+    }
   }
   .toolbar-container {
     margin-top: 10px;
