@@ -31,7 +31,7 @@ function OverviewController($scope,
 
   // Filters used by this controller.
   var annotation = $filter('annotation');
-  var buildConfigForBuild = $filter('buildConfigForBuild');
+  var getBuildConfigName = $filter('buildConfigForBuild');
   var deploymentIsInProgress = $filter('deploymentIsInProgress');
   var imageObjectRef = $filter('imageObjectRef');
   var isJenkinsPipelineStrategy = $filter('isJenkinsPipelineStrategy');
@@ -42,7 +42,10 @@ function OverviewController($scope,
 
   var imageStreams;
   var labelSuggestions = {};
-  var mostRecentByDC = {};
+
+  // The most recent replication controller by deployment config name. This
+  // might not be the active deployment if failed or cancelled.
+  var mostRecentByDeploymentConfig = {};
 
   // `overview.state` tracks common state that is shared by overview and
   // `overview-list-row`. This avoids having to the same values as attributes
@@ -141,26 +144,102 @@ function OverviewController($scope,
     });
   }
 
+  var getName = function(apiObject) {
+    return _.get(apiObject, 'metadata.name');
+  };
+
+  var getUID = function(apiObject) {
+    return _.get(apiObject, 'metadata.uid');
+  };
+
+  var isPod = function(apiObject) {
+    return apiObject && apiObject.kind === 'Pod';
+  };
+
+  var getPods = function(apiObject) {
+    var uid = getUID(apiObject);
+    if (!uid) {
+      return [];
+    }
+
+    if (isPod(apiObject)) {
+      return [apiObject];
+    }
+
+    return _.get(overview, ['state', 'podsByOwnerUID', uid], []);
+  };
+
+  var setNotifications = function(apiObject, notifications) {
+    var uid = getUID(apiObject);
+    state.notificationsByObjectUID[uid] = notifications || {};
+  };
+
+  var getNotifications = function(apiObject) {
+    var uid = getUID(apiObject);
+    if (!uid) {
+      return {};
+    }
+    return _.get(state, ['notificationsByObjectUID', uid], {});
+  };
+
   // Set pod warnings for pods owned by `apiObject`, which can be a set like
   // a replication controller or replica set, or just a pod itself.
   //
   // Updates `state.notificationsByObjectUID`
   //   key: object UID
   //   value: alerts object
-  var updatePodWarnings = function(apiObject) {
-    var uid = _.get(apiObject, 'metadata.uid');
+  var updatePodWarningsForObject = function(apiObject) {
+    var uid = getUID(apiObject);
     if (!uid) {
+      return;
+    }
+
+    var pods = getPods(apiObject);
+    var notifications = ResourceAlertsService.getPodAlerts(pods, $routeParams.project);
+    setNotifications(apiObject, notifications);
+  };
+
+  // Updates pod warnings for a collection of API objects such as replication
+  // controllers or monopods.
+  var updatePodWarnings = function(apiObjects) {
+    _.each(apiObjects, updatePodWarningsForObject);
+  };
+
+  // Get the most recently-created replication controller for a deployment
+  // config. This might not be the active deployment if it was a failed or
+  // cancelled.
+  var getMostRecentReplicationController = function(deploymentConfig) {
+    var name = getName(deploymentConfig);
+    if (!name) {
       return null;
     }
 
-    var pods;
-    if (apiObject.kind === 'Pod') {
-      pods = [apiObject];
-    } else {
-      pods = _.get(overview, ['state', 'podsByOwnerUID', uid]);
+    return mostRecentByDeploymentConfig[name];
+  };
+
+  // Get the replication controllers that are displayed for a deployment
+  // config. This will return only the active replication controller unless a
+  // deployment is in progress.
+  var getVisibleReplicationControllers = function(deploymentConfig) {
+    var name = getName(deploymentConfig);
+    if (!name) {
+      return [];
+    }
+    return _.get(overview, ['replicationControllersByDeploymentConfig', name]);
+  };
+
+  // Get the "previous" replication controller (when a deployment is in
+  // progress and more than one is active). This is the donut that appears on
+  // the left when we show two. Returns null if there is no deployment in
+  // progress or the previous has been scaled down.
+  overview.getPreviousReplicationController = function(deploymentConfig) {
+    var replicationControllers = getVisibleReplicationControllers(deploymentConfig);
+    if (_.size(replicationControllers) < 2) {
+      return null;
     }
 
-    state.notificationsByObjectUID[uid] = ResourceAlertsService.getPodAlerts(pods, $routeParams.project);
+    // The array is sorted by age, most recent first. Return the second item.
+    return replicationControllers[1];
   };
 
   // Set warnings for a deployment config, including warnings for any active
@@ -171,33 +250,34 @@ function OverviewController($scope,
   //   value: alerts object
   var updateDeploymentConfigWarnings = function(deploymentConfig) {
     var notifications = {};
-    var uid = _.get(deploymentConfig, 'metadata.uid');
-    if (!uid) {
-      return;
-    }
 
-    state.notificationsByObjectUID[uid] = {};
-    var name = _.get(deploymentConfig, 'metadata.name');
-    if (!name) {
-      return;
-    }
+    // Add any failed / canceled deployment notifications.
+    var mostRecent = getMostRecentReplicationController(deploymentConfig);
+    notifications = ResourceAlertsService.getDeploymentStatusAlerts(deploymentConfig, mostRecent);
 
-    var mostRecentRC = mostRecentByDC[name];
-    notifications = ResourceAlertsService.getDeploymentStatusAlerts(deploymentConfig, mostRecentRC);
-
-    var visibleReplicationControllers = _.get(overview, ['rcByDC', name]);
+    // Roll up notifications like pod warnings for any visible replication controller.
+    var visibleReplicationControllers = getVisibleReplicationControllers(deploymentConfig);
     _.each(visibleReplicationControllers, function(replicationController) {
-      var uid = _.get(replicationController, 'metadata.uid');
-      var rcNotifications = _.get(overview, ['state', 'notificationsByObjectUID', uid]);
+      var rcNotifications = getNotifications(replicationController);
       _.assign(notifications, rcNotifications);
     });
 
-    state.notificationsByObjectUID[uid] = notifications;
+    setNotifications(deploymentConfig, notifications);
   };
 
   // Update warnings for all deployment configs.
   var updateAllDeploymentConfigWarnings = function() {
     _.each(overview.deploymentConfigs, updateDeploymentConfigWarnings);
+  };
+
+  // Get the replica sets that are displayed for a deployment. This will return
+  // only the active replica set unless a deployment is in progress.
+  var getVisibleReplicaSets = function(deployment) {
+    var name = getName(deployment);
+    if (!name) {
+      return {};
+    }
+    return _.get(overview, ['replicaSetsByDeployment', name]);
   };
 
   // Set warnings for a Kubernetes deployment, including any active replica sets.
@@ -207,25 +287,15 @@ function OverviewController($scope,
   //   value: alerts object
   var updateDeploymentWarnings = function(deployment) {
     var notifications = {};
-    var uid = _.get(deployment, 'metadata.uid');
-    if (!uid) {
-      return;
-    }
 
-    state.notificationsByObjectUID[uid] = {};
-    var name = _.get(deployment, 'metadata.name');
-    if (!name) {
-      return;
-    }
-
-    var visibleReplicaSets = _.get(overview, ['replicaSetsByDeployment', name]);
+    // Roll up notifications like pod warnings for any visible replica set.
+    var visibleReplicaSets = getVisibleReplicaSets(deployment);
     _.each(visibleReplicaSets, function(replicaSet) {
-      var uid = _.get(replicaSet, 'metadata.uid');
-      var rsNotifications = _.get(overview, ['state', 'notificationsByObjectUID', uid]);
-      _.assign(notifications, rsNotifications);
+      var replicaSetNotifications = getNotifications(replicaSet);
+      _.assign(notifications, replicaSetNotifications);
     });
 
-    state.notificationsByObjectUID[uid] = notifications;
+    setNotifications(deployment, notifications);
   };
 
   // Update warnings for all Kubernetes deployments.
@@ -233,13 +303,18 @@ function OverviewController($scope,
     _.each(overview.deployments, updateDeploymentWarnings);
   };
 
-  // Update warnings for all kinds.
+  // Update all pod warnings, indexing the errors by owner UID.
+  var updateAllPodWarnings = function() {
+    updatePodWarnings(overview.replicationControllers);
+    updatePodWarnings(overview.replicaSets);
+    updatePodWarnings(overview.statefulSets);
+    updatePodWarnings(overview.monopods);
+  };
+
+  // Update warnings for all kinds. Debounce so we're not reevaluating this too often.
   var updateWarnings = _.debounce(function() {
     $scope.$apply(function() {
-      _.each(overview.replicationControllers, updatePodWarnings);
-      _.each(overview.replicaSets, updatePodWarnings);
-      _.each(overview.statefulSets, updatePodWarnings);
-      _.each(overview.monopods, updatePodWarnings);
+      updateAllPodWarnings();
       updateAllDeploymentConfigWarnings();
       updateAllDeploymentWarnings();
     });
@@ -254,14 +329,14 @@ function OverviewController($scope,
 
   // Group each resource kind by app and update the list of app label values.
   var updateApps = function() {
-    overview.filteredDCByApp = groupByApp(overview.filteredDeploymentConfigs);
-    overview.filteredRCByApp = groupByApp(overview.filteredReplicationControllers);
+    overview.filteredDeploymentConfigsByApp = groupByApp(overview.filteredDeploymentConfigs);
+    overview.filteredReplicationControllersByApp = groupByApp(overview.filteredReplicationControllers);
     overview.filteredDeploymentsByApp = groupByApp(overview.filteredDeployments);
     overview.filteredReplicaSetsByApp = groupByApp(overview.filteredReplicaSets);
     overview.filteredStatefulSetsByApp = groupByApp(overview.filteredStatefulSets);
     overview.filteredMonopodsByApp = groupByApp(overview.filteredMonopods);
-    overview.apps = _.union(_.keys(overview.filteredDCByApp),
-                            _.keys(overview.filteredRCByApp),
+    overview.apps = _.union(_.keys(overview.filteredDeploymentConfigsByApp),
+                            _.keys(overview.filteredReplicationControllersByApp),
                             _.keys(overview.filteredDeploymentsByApp),
                             _.keys(overview.filteredReplicaSetsByApp),
                             _.keys(overview.filteredStatefulSetsByApp),
@@ -270,7 +345,8 @@ function OverviewController($scope,
     AppsService.sortAppNames(overview.apps);
   };
 
-  // Update the label filter suggestions for a list of objects.
+  // Update the label filter suggestions for a list of objects. This should
+  // only be called for filterable top-level items to avoid polluting the list.
   var updateLabelSuggestions = function(objects) {
     if (_.isEmpty(objects)) {
       return;
@@ -342,45 +418,51 @@ function OverviewController($scope,
 
   // Get the deployment config name for a replication controller by reading the
   // "openshift.io/deployment-config.name" annotation.
-  var getDeploymentConfig = function(replicationController) {
+  var getDeploymentConfigName = function(replicationController) {
     return annotation(replicationController, 'deploymentConfig');
   };
 
   // Group replication controllers by deployment config and filter the visible
   // replication controllers.
+  // TODO: Handle deleted deployment configs and orphaned replication controllers.
   var groupReplicationControllers = function() {
-    // TODO: Handle deleted deployment configs and orphaned RCs.
-    var vanillaRCs = [];
-    overview.rcByDC = {};
-    overview.activeByDC = {};
-    mostRecentByDC = {};
+    // "Vanilla" replication controllers are those not owned by a deployment config.
+    var vanillaReplicationControllers = [];
+    overview.replicationControllersByDeploymentConfig = {};
+    overview.currentByDeploymentConfig = {};
+    mostRecentByDeploymentConfig = {};
+
+    // Add the replication controllers to a temporary map until we have them all and can sort.
+    var rcByDC = {};
     _.each(overview.replicationControllers, function(replicationController) {
-      var dcName = getDeploymentConfig(replicationController) || '';
+      var dcName = getDeploymentConfigName(replicationController) || '';
       if (!dcName) {
-        vanillaRCs.push(replicationController);
+        vanillaReplicationControllers.push(replicationController);
       }
 
       // Keep track of  the most recent replication controller even if not
       // visible to show failed/canceled deployment notifications.
-      var mostRecent = mostRecentByDC[dcName];
+      var mostRecent = mostRecentByDeploymentConfig[dcName];
       if (!mostRecent || isNewerResource(replicationController, mostRecent)) {
-        mostRecentByDC[dcName] = replicationController;
+        mostRecentByDeploymentConfig[dcName] = replicationController;
       }
 
+      // Only track the visible replication controllers. This way we only sort
+      // and check warnings for things we're showing.
       if (isReplicationControllerVisible(replicationController)) {
-        _.set(overview.rcByDC,
-              [dcName, replicationController.metadata.name],
-              replicationController);
+        _.set(rcByDC, [dcName, replicationController.metadata.name], replicationController);
       }
     });
 
     // Sort the visible replication controllers.
-    _.each(overview.rcByDC, function(replicationControllers, dcName) {
+    _.each(rcByDC, function(replicationControllers, dcName) {
       var ordered = orderObjectsByDate(replicationControllers, true);
-      overview.rcByDC[dcName] = ordered;
-      overview.activeByDC[dcName] = _.head(ordered);
+      overview.replicationControllersByDeploymentConfig[dcName] = ordered;
+      // "Current" is considered the most recent visible replication
+      // controller, even if the deployment hasn't completed.
+      overview.currentByDeploymentConfig[dcName] = _.head(ordered);
     });
-    overview.vanillaRCs = _.sortBy(vanillaRCs, 'metadata.name');
+    overview.vanillaReplicationControllers = _.sortBy(vanillaReplicationControllers, 'metadata.name');
 
     // Since the visible replication controllers for each deployment config
     // have changed, update the deployment config warnings.
@@ -419,7 +501,7 @@ function OverviewController($scope,
     }
 
     overview.replicaSetsByDeployment = LabelsService.groupBySelector(overview.replicaSets, overview.deployments, { matchSelector: true });
-    overview.activeByDeployment = {};
+    overview.currentByDeployment = {};
 
     // Sort the visible replica sets.
     _.each(overview.replicaSetsByDeployment, function(replicaSets, deploymentName) {
@@ -435,9 +517,9 @@ function OverviewController($scope,
       overview.replicaSetsByDeployment[deploymentName] = ordered;
       // TODO: Need to check if this really works for failed / canceled rollouts.
       // It might need to be reworked.
-      overview.activeByDeployment[deploymentName] = _.head(ordered);
+      overview.currentByDeployment[deploymentName] = _.head(ordered);
       // var deploymentRevision = DeploymentsService.getRevision(deployment);
-      // overview.activeByDeployment[deploymentName] = _.find(replicaSets, function(replicaSet) {
+      // overview.currentByDeployment[deploymentName] = _.find(replicaSets, function(replicaSet) {
       //   return DeploymentsService.getRevision(replicaSet) === deploymentRevision;
       // });
     });
@@ -454,21 +536,20 @@ function OverviewController($scope,
   //   key: object UID
   //   value: array of sorted services
   var selectorsByService = {};
-  var updateServices = function(objects) {
-    if (!objects || !overview.services) {
+  var updateServicesForObjects = function(apiObjects) {
+    if (!apiObjects || !overview.services) {
       return;
     }
 
-    _.each(objects, function(object) {
+    _.each(apiObjects, function(apiObject) {
       var services = [];
-      var uid = _.get(object, 'metadata.uid');
-      var podTemplate = getPodTemplate(object) || { metadata: { labels: {} } };
+      var uid = getUID(apiObject);
+      var podTemplate = getPodTemplate(apiObject) || { metadata: { labels: {} } };
       _.each(selectorsByService, function(selector, serviceName) {
         if (selector.matches(podTemplate)) {
           services.push(overview.services[serviceName]);
         }
       });
-      // TODO: Remove deleted objects from the map?
       state.servicesByObjectUID[uid] = _.sortBy(services, 'metadata.name');
     });
   };
@@ -489,13 +570,13 @@ function OverviewController($scope,
 
     var toUpdate = [
       overview.deploymentConfigs,
-      overview.vanillaRCs,
+      overview.vanillaReplicationControllers,
       overview.deployments,
       overview.vanillaReplicaSets,
       overview.statefulSets,
       overview.monopods
     ];
-    _.each(toUpdate, updateServices);
+    _.each(toUpdate, updateServicesForObjects);
   };
 
   // Group routes by the services they route to (either as a primary service or
@@ -528,7 +609,7 @@ function OverviewController($scope,
   //   key: deployment config name
   //   value: array of pipeline builds
   var groupPipelineByDC = function(build) {
-    var bcName = buildConfigForBuild(build);
+    var bcName = getBuildConfigName(build);
     var buildConfig = overview.buildConfigs[bcName];
     if (!buildConfig) {
       return;
@@ -549,13 +630,16 @@ function OverviewController($scope,
   // deployment config image change triggers.
   var buildConfigsByOutputImage = {};
   var groupBuildConfigsByOutputImage = function() {
-    buildConfigsByOutputImage = {};
-    _.each(overview.buildConfigs, function(buildConfig) {
-      var outputImage = _.get(buildConfig, 'spec.output.to');
-      var ref = imageObjectRef(outputImage, buildConfig.metadata.namespace);
-      buildConfigsByOutputImage[ref] = buildConfigsByOutputImage[ref] || [];
-      buildConfigsByOutputImage[ref].push(buildConfig);
-    });
+    buildConfigsByOutputImage = BuildsService.groupBuildConfigsByOutputImage(overview.buildConfigs);
+  };
+
+  var getBuildConfigsForDeploymentConfig = function(deploymentConfig) {
+    var uid = getUID(deploymentConfig);
+    if (!uid) {
+      return;
+    }
+
+    return _.get(state, ['buildConfigsByObjectUID', uid], []);
   };
 
   // Find all recent builds for `deploymentConfig` from each of `buildConfigs`.
@@ -563,19 +647,28 @@ function OverviewController($scope,
   // Updates `state.recentBuildsByDeploymentConfig`
   //   key: deployment config name
   //   value: array of builds, sorted in descending order by creation date
-  var updateRecentBuildsForDC = function(deploymentConfig, buildConfigs) {
+  var updateRecentBuildsForDeploymentConfig = function(deploymentConfig) {
     var builds = [];
+    var buildConfigs = getBuildConfigsForDeploymentConfig(deploymentConfig);
     _.each(buildConfigs, function(buildConfig) {
       var recentForConfig = _.get(state, ['recentBuildsByBuildConfig', buildConfig.metadata.name], []);
       builds = builds.concat(recentForConfig);
     });
-
     builds = orderObjectsByDate(builds, true);
-    _.set(state, ['recentBuildsByDeploymentConfig', deploymentConfig.metadata.name], builds);
+
+    var dcName = getName(deploymentConfig);
+    _.set(state, ['recentBuildsByDeploymentConfig', dcName], builds);
   };
 
-  // Find the build configs that relate to each deployment config.
-  //
+  var setBuildConfigsForDeploymentConfig = function(buildConfigs, deploymentConfig) {
+    var uid = getUID(deploymentConfig);
+    if (!uid) {
+      return;
+    }
+
+    _.set(state, ['buildConfigsByObjectUID', uid], buildConfigs);
+  };
+
   // Find build configs that use the pipeline strategy and have a
   // "pipeline.alpha.openshift.io/uses" annotation pointing to a deployment
   // config.
@@ -584,15 +677,7 @@ function OverviewController($scope,
   //   key: deployment config name
   //   value: array of pipeline build configs
   //          TODO: sort by name?
-  //
-  // Find build configs with an output image that matches the deployment config
-  // image change trigger.
-  //
-  // Updates `state.buildConfigsByObjectUID`
-  //   key: deployment config UID
-  //   value: array of build configs, sorted by name
-  var groupBuildConfigsByDeploymentConfig = function() {
-    // Group pipelines.
+  var groupPipelineBuildConfigsByDeploymentConfig = function() {
     overview.dcByPipeline = {};
     state.pipelinesForDC = {};
     _.each(overview.buildConfigs, function(buildConfig) {
@@ -602,14 +687,22 @@ function OverviewController($scope,
 
       // TODO: Handle other types.
       var dcNames = BuildsService.usesDeploymentConfigs(buildConfig);
-      _.set(overview, ['dcByPipeline', buildConfig.metadata.name], dcNames);
+      var bcName = getName(buildConfig);
+      _.set(overview, ['dcByPipeline', bcName], dcNames);
       _.each(dcNames, function(dcName) {
         state.pipelinesForDC[dcName] = state.pipelinesForDC[dcName] || [];
         state.pipelinesForDC[dcName].push(buildConfig);
       });
     });
+  };
 
-    // Group other build configs.
+  // Find build configs with an output image that matches the deployment config
+  // image change trigger.
+  //
+  // Updates `state.buildConfigsByObjectUID`
+  //   key: deployment config UID
+  //   value: array of build configs, sorted by name
+  var matchOutputImagesToImageChangeTriggers = function() {
     state.buildConfigsByObjectUID = {};
     _.each(overview.deploymentConfigs, function(deploymentConfig) {
       var buildConfigs = [];
@@ -628,16 +721,22 @@ function OverviewController($scope,
       });
 
       buildConfigs = _.sortBy(buildConfigs, 'metadata.name');
-      _.set(state, ['buildConfigsByObjectUID', deploymentConfig.metadata.uid], buildConfigs);
-      updateRecentBuildsForDC(deploymentConfig, buildConfigs);
+      setBuildConfigsForDeploymentConfig(buildConfigs, deploymentConfig);
+      updateRecentBuildsForDeploymentConfig(deploymentConfig);
     });
   };
 
+  // Find the build configs that relate to each deployment config. Pipeline
+  // build configs are grouped using an annotation. Other build configs are
+  // grouping using output images matched against a deployment config image
+  // change trigger.
+  var groupBuildConfigsByDeploymentConfig = function() {
+    groupPipelineBuildConfigsByDeploymentConfig();
+    matchOutputImagesToImageChangeTriggers();
+  };
+
   var groupRecentBuildsByDeploymentConfig = function() {
-    _.each(overview.deploymentConfigs, function(deploymentConfig) {
-      var buildConfigs = _.get(state, ['buildConfigsByObjectUID', deploymentConfig.metadata.uid], []);
-      updateRecentBuildsForDC(deploymentConfig, buildConfigs);
-    });
+    _.each(overview.deploymentConfigs, updateRecentBuildsForDeploymentConfig);
   };
 
   var groupBuilds = function() {
@@ -649,7 +748,7 @@ function OverviewController($scope,
     overview.recentPipelinesByDC = {};
     state.recentBuildsByBuildConfig = {};
     _.each(BuildsService.interestingBuilds(state.builds), function(build) {
-      var bcName = buildConfigForBuild(build);
+      var bcName = getBuildConfigName(build);
       if(isJenkinsPipelineStrategy(build)) {
         groupPipelineByDC(build);
       } else {
@@ -661,15 +760,17 @@ function OverviewController($scope,
     groupRecentBuildsByDeploymentConfig();
   };
 
+  // The size of all visible top-level items.
   var size = function() {
     return _.size(overview.deploymentConfigs) +
-           _.size(overview.vanillaRCs) +
+           _.size(overview.vanillaReplicationControllers) +
            _.size(overview.deployments) +
            _.size(overview.vanillaReplicaSets) +
            _.size(overview.statefulSets) +
            _.size(overview.monopods);
   };
 
+  // The size of all visible top-level items after filtering.
   var filteredSize = function() {
     return _.size(overview.filteredDeploymentConfigs) +
            _.size(overview.filteredReplicationControllers) +
@@ -742,7 +843,7 @@ function OverviewController($scope,
 
   var updateFilter = function() {
     overview.filteredDeploymentConfigs = filterItems(overview.deploymentConfigs);
-    overview.filteredReplicationControllers = filterItems(overview.vanillaRCs);
+    overview.filteredReplicationControllers = filterItems(overview.vanillaReplicationControllers);
     overview.filteredDeployments = filterItems(overview.deployments);
     overview.filteredReplicaSets = filterItems(overview.vanillaReplicaSets);
     overview.filteredStatefulSets = filterItems(overview.statefulSets);
@@ -776,26 +877,10 @@ function OverviewController($scope,
     $scope.$apply(updateFilter);
   });
 
-  // Return the same empty array each time to avoid triggering
-  // $scope.$watch updates. Otherwise, digest loop errors occur.
-  var NO_HPA = [];
-  overview.getHPA = function(object) {
-    if (!overview.horizontalPodAutoscalers) {
-      return null;
-    }
-
-    // TODO: Handle groups and subresources
-    var kind = _.get(object, 'kind'),
-        name = _.get(object, 'metadata.name');
-        // groupVersion = APIService.parseGroupVersion(object.apiVersion) || {},
-        // group = groupVersion.group || '';
-    return _.get(overview.hpaByResource, [kind, name], NO_HPA);
-  };
-
   var watches = [];
   ProjectsService.get($routeParams.project).then(_.spread(function(project, context) {
+    // Project must be set on `$scope` for the projects dropdown.
     $scope.project = project;
-    overview.projectContext = context;
 
     var updateReferencedImageStreams = function() {
       if (!overview.pods) {
@@ -813,10 +898,10 @@ function OverviewController($scope,
       groupPods();
       updateReferencedImageStreams();
       updateWarnings();
+      updateServicesForObjects(overview.monopods);
+      updatePodWarnings(overview.monopods);
       updateLabelSuggestions(overview.monopods);
-      updateServices(overview.monopods);
       updateFilter();
-      _.each(overview.monopods, updatePodWarnings);
       Logger.log("pods (subscribe)", overview.pods);
     }));
 
@@ -850,17 +935,17 @@ function OverviewController($scope,
       overview.replicationControllers = rcData.by("metadata.name");
       groupPods();
       groupReplicationControllers();
-      updateLabelSuggestions(overview.vanillaRCs);
-      updateServices(overview.vanillaRCs);
+      updateServicesForObjects(overview.vanillaReplicationControllers);
+      updatePodWarnings(overview.vanillaReplicationControllers);
+      updateLabelSuggestions(overview.vanillaReplicationControllers);
       updateFilter();
-      _.each(overview.replicationControllers, updatePodWarnings);
       Logger.log("replicationcontrollers (subscribe)", overview.replicationControllers);
     }));
 
     watches.push(DataService.watch("deploymentconfigs", context, function(dcData) {
       overview.deploymentConfigs = dcData.by("metadata.name");
+      updateServicesForObjects(overview.deploymentConfigs);
       updateLabelSuggestions(overview.deploymentConfigs);
-      updateServices(overview.deploymentConfigs);
       updateAllDeploymentWarnings();
       updateFilter();
       groupBuildConfigsByDeploymentConfig();
@@ -875,10 +960,10 @@ function OverviewController($scope,
       overview.replicaSets = replicaSetData.by('metadata.name');
       groupPods();
       groupReplicaSets();
-      updateServices(overview.vanillaReplicaSets);
+      updateServicesForObjects(overview.vanillaReplicaSets);
+      updatePodWarnings(overview.vanillaReplicaSets);
       updateLabelSuggestions(overview.vanillaReplicaSets);
       updateFilter();
-      _.each(overview.replicaSets, updatePodWarnings);
       Logger.log("replicasets (subscribe)", overview.replicaSets);
     }));
 
@@ -888,7 +973,8 @@ function OverviewController($scope,
     }, context, function(statefulSetData) {
       overview.statefulSets = statefulSetData.by('metadata.name');
       groupPods();
-      updateServices(overview.monopods);
+      updateServicesForObjects(overview.statefulSets);
+      updatePodWarnings(overview.statefulSets);
       updateLabelSuggestions(overview.statefulSets);
       updateFilter();
       Logger.log("statefulsets (subscribe)", overview.statefulSets);
@@ -900,7 +986,7 @@ function OverviewController($scope,
     }, context, function(deploymentData) {
       overview.deployments = deploymentData.by('metadata.name');
       groupReplicaSets();
-      updateServices(overview.deployments);
+      updateServicesForObjects(overview.deployments);
       updateLabelSuggestions(overview.deployments);
       updateFilter();
       Logger.log("deployments (subscribe)", overview.deployments);
@@ -940,12 +1026,18 @@ function OverviewController($scope,
       Logger.log("imagestreams (subscribe)", imageStreams);
     }, {poll: limitWatches, pollInterval: 60 * 1000}));
 
-    DataService.get("templates", Constants.SAMPLE_PIPELINE_TEMPLATE.name, {namespace: Constants.SAMPLE_PIPELINE_TEMPLATE.namespace}, { errorNotification: false }).then(
-      function(template) {
+    var samplePipelineTemplate = Constants.SAMPLE_PIPELINE_TEMPLATE;
+    if (samplePipelineTemplate) {
+      DataService.get("templates", samplePipelineTemplate.name, {
+        namespace: samplePipelineTemplate.namespace
+      }, {
+        errorNotification: false
+      }).then(function(template) {
         overview.samplePipelineURL = Navigate.createFromTemplateURL(template, $scope.projectName);
       });
+    }
 
-    $scope.$on('$destroy', function(){
+    $scope.$on('$destroy', function() {
       DataService.unwatchAll(watches);
     });
   }));

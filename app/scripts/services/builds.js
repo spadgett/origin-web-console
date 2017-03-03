@@ -201,6 +201,23 @@ angular.module("openshiftConsole")
                     }));
     };
 
+    var imageObjectRef = $filter('imageObjectRef');
+    var groupBuildConfigsByOutputImage = function(buildConfigs) {
+      var buildConfigsByOutputImage = {};
+      _.each(buildConfigs, function(buildConfig) {
+        var outputImage = _.get(buildConfig, 'spec.output.to');
+        var ref = imageObjectRef(outputImage, buildConfig.metadata.namespace);
+        if (!ref) {
+          return;
+        }
+
+        buildConfigsByOutputImage[ref] = buildConfigsByOutputImage[ref] || [];
+        buildConfigsByOutputImage[ref].push(buildConfig);
+      });
+
+      return buildConfigsByOutputImage;
+    };
+
     return {
       startBuild: startBuild,
       cancelBuild: cancelBuild,
@@ -216,6 +233,7 @@ angular.module("openshiftConsole")
       incompleteBuilds: incompleteBuilds,
       completeBuilds: completeBuilds,
       lastCompleteByBuildConfig: lastCompleteByBuildConfig,
-      interestingBuilds: interestingBuilds
+      interestingBuilds: interestingBuilds,
+      groupBuildConfigsByOutputImage: groupBuildConfigsByOutputImage
     };
   });
