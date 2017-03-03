@@ -1,5 +1,5 @@
 <div ng-if="overviewPipelines.recentPipelines.length" class="expanded-section">
-  <div class="h4">Pipelines</div>
+  <div class="section-title no-border">Pipelines</div>
   <div ng-repeat="pipeline in overviewPipelines.recentPipelines | orderObjectsByDate : true track by (pipeline | uid)"
        class="build-pipeline-wrapper animate-repeat animate-slide">
     <build-pipeline build="pipeline" build-config-name-on-expanded="true"></build-pipeline>

@@ -52,6 +52,10 @@
     padding: 0 10px 4px 0;
     .text-muted();
     text-transform: uppercase;
+    .sublabel {
+      margin-left: 2px;
+      text-transform: none;
+    }
   }
   .data-toolbar-dropdown {
     display: inline-block;
@@ -196,19 +200,29 @@
       padding-right: 20px;
     }
   }
+  .networking-section .row + .row:before {
+    content: '';
+    display: block;
+    border-top: 1px solid @list-pf-border-color;
+    margin: 0 20px 10px;
+  }
   .expanded-section {
     margin-top: 20px;
-    > .row:before {
-      content: '';
-      display: block;
-      border-top: 1px solid @list-pf-border-color;
-      margin: 0 20px 10px;
+    .section-title {
+      .h4();
+      &:not(.no-border) {
+        border-bottom: 1px solid @list-pf-border-color;
+        padding-bottom: 10px;
+      }
     }
     h3 {
       .truncate();
       line-height: 1.4;
       margin-top: 0;
       margin-bottom: 5px;
+    }
+    > .row {
+      margin-bottom: 10px;
     }
   }
   .notification-icon {

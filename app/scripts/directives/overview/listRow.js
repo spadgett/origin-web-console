@@ -25,7 +25,7 @@ function OverviewListRow($filter,
   var isJenkinsPipelineStrategy = $filter('isJenkinsPipelineStrategy');
 
   var updateTriggers = function(apiObject) {
-    var triggers = _.get(apiObject, 'spec.triggers', []);
+    var triggers = _.get(apiObject, 'spec.triggers');
     if (_.isEmpty(triggers)) {
       return;
     }
@@ -96,7 +96,7 @@ function OverviewListRow($filter,
     // Update build configs.
     var uid = _.get(row, 'apiObject.metadata.uid');
     if (uid) {
-      row.buildConfigs = _.get(row, ['state', 'buildConfigsByObjectUID', uid], []);
+      row.buildConfigs = _.get(row, ['state', 'buildConfigsByObjectUID', uid]);
     }
 
     var name;
