@@ -25,18 +25,12 @@
     line-height: 1.4;
     font-size: @font-size-base;
     margin-top: 3px;
-    .builds-label {
-      margin-right: 5px;
-    }
     .icon-count {
       // FIXME: not working
       .nowrap();
-      margin-right: 10px;
+      margin-left: 10px;
       &, [data-toggle="tooltip"] {
         cursor: help;
-      }
-      + .icon-count {
-        margin-left: 0;
       }
     }
     @media (min-width: @screen-md-min) {
@@ -157,6 +151,7 @@
     }
     .build-count {
       display: block;
+      margin-left: 0;
       @media (min-width: @screen-md-min) {
         display: inline-block;
         margin-left: 10px;
