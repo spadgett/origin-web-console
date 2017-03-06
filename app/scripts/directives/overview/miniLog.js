@@ -22,19 +22,29 @@ function MiniLogController($scope, $filter, APIService, DataService) {
 
   var update = _.throttle(function() {
     $scope.$evalAsync(function() {
-      miniLog.lines = buffer;
+      miniLog.lines = _.clone(buffer);
     });
   }, 200);
 
+  // Used as a "track by" ID in the view. Since we follow from the end, might
+  // not correspond to actual line numbers. Track by is necessary in case a
+  // line is repeated.
+  var lineNum = 0;
   var onMessage = function(msg) {
     if (!msg) {
       return;
     }
 
-    if (buffer.length >= numLines) {
-      buffer = _.drop(buffer);
+    lineNum++;
+    buffer.push({
+      text: msg,
+      id: lineNum
+    });
+
+    if (buffer.length > numLines) {
+      buffer = _.takeRight(buffer, numLines);
     }
-    buffer.push(msg);
+
     update();
   };
 
