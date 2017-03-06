@@ -22,7 +22,7 @@
         </span>
         Build
         <a ng-href="{{build | navigateResourceURL}}"><span
-            ng-if="build | annotation : 'buildNumber'">#{{build | annotation : 'buildNumber'}}<span
+            ng-if="build | annotation : 'buildNumber'">#{{build | annotation : 'buildNumber'}}</span><span
             ng-if="!(build | annotation : 'buildNumber')">{{build.metadata.name}}</span></a>
         {{build.status.phase}}
         <span ng-if="'builds/log' | canI : 'get'" class="small mar-left-sm">
