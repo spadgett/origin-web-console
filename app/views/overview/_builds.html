@@ -12,6 +12,9 @@
         <!-- <a href="" ng-if="('buildconfigs/instantiate' | canI : 'create')" ng-click="startBuild(buildConfig)" class="small mar-left-sm">Start Build</a> -->
       </div>
       <div ng-repeat="build in overviewBuilds.recentBuildsByBuildConfig[buildConfig.metadata.name] track by (build | uid)" class="mar-bottom-sm animate-repeat">
+        <span ng-if="build.status.startTimestamp && build.status.phase !== 'Complete' && ('builds/log' | canI : 'get')" class="small pull-right">
+          <a ng-if="!!['New', 'Pending'].indexOf(build.status.phase) && (build | buildLogURL)" ng-href="{{build | buildLogURL}}">View Full Log</a>
+        </span>
         <span ng-switch="build.status.phase" class="hide-ng-leave">
           <span ng-switch-when="Failed" class="status-icon">
             <i class="pficon pficon-error-circle-o text-danger"></i>
@@ -20,14 +23,18 @@
             <status-icon status="build.status.phase"></status-icon>
           </span>
         </span>
-        Build
-        <a ng-href="{{build | navigateResourceURL}}"><span
-            ng-if="build | annotation : 'buildNumber'">#{{build | annotation : 'buildNumber'}}</span><span
-            ng-if="!(build | annotation : 'buildNumber')">{{build.metadata.name}}</span></a>
-        {{build.status.phase}}
-        <span ng-if="'builds/log' | canI : 'get'" class="small mar-left-sm">
-          <a ng-if="!!['New', 'Pending'].indexOf(build.status.phase) && (build | buildLogURL)" ng-href="{{build | buildLogURL}}">View Log</a>
+        <span class="h4">
+          Build
+          <a ng-href="{{build | navigateResourceURL}}"><span
+              ng-if="build | annotation : 'buildNumber'">#{{build | annotation : 'buildNumber'}}</span><span
+              ng-if="!(build | annotation : 'buildNumber')">{{build.metadata.name}}</span></a>
+          {{build.status.phase | lowercase}}
+          <ellipsis-pulser ng-if="build | isIncompleteBuild" color="dark" size="sm" display="inline" msg=""></ellipsis-pulser>
+          <small class="text-muted mar-left-md">created <span am-time-ago="build.metadata.creationTimestamp"></span></small>
         </span>
+        <div ng-if="build.status.startTimestamp && build.status.phase !== 'Complete' && ('builds/log' | canI : 'get')" class="animate-if">
+          <mini-log api-object="build" context="overviewBuilds.context"></mini-log>
+        </div>
       </div>
     </div>
   </div>

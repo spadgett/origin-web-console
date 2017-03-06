@@ -4,7 +4,8 @@ angular.module('openshiftConsole').component('overviewBuilds', {
   controllerAs: 'overviewBuilds',
   bindings: {
     buildConfigs: '<',
-    recentBuildsByBuildConfig: '<'
+    recentBuildsByBuildConfig: '<',
+    context: '<'
   },
   templateUrl: 'views/overview/_builds.html'
 });

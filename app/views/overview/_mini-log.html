@@ -1,0 +1,4 @@
+<div ng-if="miniLog.lines.length" class="mini-log">
+  <!-- Track by $index needed in case miniLog.lines contains duplicates. -->
+  <div ng-repeat="line in miniLog.lines track by $index">{{line}}</div>
+</div>

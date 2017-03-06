@@ -883,6 +883,7 @@ function OverviewController($scope,
   ProjectsService.get($routeParams.project).then(_.spread(function(project, context) {
     // Project must be set on `$scope` for the projects dropdown.
     $scope.project = project;
+    state.context = context;
 
     var updateReferencedImageStreams = function() {
       if (!overview.pods) {
