@@ -12,10 +12,10 @@
       <!-- <span class="text-muted mar-right-xs"> -->
       <!--   <span data-icon="" aria-hidden="true" style="font-size: 16px; vertical-align: -2px;"></span> -->
       <!-- </span> -->
-      <label>Ports:</label>
       <span ng-repeat="portMapping in service.spec.ports | limitTo : 1">
-        {{portMapping.port}} <i class="fa fa-long-arrow-right text-muted"></i>
-        {{portMapping.targetPort}} ({{portMapping.protocol}})
+        {{portMapping.port}}/{{portMapping.protocol}} ({{portMapping.name}})
+        <i class="fa fa-long-arrow-right text-muted"></i>
+        {{portMapping.targetPort}}
       </span>
       <span ng-if="service.spec.ports.length >= 2">
         and
@@ -41,9 +41,10 @@
             <span ng-if="!(route | isWebRoute)">{{route | routeLabel}}</span>
             <route-warnings route="route" service="service"></route-warnings>
           </h3>
-          <div class="nowrap truncate">
-            Route
-            <a ng-href="{{route | navigateResourceURL}}">{{route.metadata.name}}</a>
+          <div class="nowrap">
+            <span class="nowrap">Route
+              <a ng-href="{{route | navigateResourceURL}}">{{route.metadata.name}}</a>,</span>
+            target port {{route.spec.port.targetPort}}
           </div>
           <div ng-if="route | hasAlternateBackends">
             <route-service-bar-chart route="route" highlight-service="service.metadata.name"></route-service-bar-chart>
