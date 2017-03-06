@@ -22,7 +22,8 @@ function OverviewController($scope,
                             Navigate,
                             ProjectsService,
                             ResourceAlertsService,
-                            RoutesService) {
+                            RoutesService,
+                            BREAKPOINTS) {
   var overview = this;
   var limitWatches = $filter('isIE')() || $filter('isEdge')();
   var DEFAULT_POLL_INTERVAL = 60 * 1000; // milliseconds
@@ -76,6 +77,38 @@ function OverviewController($scope,
     state.alerts[alert.name] = alert.data;
   });
   AlertMessageService.clearAlerts();
+
+  var getBreakpoint = function() {
+    if (window.innerWidth < BREAKPOINTS.screenXsMin) {
+      return 'xs';
+    }
+
+    if (window.innerWidth < BREAKPOINTS.screenSmMin) {
+      return 'sm';
+    }
+
+    if (window.innerWidth < BREAKPOINTS.screenLgMin) {
+      return 'md';
+    }
+
+    return 'lg';
+  };
+
+  // Track the breakpoint ourselves so we can remove elements from the page,
+  // rather than hiding them using CSS. This avoids rendering charts more than
+  // once for the responsive layout, which switches to tabs at smaller screen
+  // widths.
+  overview.state.breakpoint = getBreakpoint();
+  var onResize = _.throttle(function() {
+    var breakpoint = getBreakpoint();
+    if (overview.state.breakpoint !== breakpoint) {
+      $scope.$evalAsync(function() {
+        overview.state.breakpoint = breakpoint;
+      });
+    }
+  }, 50);
+
+  $(window).on('resize', onResize);
 
   overview.renderOptions = {
     showGetStarted: false,
@@ -1043,6 +1076,7 @@ function OverviewController($scope,
 
     $scope.$on('$destroy', function() {
       DataService.unwatchAll(watches);
+      $(window).off('resize', onResize);
     });
   }));
 }

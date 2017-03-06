@@ -155,6 +155,12 @@
     display: inline-block;
     margin: 0;
   }
+  .list-row-tabset {
+    margin-top: 20px;
+    @media (min-width: @screen-md-min) {
+      margin-top: 0;
+    }
+  }
   .list-view-pf-actions .actions-dropdown-kebab {
     font-size: 18px;
     // Give a bigger click target (fill `list-view-pf-actions` width)
@@ -178,15 +184,14 @@
       border-bottom: 1px solid #ededed;
       display: inline-block;
       height: 28px;
+      max-width: 300px;
       vertical-align: -6px;
-      width: 125px;
-      @media (min-width: 1400px) {
-        width: 175px;
-      }
+      width: calc(~"100% - 80px");
     }
     .metrics-usage {
       display: inline-block;
       margin-left: 10px;
+      max-width: 80px;
     }
     .usage-label {
       // Make sure the labels align with the bottom of the chart.
