@@ -85,7 +85,12 @@
                 </overview-networking>
               </uib-tab>
               <uib-tab ng-if="row.state.breakpoint === 'xs' || row.state.breakpoint === 'sm'">
-                <uib-tab-heading>Builds</uib-tab-heading>
+                <uib-tab-heading>
+                  Builds
+                  <span class="build-count">
+                    <build-counts builds="row.recentBuilds"></build-counts>
+                  </span>
+                </uib-tab-heading>
                 <overview-builds
                   build-configs="row.buildConfigs"
                   recent-builds-by-build-config="row.state.recentBuildsByBuildConfig"

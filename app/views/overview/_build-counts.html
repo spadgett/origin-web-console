@@ -1,6 +1,6 @@
 <span ng-if="buildCounts.show" class="animate-if">
-  <span class="builds-label">
-    {{buildCounts.buildLabel || 'Builds'}}
+  <span ng-if="buildCounts.label" class="builds-label">
+    {{buildCounts.label}}
   </span>
   <span ng-repeat="phase in buildCounts.interestingPhases"
         ng-if="buildCounts.countByPhase[phase]"

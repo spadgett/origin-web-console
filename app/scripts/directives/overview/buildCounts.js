@@ -5,7 +5,7 @@ angular.module('openshiftConsole').component('buildCounts', {
   controllerAs: 'buildCounts',
   bindings: {
     builds: '<',
-    buildLabel: '@'
+    label: '@'
   },
   templateUrl: 'views/overview/_build-counts.html'
 });

@@ -22,7 +22,6 @@
 
 .overview-new {
   .build-count {
-    display: block;
     line-height: 1.4;
     font-size: @font-size-base;
     margin-top: 3px;
@@ -151,9 +150,18 @@
       min-height: 80px;
     }
   }
-  .list-pf-name h3 {
-    display: inline-block;
-    margin: 0;
+  .list-pf-name {
+    h3 {
+      display: inline-block;
+      margin: 0;
+    }
+    .build-count {
+      display: block;
+      @media (min-width: @screen-md-min) {
+        display: inline-block;
+        margin-left: 10px;
+      }
+    }
   }
   .list-row-tabset {
     margin-top: 20px;
