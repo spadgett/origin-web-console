@@ -22,20 +22,15 @@
 
 .overview-new {
   .build-count {
-    line-height: 1.4;
-    font-size: @font-size-base;
-    margin-top: 3px;
+    .builds,
+    .pipelines {
+      display: block;
+    }
     .icon-count {
-      // FIXME: not working
-      .nowrap();
       margin-left: 5px;
       &, [data-toggle="tooltip"] {
         cursor: help;
       }
-    }
-    @media (min-width: @screen-md-min) {
-      display: inline-block;
-      margin-left: 10px;
     }
   }
   .build-pipeline {
@@ -50,10 +45,12 @@
   }
   .component-label {
     font-size: @component-label;
-    padding: 0 10px 4px 0;
+    font-weight: 500;
+    padding: 0 0 4px 0;
     .text-muted();
     text-transform: uppercase;
     .sublabel {
+      font-size: (@component-label - 1);
       margin-left: 2px;
       text-transform: none;
     }
@@ -89,12 +86,31 @@
     margin-right: 5px;
     vertical-align: 8px;
   }
-  .filter-status {
-    margin-bottom: 5px;
-  }
   .deployment-connector-arrow {
     font-size: 300%;
     .text-muted();
+  }
+  .expanded-section {
+    margin-top: 20px;
+    > .row > [class^=col-] {
+      margin-bottom: 10px;
+    }
+    h3 {
+      line-height: 1.4;
+      margin-bottom: 5px;
+      margin-top: 0;
+      .truncate();
+    }
+    .section-title {
+      .h4();
+      &:not(.no-border) {
+        border-bottom: 1px solid @list-pf-border-color;
+        padding-bottom: 10px;
+      }
+    }
+  }
+  .filter-status {
+    margin-bottom: 5px;
   }
   h1, h2 {
     // Don't clip descenders.
@@ -104,13 +120,26 @@
   }
   h2 {
     margin-top: 0;
+    > .component-label {
+      padding-bottom: 0;
+    }
   }
   .list-pf {
     border-bottom-color: @list-pf-border-color;
     margin-bottom: 50px;
   }
-  .list-pf-content .row h4:first-child {
-    margin-top: 0;
+  .list-pf-actions {
+    // if no actions-dropdown-kebab is present, still take up space
+    min-width: 19px;
+  }
+  .list-pf-content {
+    @media (min-width: @screen-md-min) {
+      // Prevent the row from shrinking slightly on expand.
+      min-height: 45px;
+    }
+    .row h4:first-child {
+      margin-top: 0;
+    }
   }
   .list-pf-details {
     max-width: 500px;
@@ -140,21 +169,20 @@
     }
     > .list-pf-container {
       cursor: pointer;
-      // Prevent the row from shrinking slightly on expand.
-      min-height: 80px;
     }
   }
   .list-pf-name {
-    h3 {
-      display: inline-block;
-      margin: 0;
+    display: flex;
+    flex-direction: column;
+    @media (min-width: @screen-md-min) {
+      align-items: center;
+      flex-direction: row;
     }
-    .build-count {
-      display: block;
-      margin-left: 0;
+    h3 {
+      line-height: 1;
+      margin: 0;
       @media (min-width: @screen-md-min) {
-        display: inline-block;
-        margin-left: 10px;
+        width: 50%;
       }
     }
   }
@@ -176,13 +204,15 @@
     margin-top: 20px;
   }
   .metrics-collapsed {
-    .text-center();
     flex-grow: 1;
+    .text-center();
   }
   .metrics-summary {
-    .text-center();
     display: inline-block;
-    margin: 0 10px;
+    .text-center();
+    + .metrics-summary {
+      margin-left: 20px;
+    }
   }
   .metrics-compact {
     white-space : nowrap;
@@ -243,34 +273,13 @@
     border-top: 1px solid @list-pf-border-color;
     margin: 0 20px 10px;
   }
-  .expanded-section {
-    margin-top: 20px;
-    h3 {
-      .truncate();
-      line-height: 1.4;
-      margin-top: 0;
-      margin-bottom: 5px;
-    }
-    > .row > [class^=col-] {
-      margin-bottom: 10px;
-    }
-    .section-title {
-      .h4();
-      &:not(.no-border) {
-        border-bottom: 1px solid @list-pf-border-color;
-        padding-bottom: 10px;
-      }
-    }
-  }
   .notification-icon {
-    .text-center();
     display: inline-block;
-    margin: 0 5px;
-    &, [data-toggle="tooltip"] {
-      cursor: help;
+    + .notification-icon {
+      margin-left: 5px;
     }
-    &:first-child {
-      margin-left: 0;
+    [data-toggle="tooltip"] {
+      cursor: help;
     }
   }
   overview-list-row + overview-list-row .list-pf-item.active {
@@ -285,13 +294,15 @@
   .overview-row-inline-actions {
     .mar-left-md();
   }
+  pod-donut[mini] {
+    align-items: center;
+    display: flex;
+  }
   .status-icons {
-    display: block;
+    margin-top: 5px;
     @media (min-width: @screen-md-min) {
-      .text-center();
-      display: inline-block;
-      margin-left: 40px;
-      max-width: 200px;
+      margin-top: 0;
+      width: 50%;
     }
   }
   .toolbar-container {
@@ -302,7 +313,7 @@
     margin-bottom: 20px;
   }
   .usage-value {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 300;
     line-height: 1;
   }

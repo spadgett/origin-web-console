@@ -15,12 +15,12 @@
     </span>
   </h3>
   <div class="status-icons">
-    <notification-icon alerts="row.notifications"></notification-icon>
+    <notification-icon ng-if="!row.isExpanded()" alerts="row.notifications"></notification-icon>
     <span class="build-count">
-      <span ng-if="!row.isExpanded() && !row.hidePipelines && (row.recentPipelines | hashSize)">
+      <span ng-if="!row.isExpanded() && !row.hidePipelines && (row.recentPipelines | hashSize)" class="pipelines">
         <build-counts builds="row.recentPipelines" label="Pipelines"></build-counts>
       </span>
-      <span ng-if="!row.isExpanded() && (row.recentBuilds | hashSize)">
+      <span ng-if="!row.isExpanded() && (row.recentBuilds | hashSize)" class="builds">
         <build-counts builds="row.recentBuilds" label="Builds"></build-counts>
       </span>
     </span>
