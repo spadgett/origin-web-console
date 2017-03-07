@@ -45,6 +45,7 @@ angular.module("openshiftConsole")
 
         // Handle certain warnings specially.
         switch (warning.reason) {
+          case "Looping":
           case "NonZeroExit":
             // Add a View Log link for crashing containers.
             var podLink = Navigate.resourceURL(warning.pod, "Pod", namespace);
