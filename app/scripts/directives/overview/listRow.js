@@ -20,9 +20,7 @@ function OverviewListRow($filter,
                          DeploymentsService,
                          Navigate) {
   var row = this;
-  row.selectedTab = {
-    metrics: true
-  };
+  row.selectedTab = {};
 
   var deploymentIsInProgress = $filter('deploymentIsInProgress');
   var getErrorDetails = $filter('getErrorDetails');

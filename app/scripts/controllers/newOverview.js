@@ -79,11 +79,11 @@ function OverviewController($scope,
   AlertMessageService.clearAlerts();
 
   var getBreakpoint = function() {
-    if (window.innerWidth < BREAKPOINTS.screenXsMin) {
+    if (window.innerWidth < BREAKPOINTS.screenSmMin) {
       return 'xs';
     }
 
-    if (window.innerWidth < BREAKPOINTS.screenSmMin) {
+    if (window.innerWidth < BREAKPOINTS.screenMdMin) {
       return 'sm';
     }
 

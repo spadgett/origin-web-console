@@ -41,9 +41,26 @@
             </deployment-donut>
           </div>
         </div>
-        <div ng-if="row.state.breakpoint !== 'lg' && !row.state.previous">
+        <div ng-if="row.state.breakpoint === 'xs' && !row.state.previous">
           <div class="col-sm-8 col-md-9">
             <uib-tabset class="list-row-tabset">
+              <uib-tab active="row.selectedTab.networking">
+                <uib-tab-heading>Networking</uib-tab-heading>
+                <overview-networking
+                  services="row.state.servicesByObjectUID[row.apiObject.metadata.uid]"
+                  routes-by-service="row.state.routesByService">
+                </overview-networking>
+              </uib-tab>
+              <uib-tab active="row.selectedTab.containers">
+                <uib-tab-heading>Containers</uib-tab-heading>
+
+                <!-- TODO: markup semantics suggest div.component-label in <pod-template> should be an h4,
+                           but only here on the overview -->
+                <pod-template
+                  pod-template="row.current | podTemplate"
+                  images-by-docker-reference="row.state.imagesByDockerReference"
+                  builds="row.state.builds"></pod-template>
+              </uib-tab>
               <uib-tab ng-if="row.state.showMetrics" active="row.selectedTab.metrics">
                 <uib-tab-heading>Metrics</uib-tab-heading>
                 <!-- Use ng-if to avoid requesting metrics when the tab is not active. -->
@@ -70,24 +87,7 @@
                   </div>
                 </div>
               </uib-tab>
-              <uib-tab active="row.selectedTab.details">
-                <uib-tab-heading>Details</uib-tab-heading>
-
-                <!-- TODO: markup semantics suggest div.component-label in <pod-template> should be an h4,
-                           but only here on the overview -->
-                <pod-template
-                  pod-template="row.current | podTemplate"
-                  images-by-docker-reference="row.state.imagesByDockerReference"
-                  builds="row.state.builds"></pod-template>
-              </uib-tab>
-              <uib-tab ng-if="row.state.breakpoint === 'xs' || row.state.breakpoint === 'sm'" active="row.selectedTab.networking">
-                <uib-tab-heading>Networking</uib-tab-heading>
-                <overview-networking
-                  services="row.state.servicesByObjectUID[row.apiObject.metadata.uid]"
-                  routes-by-service="row.state.routesByService">
-                </overview-networking>
-              </uib-tab>
-              <uib-tab ng-if="row.buildConfigs.length && (row.state.breakpoint === 'xs' || row.state.breakpoint === 'sm')" active="row.selectedTab.builds">
+              <uib-tab ng-if="row.buildConfigs.length" active="row.selectedTab.builds">
                 <uib-tab-heading>
                   Builds
                   <span class="build-count">
@@ -104,7 +104,7 @@
             </uib-tabset>
           </div>
         </div>
-        <div ng-if="row.state.breakpoint === 'lg'">
+        <div ng-if="row.state.breakpoint !== 'xs'">
           <div ng-if="row.state.showMetrics && !row.previous" class="col-md-4 col-lg-3">
             <div ng-if="row.apiObject.kind === 'Pod'">
               <h4>Usage <small>Last 15 Minutes</small></h4>
@@ -127,7 +127,7 @@
               </deployment-metrics>
             </div>
           </div>
-          <div class="col-sm-8 col-md-5 col-lg-6" ng-class="{ 'hidden-sm col-md-4 col-lg-4': row.previous }">
+          <div class="col-sm-12 col-md-5 col-lg-6" ng-class="{ 'hidden-sm col-md-4 col-lg-4': row.previous }">
             <!-- TODO: markup semantics suggest div.component-label in <pod-template> should be an h4,
                        but only here on the overview -->
             <pod-template
@@ -146,7 +146,7 @@
 
     <!-- Networking Section -->
     <overview-networking
-      ng-if="!row.current || (row.state.breakpoint === 'md' || row.state.breakpoint === 'lg')"
+      ng-if="!row.current || row.state.breakpoint !== 'xs'"
       services="row.state.servicesByObjectUID[row.apiObject.metadata.uid]"
       routes-by-service="row.state.routesByService">
     </overview-networking>
@@ -159,7 +159,7 @@
 
     <!-- Builds Section -->
     <overview-builds
-      ng-if="!row.current || (row.state.breakpoint === 'md' || row.state.breakpoint === 'lg')"
+      ng-if="!row.current || row.state.breakpoint !== 'xs'"
       build-configs="row.buildConfigs"
       recent-builds-by-build-config="row.state.recentBuildsByBuildConfig"
       context="row.state.context"
