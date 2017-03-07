@@ -180,9 +180,12 @@
     }
     h3 {
       line-height: 1;
-      margin: 0;
+      margin: 0 15px 0 0;
       @media (min-width: @screen-md-min) {
-        width: 50%;
+        width: 60%;
+      }
+      a {
+        .word-break();
       }
     }
   }
@@ -275,9 +278,7 @@
   }
   .notification-icon {
     display: inline-block;
-    + .notification-icon {
-      margin-left: 5px;
-    }
+    margin: 0 5px 0 0;
     [data-toggle="tooltip"] {
       cursor: help;
     }
@@ -301,8 +302,9 @@
   .status-icons {
     margin-top: 5px;
     @media (min-width: @screen-md-min) {
+      margin-right: 15px;
       margin-top: 0;
-      width: 50%;
+      width: 40%;
     }
   }
   .toolbar-container {
