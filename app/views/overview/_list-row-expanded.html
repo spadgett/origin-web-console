@@ -127,7 +127,11 @@
               </deployment-metrics>
             </div>
           </div>
-          <div class="col-sm-12 col-md-5 col-lg-6" ng-class="{ 'hidden-sm col-md-4 col-lg-4': row.previous }">
+          <div class="col-sm-12 col-md-5 col-lg-6"
+               ng-class="{
+                 'col-sm-8': !row.state.showMetrics,
+                 'hidden-sm col-md-4 col-lg-4': row.previous
+               }">
             <!-- TODO: markup semantics suggest div.component-label in <pod-template> should be an h4,
                        but only here on the overview -->
             <pod-template
