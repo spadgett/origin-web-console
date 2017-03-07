@@ -87,6 +87,17 @@
                   </div>
                 </div>
               </uib-tab>
+              <uib-tab ng-if="!row.hidePipelines && row.recentPipelines.length" active="row.selectedTab.pipelines">
+                <uib-tab-heading>
+                  Pipelines
+                  <span class="build-count">
+                    <build-counts builds="row.recentPipelines"></build-counts>
+                  </span>
+                </uib-tab-heading>
+                <overview-pipelines
+                  recent-pipelines="row.recentPipelines">
+                </overview-pipelines>
+              </uib-tab>
               <uib-tab ng-if="row.buildConfigs.length" active="row.selectedTab.builds">
                 <uib-tab-heading>
                   Builds
@@ -157,7 +168,7 @@
 
     <!-- Pipelines Section -->
     <overview-pipelines
-      ng-if="!row.hidePipelines"
+      ng-if="!row.hidePipelines && row.state.breakpoint !== 'xs'"
       recent-pipelines="row.recentPipelines">
     </overview-pipelines>
 
