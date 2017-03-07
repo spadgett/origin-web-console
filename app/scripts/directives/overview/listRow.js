@@ -102,9 +102,10 @@ function OverviewListRow($filter,
       row.hpa = getHPA(row.current);
     }
 
-    // Update build configs.
+    // Update services and build configs.
     var uid = _.get(row, 'apiObject.metadata.uid');
     if (uid) {
+      row.services = _.get(row, ['state', 'servicesByObjectUID', uid]);
       row.buildConfigs = _.get(row, ['state', 'buildConfigsByObjectUID', uid]);
     }
 

@@ -44,10 +44,10 @@
         <div ng-if="row.state.breakpoint === 'xs' && !row.state.previous">
           <div class="col-sm-8 col-md-9">
             <uib-tabset class="list-row-tabset">
-              <uib-tab active="row.selectedTab.networking">
+              <uib-tab active="row.selectedTab.networking" ng-if="row.services | hashSize">
                 <uib-tab-heading>Networking</uib-tab-heading>
                 <overview-networking
-                  services="row.state.servicesByObjectUID[row.apiObject.metadata.uid]"
+                  services="row.services"
                   routes-by-service="row.state.routesByService">
                 </overview-networking>
               </uib-tab>
@@ -162,7 +162,7 @@
     <!-- Networking Section -->
     <overview-networking
       ng-if="!row.current || row.state.breakpoint !== 'xs'"
-      services="row.state.servicesByObjectUID[row.apiObject.metadata.uid]"
+      services="row.services"
       routes-by-service="row.state.routesByService">
     </overview-networking>
 
