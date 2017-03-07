@@ -20,6 +20,10 @@ function OverviewListRow($filter,
                          DeploymentsService,
                          Navigate) {
   var row = this;
+  row.selectedTab = {
+    metrics: true
+  };
+
   var deploymentIsInProgress = $filter('deploymentIsInProgress');
   var getErrorDetails = $filter('getErrorDetails');
   var isJenkinsPipelineStrategy = $filter('isJenkinsPipelineStrategy');

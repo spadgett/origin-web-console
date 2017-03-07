@@ -41,34 +41,37 @@
             </deployment-donut>
           </div>
         </div>
-        <div ng-if="row.state.breakpoint !== 'lg' && row.state.showMetrics && !row.state.previous">
+        <div ng-if="row.state.breakpoint !== 'lg' && !row.state.previous">
           <div class="col-sm-8 col-md-9">
             <uib-tabset class="list-row-tabset">
-              <uib-tab>
-                <uib-tab-heading>Metrics</uib-tab-heading>
-                <div ng-if="row.apiObject.kind === 'Pod'">
-                  <h4>Usage <small>Last 15 Minutes</small></h4>
-                  <deployment-metrics
-                    pods="[row.apiObject]"
-                    containers="row.apiObject.spec.containers"
-                    profile="compact"
-                    alerts="row.state.alerts"
-                    class="overview-metrics">
-                  </deployment-metrics>
-                </div>
-                <div ng-if="row.apiObject.kind !== 'Pod'">
-                  <h4>Average Usage <small>Last 15 Minutes</small></h4>
-                  <deployment-metrics
-                    pods="row.getPods(row.current)"
-                    containers="row.current.spec.template.spec.containers"
-                    profile="compact"
-                    alerts="row.sate.alerts"
-                    class="overview-metrics">
-                  </deployment-metrics>
+              <uib-tab ng-if="row.state.showMetrics">
+                <uib-tab-heading active="selectedTab.metrics">Metrics</uib-tab-heading>
+                <!-- Use ng-if to avoid requesting metrics when the tab is not active. -->
+                <div ng-if="selectedTab.metrics">
+                  <div ng-if="row.apiObject.kind === 'Pod'">
+                    <h4>Usage <small>Last 15 Minutes</small></h4>
+                    <deployment-metrics
+                      pods="[row.apiObject]"
+                      containers="row.apiObject.spec.containers"
+                      profile="compact"
+                      alerts="row.state.alerts"
+                      class="overview-metrics">
+                    </deployment-metrics>
+                  </div>
+                  <div ng-if="row.apiObject.kind !== 'Pod'">
+                    <h4>Average Usage <small>Last 15 Minutes</small></h4>
+                    <deployment-metrics
+                      pods="row.getPods(row.current)"
+                      containers="row.current.spec.template.spec.containers"
+                      profile="compact"
+                      alerts="row.sate.alerts"
+                      class="overview-metrics">
+                    </deployment-metrics>
+                  </div>
                 </div>
               </uib-tab>
               <uib-tab>
-                <uib-tab-heading>Details</uib-tab-heading>
+                <uib-tab-heading active="selectedTab.details">Details</uib-tab-heading>
 
                 <!-- TODO: markup semantics suggest div.component-label in <pod-template> should be an h4,
                            but only here on the overview -->
@@ -78,14 +81,14 @@
                   builds="row.state.builds"></pod-template>
               </uib-tab>
               <uib-tab ng-if="row.state.breakpoint === 'xs' || row.state.breakpoint === 'sm'">
-                <uib-tab-heading>Networking</uib-tab-heading>
+                <uib-tab-heading active="selectedTab.networking">Networking</uib-tab-heading>
                 <overview-networking
                   services="row.state.servicesByObjectUID[row.apiObject.metadata.uid]"
                   routes-by-service="row.state.routesByService">
                 </overview-networking>
               </uib-tab>
-              <uib-tab ng-if="row.state.breakpoint === 'xs' || row.state.breakpoint === 'sm'">
-                <uib-tab-heading>
+              <uib-tab ng-if="row.buildConfigs.length && (row.state.breakpoint === 'xs' || row.state.breakpoint === 'sm')">
+                <uib-tab-heading active="selectedTab.builds">
                   Builds
                   <span class="build-count">
                     <build-counts builds="row.recentBuilds"></build-counts>
@@ -101,7 +104,7 @@
             </uib-tabset>
           </div>
         </div>
-        <div ng-if="row.state.breakpoint === 'lg' || !row.state.showMetrics">
+        <div ng-if="row.state.breakpoint === 'lg'">
           <div ng-if="row.state.showMetrics && !row.previous" class="col-md-4 col-lg-3">
             <div ng-if="row.apiObject.kind === 'Pod'">
               <h4>Usage <small>Last 15 Minutes</small></h4>
@@ -143,7 +146,7 @@
 
     <!-- Networking Section -->
     <overview-networking
-      ng-if="row.state.breakpoint === 'md' || row.state.breakpoint === 'lg'"
+      ng-if="!row.current || (row.state.breakpoint === 'md' || row.state.breakpoint === 'lg')"
       services="row.state.servicesByObjectUID[row.apiObject.metadata.uid]"
       routes-by-service="row.state.routesByService">
     </overview-networking>
@@ -156,7 +159,7 @@
 
     <!-- Builds Section -->
     <overview-builds
-      ng-if="row.state.breakpoint === 'md' || row.state.breakpoint === 'lg'"
+      ng-if="!row.current || (row.state.breakpoint === 'md' || row.state.breakpoint === 'lg')"
       build-configs="row.buildConfigs"
       recent-builds-by-build-config="row.state.recentBuildsByBuildConfig"
       context="row.state.context"
