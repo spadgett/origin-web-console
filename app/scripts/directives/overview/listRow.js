@@ -27,7 +27,6 @@ function OverviewListRow($filter,
                          DeploymentsService,
                          Navigate) {
   var row = this;
-  row.selectedTab = {};
 
   var deploymentIsInProgress = $filter('deploymentIsInProgress');
   var getErrorDetails = $filter('getErrorDetails');
@@ -90,6 +89,18 @@ function OverviewListRow($filter,
     // var group = groupVersion.group || '';
 
     return _.get(row.state.hpaByResource, [kind, name], NO_HPA);
+  };
+
+  var setInitialTab = function() {
+    if (!_.isEmpty(row.services)) {
+      _.set(row, 'selectedTab.networking', true);
+    } else {
+      _.set(row, 'selectedTab.networking', true);
+    }
+  };
+
+  row.$onInit = function() {
+    setInitialTab();
   };
 
   row.$doCheck = function() {
