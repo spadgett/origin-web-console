@@ -484,6 +484,10 @@ function OverviewController($scope,
   // replication controllers.
   // TODO: Handle deleted deployment configs and orphaned replication controllers.
   var groupReplicationControllers = function() {
+    if (!overview.deploymentConfigs || !overview.replicationControllers) {
+      return;
+    }
+
     // "Vanilla" replication controllers are those not owned by a deployment config.
     var vanillaReplicationControllers = [];
     overview.replicationControllersByDeploymentConfig = {};
@@ -494,7 +498,7 @@ function OverviewController($scope,
     var rcByDC = {};
     _.each(overview.replicationControllers, function(replicationController) {
       var dcName = getDeploymentConfigName(replicationController) || '';
-      if (!dcName) {
+      if (!dcName || !overview.deploymentConfigs[dcName]) {
         vanillaReplicationControllers.push(replicationController);
       }
 
@@ -1004,6 +1008,7 @@ function OverviewController($scope,
 
     watches.push(DataService.watch("deploymentconfigs", context, function(dcData) {
       overview.deploymentConfigs = dcData.by("metadata.name");
+      groupReplicationControllers();
       updateServicesForObjects(overview.deploymentConfigs);
       updateLabelSuggestions(overview.deploymentConfigs);
       updateAllDeploymentWarnings();
