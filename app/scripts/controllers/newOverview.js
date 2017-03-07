@@ -1,7 +1,30 @@
 'use strict';
 
 // TODO: Rename file and controller when old overview is removed.
-angular.module('openshiftConsole').controller('NewOverviewController', OverviewController);
+angular.module('openshiftConsole').controller('NewOverviewController', [
+  '$scope',
+  '$filter',
+  '$routeParams',
+  'AlertMessageService',
+  'AppsService',
+  'BuildsService',
+  'Constants',
+  'DataService',
+  'DeploymentsService',
+  'HPAService',
+  'ImageStreamResolver',
+  'KeywordService',
+  'LabelFilter',
+  'LabelsService',
+  'Logger',
+  'MetricsService',
+  'Navigate',
+  'ProjectsService',
+  'ResourceAlertsService',
+  'RoutesService',
+  'BREAKPOINTS',
+  OverviewController
+]);
 
 function OverviewController($scope,
                             $filter,

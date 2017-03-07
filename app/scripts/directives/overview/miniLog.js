@@ -2,7 +2,13 @@
 
 angular.module('openshiftConsole').component('miniLog', {
   controllerAs: 'miniLog',
-  controller: MiniLogController,
+  controller: [
+    '$scope',
+    '$filter',
+    'APIService',
+    'DataService',
+    MiniLogController
+  ],
   bindings: {
     apiObject: '<',
     numLines: '<',

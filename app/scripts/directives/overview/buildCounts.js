@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('openshiftConsole').component('buildCounts', {
-  controller: BuildCounts,
+  controller: ['$scope', BuildCounts],
   controllerAs: 'buildCounts',
   bindings: {
     builds: '<',

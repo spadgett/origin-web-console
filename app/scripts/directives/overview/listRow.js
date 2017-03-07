@@ -1,7 +1,14 @@
 'use strict';
 
 angular.module('openshiftConsole').component('overviewListRow', {
-  controller: OverviewListRow,
+  controller: [
+    '$filter',
+    '$uibModal',
+    'BuildsService',
+    'DeploymentsService',
+    'Navigate',
+    OverviewListRow
+  ],
   controllerAs: 'row',
   bindings: {
     apiObject: '<',

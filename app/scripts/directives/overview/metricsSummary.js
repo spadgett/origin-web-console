@@ -1,7 +1,13 @@
 'use strict';
 
 angular.module('openshiftConsole').component('metricsSummary', {
-  controller: MetricsSummary,
+  controller: [
+    '$interval',
+    'ConversionService',
+    'MetricsCharts',
+    'MetricsService',
+    MetricsSummary
+  ],
   controllerAs: 'metricsSummary',
   bindings: {
     pods: '<',

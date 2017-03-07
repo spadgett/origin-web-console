@@ -1,7 +1,10 @@
 'use strict';
 
 angular.module('openshiftConsole').component('notificationIcon', {
-  controller: NotificationIcon,
+  controller: [
+    '$scope',
+    NotificationIcon
+  ],
   controllerAs: 'notification',
   bindings: {
     alerts: '<'
