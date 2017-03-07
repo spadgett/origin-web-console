@@ -245,21 +245,21 @@
   }
   .expanded-section {
     margin-top: 20px;
-    .section-title {
-      .h4();
-      &:not(.no-border) {
-        border-bottom: 1px solid @list-pf-border-color;
-        padding-bottom: 10px;
-      }
-    }
     h3 {
       .truncate();
       line-height: 1.4;
       margin-top: 0;
       margin-bottom: 5px;
     }
-    > .row {
+    > .row > [class^=col-] {
       margin-bottom: 10px;
+    }
+    .section-title {
+      .h4();
+      &:not(.no-border) {
+        border-bottom: 1px solid @list-pf-border-color;
+        padding-bottom: 10px;
+      }
     }
   }
   .notification-icon {
