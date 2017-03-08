@@ -105,6 +105,9 @@
                   <div class="component-label">Application</div>
                   <span ng-bind-html="app | highlightKeywords : overview.state.filterKeywords"></span>
                 </h2>
+                <h2 ng-if="!app">
+                  Other Resources
+                </h2>
                 <div class="list-pf">
                   <overview-list-row
                        ng-repeat="deploymentConfig in overview.filteredDeploymentConfigsByApp[app] track by (deploymentConfig | uid)"
