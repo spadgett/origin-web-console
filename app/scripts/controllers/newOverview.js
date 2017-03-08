@@ -158,6 +158,101 @@ function OverviewController($scope,
     label: 'Pipeline'
   }];
 
+  var getName = function(apiObject) {
+    return _.get(apiObject, 'metadata.name');
+  };
+
+  var getUID = function(apiObject) {
+    return _.get(apiObject, 'metadata.uid');
+  };
+
+  // The size of all visible top-level items.
+  var size = function() {
+    return _.size(overview.deploymentConfigs) +
+           _.size(overview.vanillaReplicationControllers) +
+           _.size(overview.deployments) +
+           _.size(overview.vanillaReplicaSets) +
+           _.size(overview.statefulSets) +
+           _.size(overview.monopods);
+  };
+
+  // The size of all visible top-level items after filtering.
+  var filteredSize = function() {
+    return _.size(overview.filteredDeploymentConfigs) +
+           _.size(overview.filteredReplicationControllers) +
+           _.size(overview.filteredDeployments) +
+           _.size(overview.filteredReplicaSets) +
+           _.size(overview.filteredStatefulSets) +
+           _.size(overview.filteredMonopods);
+  };
+
+  // Show the "Get Started" message if the project is empty.
+  var updateShowGetStarted = function() {
+    overview.size = size();
+    overview.filteredSize = filteredSize();
+
+    // Check if there is any data visible in the overview.
+    var projectEmpty = overview.size === 0;
+
+    // Check if we've loaded the top-level items we show on the overview.
+    var loaded = overview.deploymentConfigs &&
+                 overview.replicationControllers &&
+                 overview.deployments &&
+                 overview.replicaSets &&
+                 overview.statefulSets &&
+                 overview.pods;
+
+    state.expandAll = loaded && overview.size === 1;
+
+    overview.renderOptions.showGetStarted = loaded && projectEmpty;
+    overview.renderOptions.showLoading = !loaded && projectEmpty;
+
+    overview.everythingFiltered = !projectEmpty && !overview.filteredSize;
+  };
+
+  // Group a collection of resources by app label. Returns a map where the key
+  // is the app label value and the value is an array of object, sorted by
+  // `metadata.name`.
+  var groupByApp = function(collection) {
+    return AppsService.groupByApp(collection, 'metadata.name');
+  };
+
+  // Group each resource kind by app and update the list of app label values.
+  var updateApps = function() {
+    overview.filteredDeploymentConfigsByApp = groupByApp(overview.filteredDeploymentConfigs);
+    overview.filteredReplicationControllersByApp = groupByApp(overview.filteredReplicationControllers);
+    overview.filteredDeploymentsByApp = groupByApp(overview.filteredDeployments);
+    overview.filteredReplicaSetsByApp = groupByApp(overview.filteredReplicaSets);
+    overview.filteredStatefulSetsByApp = groupByApp(overview.filteredStatefulSets);
+    overview.filteredMonopodsByApp = groupByApp(overview.filteredMonopods);
+    overview.apps = _.union(_.keys(overview.filteredDeploymentConfigsByApp),
+                            _.keys(overview.filteredReplicationControllersByApp),
+                            _.keys(overview.filteredDeploymentsByApp),
+                            _.keys(overview.filteredReplicaSetsByApp),
+                            _.keys(overview.filteredStatefulSetsByApp),
+                            _.keys(overview.filteredMonopodsByApp));
+
+    AppsService.sortAppNames(overview.apps);
+  };
+
+  var updatePipelineOtherResources = function() {
+    // Find deployment configs no associated with a pipeline.
+    var otherDeploymentConfigs = _.filter(overview.filteredDeploymentConfigs, function(deploymentConfig) {
+      var name = getName(deploymentConfig);
+      return _.isEmpty(state.pipelinesForDeploymentConfig[name]);
+    });
+    overview.filteredDeploymentConfigsWithNoPipeline = _.sortBy(otherDeploymentConfigs, 'metadata.name');
+
+    // TODO: Track resources that are not associated with a pipeline.
+    overview.pipelineViewHasOtherResources =
+      !_.isEmpty(overview.filteredDeploymentConfigsWithNoPipeline) ||
+      !_.isEmpty(overview.filteredReplicationControllers) ||
+      !_.isEmpty(overview.filteredDeployments) ||
+      !_.isEmpty(overview.filteredReplicaSets) ||
+      !_.isEmpty(overview.filteredStatefulSets) ||
+      !_.isEmpty(overview.filteredMonopods);
+  };
+
   var updateFilterDisabledState = function() {
     overview.disableFilter = overview.viewBy === 'pipeline' && _.isEmpty(overview.pipelineBuildConfigs);
   };
@@ -253,14 +348,6 @@ function OverviewController($scope,
       };
     });
   }
-
-  var getName = function(apiObject) {
-    return _.get(apiObject, 'metadata.name');
-  };
-
-  var getUID = function(apiObject) {
-    return _.get(apiObject, 'metadata.uid');
-  };
 
   var isPod = function(apiObject) {
     return apiObject && apiObject.kind === 'Pod';
@@ -429,49 +516,6 @@ function OverviewController($scope,
       updateAllDeploymentWarnings();
     });
   }, 500);
-
-  // Group a collection of resources by app label. Returns a map where the key
-  // is the app label value and the value is an array of object, sorted by
-  // `metadata.name`.
-  var groupByApp = function(collection) {
-    return AppsService.groupByApp(collection, 'metadata.name');
-  };
-
-  // Group each resource kind by app and update the list of app label values.
-  var updateApps = function() {
-    overview.filteredDeploymentConfigsByApp = groupByApp(overview.filteredDeploymentConfigs);
-    overview.filteredReplicationControllersByApp = groupByApp(overview.filteredReplicationControllers);
-    overview.filteredDeploymentsByApp = groupByApp(overview.filteredDeployments);
-    overview.filteredReplicaSetsByApp = groupByApp(overview.filteredReplicaSets);
-    overview.filteredStatefulSetsByApp = groupByApp(overview.filteredStatefulSets);
-    overview.filteredMonopodsByApp = groupByApp(overview.filteredMonopods);
-    overview.apps = _.union(_.keys(overview.filteredDeploymentConfigsByApp),
-                            _.keys(overview.filteredReplicationControllersByApp),
-                            _.keys(overview.filteredDeploymentsByApp),
-                            _.keys(overview.filteredReplicaSetsByApp),
-                            _.keys(overview.filteredStatefulSetsByApp),
-                            _.keys(overview.filteredMonopodsByApp));
-
-    AppsService.sortAppNames(overview.apps);
-  };
-
-  var updatePipelineOtherResources = function() {
-    // Find deployment configs no associated with a pipeline.
-    var otherDeploymentConfigs = _.filter(overview.filteredDeploymentConfigs, function(deploymentConfig) {
-      var name = getName(deploymentConfig);
-      return _.isEmpty(state.pipelinesForDeploymentConfig[name]);
-    });
-    overview.filteredDeploymentConfigsWithNoPipeline = _.sortBy(otherDeploymentConfigs, 'metadata.name');
-
-    // TODO: Track resources that are not associated with a pipeline.
-    overview.pipelineViewHasOtherResources =
-      !_.isEmpty(overview.filteredDeploymentConfigsWithNoPipeline) ||
-      !_.isEmpty(overview.filteredReplicationControllers) ||
-      !_.isEmpty(overview.filteredDeployments) ||
-      !_.isEmpty(overview.filteredReplicaSets) ||
-      !_.isEmpty(overview.filteredStatefulSets) ||
-      !_.isEmpty(overview.filteredMonopods);
-  };
 
   // Update the label filter suggestions for a list of objects. This should
   // only be called for filterable top-level items to avoid polluting the list.
@@ -905,50 +949,6 @@ function OverviewController($scope,
       return BuildsService.sortByBuildNumber(builds, true);
     });
     groupRecentBuildsByDeploymentConfig();
-  };
-
-  // The size of all visible top-level items.
-  var size = function() {
-    return _.size(overview.deploymentConfigs) +
-           _.size(overview.vanillaReplicationControllers) +
-           _.size(overview.deployments) +
-           _.size(overview.vanillaReplicaSets) +
-           _.size(overview.statefulSets) +
-           _.size(overview.monopods);
-  };
-
-  // The size of all visible top-level items after filtering.
-  var filteredSize = function() {
-    return _.size(overview.filteredDeploymentConfigs) +
-           _.size(overview.filteredReplicationControllers) +
-           _.size(overview.filteredDeployments) +
-           _.size(overview.filteredReplicaSets) +
-           _.size(overview.filteredStatefulSets) +
-           _.size(overview.filteredMonopods);
-  };
-
-  // Show the "Get Started" message if the project is empty.
-  var updateShowGetStarted = function() {
-    overview.size = size();
-    overview.filteredSize = filteredSize();
-
-    // Check if there is any data visible in the overview.
-    var projectEmpty = overview.size === 0;
-
-    // Check if we've loaded the top-level items we show on the overview.
-    var loaded = overview.deploymentConfigs &&
-                 overview.replicationControllers &&
-                 overview.deployments &&
-                 overview.replicaSets &&
-                 overview.statefulSets &&
-                 overview.pods;
-
-    state.expandAll = loaded && overview.size === 1;
-
-    overview.renderOptions.showGetStarted = loaded && projectEmpty;
-    overview.renderOptions.showLoading = !loaded && projectEmpty;
-
-    overview.everythingFiltered = !projectEmpty && !overview.filteredSize;
   };
 
   var updateQuotaWarnings = function() {
