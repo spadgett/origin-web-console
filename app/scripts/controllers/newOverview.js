@@ -832,6 +832,9 @@ function OverviewController($scope,
     });
 
     overview.pipelineBuildConfigs = _.sortBy(pipelineBuildConfigs, 'metadata.name');
+    // TODO: Change label suggestions based on `viewBy` state. Suggest pipeline
+    // labels when viewBy === 'pipeline' and other labels in other states.
+    updateLabelSuggestions(overview.pipelineBuildConfigs);
     updateFilterDisabledState();
   };
 
