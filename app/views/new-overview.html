@@ -36,14 +36,22 @@
           <div class="container-fluid toolbar-container">
             <div class="data-toolbar">
               <div class="data-toolbar-filter">
-                <ui-select class="data-toolbar-dropdown" ng-model="overview.filterBy" search-enabled="false" append-to-body="true">
+                <ui-select
+                  class="data-toolbar-dropdown"
+                  ng-model="overview.filterBy"
+                  search-enabled="false"
+                  append-to-body="true"
+                  ng-disabled="overview.disableFilter">
                   <ui-select-match>{{$select.selected.label}}</ui-select-match>
                   <ui-select-choices repeat="option.id as option in overview.filterByOptions">
                     {{option.label}}
                   </ui-select-choices>
                 </ui-select>
                 <div ng-if="overview.filterBy === 'label'" class="label-filter">
-                  <project-filter></project-filter>
+                  <!-- FIXME: This disables the add button but not the label filter selectize controlers. -->
+                  <fieldset ng-disabled="overview.disableFilter">
+                    <project-filter></project-filter>
+                  </fieldset>
                 </div>
                 <div ng-if="overview.filterBy === 'name'" class="name-filter">
                   <form role="form" class="search-pf has-button">
@@ -57,12 +65,13 @@
                           placeholder="Filter by name"
                           autocorrect="off"
                           autocapitalize="off"
-                          spellcheck="false">
+                          spellcheck="false"
+                          ng-disabled="overview.disableFilter">
                         <button
                           type="button"
                           class="clear"
                           aria-hidden="true"
-                          ng-if="overview.filterText"
+                          ng-if="overview.filterText && !overview.disableFilter"
                           ng-click="overview.filterText = ''">
                           <span class="pficon pficon-close"></span>
                         </button>
@@ -83,7 +92,12 @@
               </div>
             </div>
             <div ng-if="overview.filterActive" class="filter-status">
-              Showing <strong>{{overview.filteredSize}}</strong> of <strong>{{overview.size}}</strong> items
+              <span ng-if="overview.viewBy !== 'pipeline'">
+                Showing <strong>{{overview.filteredSize}}</strong> of <strong>{{overview.size}}</strong> items
+              </span>
+              <span ng-if="overview.viewBy === 'pipeline' && {{overview.pipelineBuildConfigs | hashSize}}">
+                Showing <strong>{{overview.filteredPipelineBuildConfigs | hashSize}}</strong> of <strong>{{overview.pipelineBuildConfigs | hashSize}}</strong> pipelines
+              </span>
             </div>
           </div>
         </div>
@@ -93,13 +107,13 @@
             <alerts alerts="overview.state.alerts"></alerts>
           </div>
           <div class="container-fluid">
-            <div ng-if="overview.everythingFiltered">
+            <div ng-if="overview.everythingFiltered && overview.viewBy !== 'pipeline'">
               <div class="empty-state-message text-center h2">
                 The filter is hiding all resources.
                 <a href="" ng-click="overview.clearFilter()">Clear Filter</a>
               </div>
             </div>
-            <div ng-if="!overview.everythingFiltered">
+            <div ng-if="!overview.everythingFiltered || overview.viewBy === 'pipeline'">
               <div ng-if="overview.viewBy === 'app'" ng-repeat="app in overview.apps">
                 <h2 ng-if="app">
                   <div class="component-label">Application</div>
@@ -244,10 +258,16 @@
                     <ng-include src="'views/_request-access.html'"></ng-include>
                   </div>
                 </div>
-                <div ng-repeat="pipeline in overview.pipelineBuildConfigs track by (pipeline | uid)">
+                <div ng-if="(overview.pipelineBuildConfigs | hashSize) && !(overview.filteredPipelineBuildConfigs | hashSize)">
+                  <div class="empty-state-message text-center h2">
+                    All pipelines are filtered.
+                    <a href="" ng-click="overview.clearFilter()">Clear Filter</a>
+                  </div>
+                </div>
+                <div ng-repeat="pipeline in overview.filteredPipelineBuildConfigs track by (pipeline | uid)">
                   <h2>
                     <div class="component-label">Pipeline</div>
-                    {{pipeline.metadata.name}}
+                    <span ng-bind-html="pipeline.metadata.name | highlightKeywords : overview.state.filterKeywords"></span>
                   </h2>
                   <div ng-if="!(overview.recentPipelinesByBuildConfig[pipeline.metadata.name] | hashSize)" class="mar-bottom-lg">
                     No pipeline runs.
@@ -274,7 +294,8 @@
                     </overview-list-row>
                   </div>
 
-                  <div class="list-pf" ng-if="overview.pipelineViewHasOtherResources">
+                  <!-- Currently we only filter the pipelines. -->
+                  <div class="list-pf" ng-if="overview.pipelineViewHasOtherResources && !overview.filterActive">
                     <h2>Other Resources</h2>
                     <overview-list-row
                          ng-repeat="deploymentConfig in overview.filteredDeploymentConfigsWithNoPipeline track by (deploymentConfig | uid)"
@@ -285,30 +306,30 @@
                          state="overview.state">
                     </overview-list-row>
                     <overview-list-row
-                         ng-repeat="deployment in overview.filteredDeployments track by (deployment | uid)"
+                         ng-repeat="deployment in overview.deployments track by (deployment | uid)"
                          api-object="deployment"
                          current="overview.currentByDeployment[deployment.metadata.name]"
                          previous="overview.replicaSetsByDeployment[deployment.metadata.name][1]"
                          state="overview.state">
                     </overview-list-row>
                     <overview-list-row
-                         ng-repeat="replicationController in overview.filteredReplicationControllers track by (replicationController | uid)"
+                         ng-repeat="replicationController in overview.replicationControllers track by (replicationController | uid)"
                          api-object="replicationController"
                          current="replicationController"
                          state="overview.state">
                     </overview-list-row>
                     <overview-list-row
-                         ng-repeat="replicaSet in overview.filteredReplicaSets track by (replicaSet | uid)"
+                         ng-repeat="replicaSet in overview.replicaSets track by (replicaSet | uid)"
                          api-object="replicaSet"
                          state="overview.state">
                     </overview-list-row>
                     <overview-list-row
-                         ng-repeat="statefulSet in overview.filteredStatefulSets track by (statefulSet | uid)"
+                         ng-repeat="statefulSet in overview.statefulSets track by (statefulSet | uid)"
                          api-object="statefulSet"
                          state="overview.state">
                     </overview-list-row>
                     <overview-list-row
-                         ng-repeat="pod in overview.filteredMonopods track by (pod | uid)"
+                         ng-repeat="pod in overview.monopods track by (pod | uid)"
                          api-object="pod"
                          state="overview.state">
                     </overview-list-row>

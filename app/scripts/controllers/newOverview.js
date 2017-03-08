@@ -158,6 +158,10 @@ function OverviewController($scope,
     label: 'Pipeline'
   }];
 
+  var updateFilterDisabledState = function() {
+    overview.disableFilter = overview.viewBy === 'pipeline' && _.isEmpty(overview.pipelineBuildConfigs);
+  };
+
   // Track view-by state in localStorage.
   var viewByKey = $routeParams.project + '/view-by';
   overview.viewBy = localStorage.getItem(viewByKey) || 'app';
@@ -165,6 +169,7 @@ function OverviewController($scope,
     return overview.viewBy;
   },function(value){
     localStorage.setItem(viewByKey, value);
+    updateFilterDisabledState();
   });
 
   if (!window.OPENSHIFT_CONSTANTS.DISABLE_OVERVIEW_METRICS) {
@@ -780,6 +785,7 @@ function OverviewController($scope,
     });
 
     overview.pipelineBuildConfigs = _.sortBy(pipelineBuildConfigs, 'metadata.name');
+    updateFilterDisabledState();
   };
 
   // Find build configs with an output image that matches the deployment config
@@ -939,6 +945,7 @@ function OverviewController($scope,
     overview.filteredReplicaSets = filterItems(overview.vanillaReplicaSets);
     overview.filteredStatefulSets = filterItems(overview.statefulSets);
     overview.filteredMonopods = filterItems(overview.monopods);
+    overview.filteredPipelineBuildConfigs = filterItems(overview.pipelineBuildConfigs);
     updateApps();
     updatePipelineOtherResources();
 
@@ -1019,6 +1026,7 @@ function OverviewController($scope,
       groupBuildConfigsByOutputImage();
       groupBuildConfigsByDeploymentConfig();
       groupBuilds();
+      updateFilter();
       Logger.log("buildconfigs (subscribe)", overview.buildConfigs);
     }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
 
@@ -1045,9 +1053,9 @@ function OverviewController($scope,
       updateServicesForObjects(overview.deploymentConfigs);
       updateLabelSuggestions(overview.deploymentConfigs);
       updateAllDeploymentWarnings();
-      updateFilter();
       groupBuildConfigsByDeploymentConfig();
       groupRecentBuildsByDeploymentConfig();
+      updateFilter();
       Logger.log("deploymentconfigs (subscribe)", overview.deploymentConfigs);
     }));
 
