@@ -220,7 +220,7 @@
               </div>
               <div ng-if="overview.viewBy === 'pipeline'">
                 <!-- TODO: Reuse pipelines empty state message from pipelines.html -->
-                <div ng-if="!(overview.deploymentConfigsByPipeline | hashSize)" class="empty-state-message text-center">
+                <div ng-if="!overview.pipelineBuildConfigs.length" class="empty-state-message text-center">
                   <h2>No pipelines.</h2>
                   <div ng-if="project.metadata.name | canIAddToProject">
                     <p>
@@ -241,33 +241,34 @@
                     <ng-include src="'views/_request-access.html'"></ng-include>
                   </div>
                 </div>
-                <div ng-if="overview.deploymentConfigsByPipeline | hashSize">
-                  <div ng-repeat="(pipelineName, deploymentConfigNames) in overview.deploymentConfigsByPipeline" class="mar-bottom-lg">
-                    <h2>
-                      <div class="component-label">Pipeline</div>
-                      {{pipelineName}}
-                    </h2>
-                    <div ng-if="!(overview.recentPipelinesByBuildConfig[pipelineName] | hashSize)" class="mar-bottom-lg">
-                      No pipeline runs.
-                    </div>
-                    <div ng-if="overview.recentPipelinesByBuildConfig[pipelineName] | hashSize" class="build-pipelines">
-                      <div ng-repeat="pipeline in overview.recentPipelinesByBuildConfig[pipelineName] | orderObjectsByDate : true track by (pipeline | uid)"
-                           class="row build-pipeline-wrapper animate-repeat animate-slide">
-                        <div class="col-sm-12">
-                          <build-pipeline build="pipeline" build-config-name-on-expanded="true"></build-pipeline>
-                        </div>
+                <div ng-repeat="pipeline in overview.pipelineBuildConfigs track by (pipeline | uid)">
+                  <h2>
+                    <div class="component-label">Pipeline</div>
+                    {{pipeline.metadata.name}}
+                  </h2>
+                  <div ng-if="!(overview.recentPipelinesByBuildConfig[pipeline.metadata.name] | hashSize)" class="mar-bottom-lg">
+                    No pipeline runs.
+                  </div>
+                  <div ng-if="overview.recentPipelinesByBuildConfig[pipeline.metadata.name] | hashSize" class="build-pipelines">
+                    <div ng-repeat="pipeline in overview.recentPipelinesByBuildConfig[pipeline.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)"
+                         class="row build-pipeline-wrapper animate-repeat animate-slide">
+                      <div class="col-sm-12">
+                        <build-pipeline build="pipeline" build-config-name-on-expanded="true"></build-pipeline>
                       </div>
                     </div>
-                    <div class="list-pf">
-                      <overview-list-row
-                           ng-repeat="dcName in deploymentConfigNames"
-                           api-object="overview.deploymentConfigs[dcName]"
-                           current="overview.currentByDeploymentConfig[dcName]"
-                           previous="overview.getPreviousReplicationController(deploymentConfig)"
-                           state="overview.state"
-                           hide-pipelines="true">
-                      </overview-list-row>
-                    </div>
+                  </div>
+                  <div ng-if="!overview.deploymentConfigsByPipeline[pipeline.metadata.name].length" class="mar-bottom-lg">
+                    This pipeline is not associated with any deployments.
+                  </div>
+                  <div ng-if="overview.deploymentConfigsByPipeline[pipeline.metadata.name].length" class="list-pf">
+                    <overview-list-row
+                         ng-repeat="dcName in overview.deploymentConfigsByPipeline[pipeline.metadata.name]"
+                         api-object="overview.deploymentConfigs[dcName]"
+                         current="overview.currentByDeploymentConfig[dcName]"
+                         previous="overview.getPreviousReplicationController(deploymentConfig)"
+                         state="overview.state"
+                         hide-pipelines="true">
+                    </overview-list-row>
                   </div>
 
                   <div class="list-pf" ng-if="overview.pipelineViewHasOtherResources">

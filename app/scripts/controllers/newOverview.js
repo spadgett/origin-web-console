@@ -758,12 +758,15 @@ function OverviewController($scope,
   //   value: array of pipeline build configs
   //          TODO: sort by name?
   var groupPipelineBuildConfigsByDeploymentConfig = function() {
+    var pipelineBuildConfigs = [];
     overview.deploymentConfigsByPipeline = {};
     state.pipelinesForDeploymentConfig = {};
     _.each(overview.buildConfigs, function(buildConfig) {
       if (!isJenkinsPipelineStrategy(buildConfig)) {
         return;
       }
+
+      pipelineBuildConfigs.push(buildConfig);
 
       // TODO: Handle other types.
       // Preserve the order they appear in the annotation.
@@ -775,6 +778,8 @@ function OverviewController($scope,
         state.pipelinesForDeploymentConfig[dcName].push(buildConfig);
       });
     });
+
+    overview.pipelineBuildConfigs = _.sortBy(pipelineBuildConfigs, 'metadata.name');
   };
 
   // Find build configs with an output image that matches the deployment config
