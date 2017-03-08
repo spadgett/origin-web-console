@@ -371,7 +371,7 @@ function OverviewController($scope,
 
   // Update warnings for all kinds. Debounce so we're not reevaluating this too often.
   var updateWarnings = _.debounce(function() {
-    $scope.$apply(function() {
+    $scope.$evalAsync(function() {
       updateAllPodWarnings();
       updateAllDeploymentConfigWarnings();
       updateAllDeploymentWarnings();
@@ -953,7 +953,7 @@ function OverviewController($scope,
       return;
     }
     state.filterKeywords = KeywordService.generateKeywords(text);
-    $scope.$apply(updateFilter);
+    $scope.$evalAsync(updateFilter);
   }, 50, { maxWait: 250 }));
 
   $scope.$watch(function() {
@@ -965,7 +965,7 @@ function OverviewController($scope,
   });
 
   LabelFilter.onActiveFiltersChanged(function() {
-    $scope.$apply(updateFilter);
+    $scope.$evalAsync(updateFilter);
   });
 
   var watches = [];
