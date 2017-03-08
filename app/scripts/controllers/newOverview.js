@@ -162,6 +162,51 @@ function OverviewController($scope,
     overview.disableFilter = overview.viewBy === 'pipeline' && _.isEmpty(overview.pipelineBuildConfigs);
   };
 
+  var filterByLabel = function(items) {
+    return LabelFilter.getLabelSelector().select(items);
+  };
+
+  // Updated on viewBy changes to include the app label when appropriate.
+  var filterFields = ['metadata.name'];
+  var filterByName = function(items) {
+    return KeywordService.filterForKeywords(items, filterFields, state.filterKeywords);
+  };
+
+  var filterItems = function(items) {
+    switch (overview.filterBy) {
+    case 'label':
+      return filterByLabel(items);
+    case 'name':
+      return filterByName(items);
+    }
+
+    return items;
+  };
+
+  var isFilterActive = function() {
+    switch (overview.filterBy) {
+    case 'label':
+      return !LabelFilter.getLabelSelector().isEmpty();
+    case 'name':
+      return !_.isEmpty(state.filterKeywords);
+    }
+  };
+
+  var updateFilter = function() {
+    overview.filteredDeploymentConfigs = filterItems(overview.deploymentConfigs);
+    overview.filteredReplicationControllers = filterItems(overview.vanillaReplicationControllers);
+    overview.filteredDeployments = filterItems(overview.deployments);
+    overview.filteredReplicaSets = filterItems(overview.vanillaReplicaSets);
+    overview.filteredStatefulSets = filterItems(overview.statefulSets);
+    overview.filteredMonopods = filterItems(overview.monopods);
+    overview.filteredPipelineBuildConfigs = filterItems(overview.pipelineBuildConfigs);
+    updateApps();
+    updatePipelineOtherResources();
+
+    overview.filterActive = isFilterActive();
+    updateShowGetStarted();
+  };
+
   // Track view-by state in localStorage.
   var viewByKey = $routeParams.project + '/view-by';
   overview.viewBy = localStorage.getItem(viewByKey) || 'app';
@@ -170,6 +215,8 @@ function OverviewController($scope,
   },function(value){
     localStorage.setItem(viewByKey, value);
     updateFilterDisabledState();
+    filterFields = overview.viewBy === 'app' ? ['metadata.name', 'metadata.labels.app'] : ['metadata.name'];
+    updateFilter();
   });
 
   if (!window.OPENSHIFT_CONSTANTS.DISABLE_OVERVIEW_METRICS) {
@@ -906,51 +953,6 @@ function OverviewController($scope,
                                                  state.clusterQuotaData,
                                                  $routeParams.project,
                                                  state.alerts);
-  };
-
-  var filterByLabel = function(items) {
-    return LabelFilter.getLabelSelector().select(items);
-  };
-
-  var filterByName = function(items) {
-    return KeywordService.filterForKeywords(items,
-                                            ['metadata.name', 'metadata.labels.app'],
-                                            state.filterKeywords);
-  };
-
-  var filterItems = function(items) {
-    switch (overview.filterBy) {
-    case 'label':
-      return filterByLabel(items);
-    case 'name':
-      return filterByName(items);
-    }
-
-    return items;
-  };
-
-  var isFilterActive = function() {
-    switch (overview.filterBy) {
-    case 'label':
-      return !LabelFilter.getLabelSelector().isEmpty();
-    case 'name':
-      return !_.isEmpty(state.filterKeywords);
-    }
-  };
-
-  var updateFilter = function() {
-    overview.filteredDeploymentConfigs = filterItems(overview.deploymentConfigs);
-    overview.filteredReplicationControllers = filterItems(overview.vanillaReplicationControllers);
-    overview.filteredDeployments = filterItems(overview.deployments);
-    overview.filteredReplicaSets = filterItems(overview.vanillaReplicaSets);
-    overview.filteredStatefulSets = filterItems(overview.statefulSets);
-    overview.filteredMonopods = filterItems(overview.monopods);
-    overview.filteredPipelineBuildConfigs = filterItems(overview.pipelineBuildConfigs);
-    updateApps();
-    updatePipelineOtherResources();
-
-    overview.filterActive = isFilterActive();
-    updateShowGetStarted();
   };
 
   overview.clearFilter = function() {
