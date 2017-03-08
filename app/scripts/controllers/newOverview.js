@@ -939,7 +939,11 @@ function OverviewController($scope,
 
   $scope.$watch(function() {
     return overview.filterBy;
-  }, updateFilter);
+  }, function() {
+    // Clear any existing filter when switching filter types.
+    overview.clearFilter();
+    updateFilter();
+  });
 
   LabelFilter.onActiveFiltersChanged(function() {
     $scope.$apply(updateFilter);
