@@ -403,6 +403,24 @@ function OverviewController($scope,
     AppsService.sortAppNames(overview.apps);
   };
 
+  var updatePipelineOtherResources = function() {
+    // Find deployment configs no associated with a pipeline.
+    var otherDeploymentConfigs = _.filter(overview.filteredDeploymentConfigs, function(deploymentConfig) {
+      var name = getName(deploymentConfig);
+      return _.isEmpty(state.pipelinesForDeploymentConfig[name]);
+    });
+    overview.filteredDeploymentConfigsWithNoPipeline = _.sortBy(otherDeploymentConfigs, 'metadata.name');
+
+    // TODO: Track resources that are not associated with a pipeline.
+    overview.pipelineViewHasOtherResources =
+      !_.isEmpty(overview.filteredDeploymentConfigsWithNoPipeline) ||
+      !_.isEmpty(overview.filteredReplicationControllers) ||
+      !_.isEmpty(overview.filteredDeployments) ||
+      !_.isEmpty(overview.filteredReplicaSets) ||
+      !_.isEmpty(overview.filteredStatefulSets) ||
+      !_.isEmpty(overview.filteredMonopods);
+  };
+
   // Update the label filter suggestions for a list of objects. This should
   // only be called for filterable top-level items to avoid polluting the list.
   var updateLabelSuggestions = function(objects) {
@@ -663,11 +681,11 @@ function OverviewController($scope,
 
   // Adds a recent pipeline build to the following maps:
   //
-  // `state.recentPipelinesByDeploymentConfig``
+  // `state.recentPipelinesByBuildConfig``
   //   key: build config name
   //   value: array of pipeline builds
   //
-  // `overview.recentPipelinesByDC`
+  // `overview.recentPipelinesByDeploymentConfig`
   //   key: deployment config name
   //   value: array of pipeline builds
   var groupPipelineByDC = function(build) {
@@ -677,8 +695,8 @@ function OverviewController($scope,
       return;
     }
 
-    overview.recentPipelinesByBC[bcName] = overview.recentPipelinesByBC[bcName] || [];
-    overview.recentPipelinesByBC[bcName].push(build);
+    overview.recentPipelinesByBuildConfig[bcName] = overview.recentPipelinesByBuildConfig[bcName] || [];
+    overview.recentPipelinesByBuildConfig[bcName].push(build);
 
     // Index running pipelines by DC name.
     var dcNames = BuildsService.usesDeploymentConfigs(buildConfig);
@@ -807,7 +825,7 @@ function OverviewController($scope,
       return;
     }
     // reset these maps
-    overview.recentPipelinesByBC = {};
+    overview.recentPipelinesByBuildConfig = {};
     state.recentBuildsByBuildConfig = {};
     state.recentPipelinesByDeploymentConfig = {};
 
@@ -917,6 +935,7 @@ function OverviewController($scope,
     overview.filteredStatefulSets = filterItems(overview.statefulSets);
     overview.filteredMonopods = filterItems(overview.monopods);
     updateApps();
+    updatePipelineOtherResources();
 
     overview.filterActive = isFilterActive();
     updateShowGetStarted();
