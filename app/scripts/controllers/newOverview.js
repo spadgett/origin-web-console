@@ -152,7 +152,7 @@ function OverviewController($scope,
     label: 'Application'
   }, {
     id: 'resource',
-    label: 'Resource'
+    label: 'Resource Type'
   }, {
     id: 'pipeline',
     label: 'Pipeline'
