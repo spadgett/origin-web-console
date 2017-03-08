@@ -15,18 +15,18 @@
     </span>
   </h3>
   <div class="status-icons">
-    <notification-icon ng-if="!row.isExpanded()" alerts="row.notifications"></notification-icon>
+    <notification-icon ng-if="!row.expanded" alerts="row.notifications"></notification-icon>
     <span class="build-count">
-      <span ng-if="!row.isExpanded() && !row.hidePipelines && (row.recentPipelines | hashSize)" class="pipelines">
+      <span ng-if="!row.expanded && !row.hidePipelines && (row.recentPipelines | hashSize)" class="pipelines">
         <build-counts builds="row.recentPipelines" label="Pipelines"></build-counts>
       </span>
-      <span ng-if="!row.isExpanded() && (row.recentBuilds | hashSize)" class="builds">
+      <span ng-if="!row.expanded && (row.recentBuilds | hashSize)" class="builds">
         <build-counts builds="row.recentBuilds" label="Builds"></build-counts>
       </span>
     </span>
   </div>
 </div>
-<div ng-if="row.apiObject.kind === 'DeploymentConfig' && !row.current && !row.isExpanded()" class="list-pf-details hidden-xs hidden-sm">
+<div ng-if="row.apiObject.kind === 'DeploymentConfig' && !row.current && !row.expanded" class="list-pf-details hidden-xs hidden-sm">
   <span>
     No deployments for <a ng-href="{{row.apiObject | navigateResourceURL}}">{{row.apiObject.metadata.name}}</a>.
   </span>
@@ -47,7 +47,7 @@
     {{row.apiObject.spec.strategy.type | sentenceCase}}&nbsp;<ellipsis-pulser color="dark" size="sm" display="inline" msg="in progress"></ellipsis-pulser>
   </div>
 </div>
-<div ng-if="row.current && !row.isDeploymentInProgress() && !row.isExpanded()" class="list-pf-details animate-if hidden-xs hidden-sm">
+<div ng-if="row.current && !row.isDeploymentInProgress() && !row.expanded" class="list-pf-details animate-if hidden-xs hidden-sm">
   <div class="additional-info-item">
     <div ng-if="row.apiObject.kind === 'Pod'">
       <pod-donut pods="[row.apiObject]" mini="true"></pod-donut>

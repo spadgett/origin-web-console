@@ -99,8 +99,46 @@ function OverviewListRow($filter,
     }
   };
 
+  var expandedKey = function(apiObject) {
+    var uid = _.get(apiObject, 'metadata.uid');
+    if (!uid) {
+      return null;
+    }
+
+    return 'overview/expand/' + uid;
+  };
+
+  row.toggleExpand = function(e) {
+    if ($(e.target).closest("a").length > 0) {
+      return;
+    }
+
+    var key = expandedKey(row.apiObject);
+    if (!key) {
+      return;
+    }
+
+    row.expanded = !row.expanded;
+    sessionStorage.setItem(key, row.expanded ? 'true' : 'false');
+  };
+
+  var setInitialExpandedState = function() {
+    var key = expandedKey(row.apiObject);
+    if (!key) {
+      return false;
+    }
+
+    var item = sessionStorage.getItem(key);
+    if (!item && row.state.expandAll) {
+      return true;
+    }
+
+    row.expanded = item === 'true';
+  };
+
   row.$onInit = function() {
     setInitialTab();
+    setInitialExpandedState();
   };
 
   row.$doCheck = function() {
@@ -128,43 +166,6 @@ function OverviewListRow($filter,
       row.recentBuilds = _.get(row, ['state', 'recentBuildsByDeploymentConfig', name]);
       row.recentPipelines = _.get(row, ['state', 'recentPipelinesByDeploymentConfig', name]);
     }
-  };
-
-  var expandedKey = function(apiObject) {
-    var uid = _.get(apiObject, 'metadata.uid');
-    if (!uid) {
-      return null;
-    }
-
-    return 'overview/expand/' + uid;
-  };
-
-  row.toggleExpand = function(e) {
-    if ($(e.target).closest("a").length > 0) {
-      return;
-    }
-
-    var key = expandedKey(row.apiObject);
-    if (!key) {
-      return;
-    }
-
-    var previouslyExpanded = sessionStorage.getItem(key) === 'true';
-    sessionStorage.setItem(key, previouslyExpanded ? 'false' : 'true');
-  };
-
-  row.isExpanded = function() {
-    var key = expandedKey(row.apiObject);
-    if (!key) {
-      return false;
-    }
-
-    var item = sessionStorage.getItem(key);
-    if (!item && row.state.expandAll) {
-      return true;
-    }
-
-    return item === 'true';
   };
 
   row.getPods = function(owner) {
