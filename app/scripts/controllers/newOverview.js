@@ -716,7 +716,7 @@ function OverviewController($scope,
       var recentForConfig = _.get(state, ['recentBuildsByBuildConfig', buildConfig.metadata.name], []);
       builds = builds.concat(recentForConfig);
     });
-    builds = orderObjectsByDate(builds, true);
+    builds = BuildsService.sortByBuildNumber(builds, true);
 
     var dcName = getName(deploymentConfig);
     _.set(state, ['recentBuildsByDeploymentConfig', dcName], builds);
@@ -810,16 +810,21 @@ function OverviewController($scope,
     overview.recentPipelinesByBC = {};
     state.recentBuildsByBuildConfig = {};
     state.recentPipelinesByDeploymentConfig = {};
+
+    var recentByConfig = {};
     _.each(BuildsService.interestingBuilds(state.builds), function(build) {
       var bcName = getBuildConfigName(build);
       if(isJenkinsPipelineStrategy(build)) {
         groupPipelineByDC(build);
       } else {
-        state.recentBuildsByBuildConfig[bcName] = state.recentBuildsByBuildConfig[bcName] || [];
-        state.recentBuildsByBuildConfig[bcName].push(build);
+        recentByConfig[bcName] = recentByConfig[bcName] || [];
+        recentByConfig[bcName].push(build);
       }
     });
 
+    state.recentBuildsByBuildConfig = _.mapValues(recentByConfig, function(builds) {
+      return BuildsService.sortByBuildNumber(builds, true);
+    });
     groupRecentBuildsByDeploymentConfig();
   };
 

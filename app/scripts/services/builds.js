@@ -218,6 +218,42 @@ angular.module("openshiftConsole")
       return buildConfigsByOutputImage;
     };
 
+
+    var sortByBuildNumber = function(builds, descending) {
+      var compareBuildNumbers = function(left, right) {
+        var leftNumber = annotation(left, 'buildNumber');
+        var rightNumber = annotation(right, 'buildNumber');
+
+        var leftName, rightName;
+        if (!leftNumber && !rightNumber) {
+          leftName = _.get(left, 'metadata.name', '');
+          rightName = _.get(right, 'metadata.name', '');
+          if (descending) {
+            return rightName.localeCompare(leftName);
+          }
+          return leftName.localeCompare(rightName);
+        }
+
+        if (!leftNumber) {
+          return descending ? 1 : -1;
+        }
+
+        if (!rightNumber) {
+          return descending ? -1 : 1;
+        }
+
+        rightNumber = parseInt(rightNumber, 10);
+        leftNumber = parseInt(leftNumber, 10);
+        if (descending) {
+          return rightNumber - leftNumber;
+        }
+
+        return leftNumber - rightNumber;
+      };
+
+      return _.toArray(builds).sort(compareBuildNumbers);
+    };
+
     return {
       startBuild: startBuild,
       cancelBuild: cancelBuild,
@@ -234,6 +270,7 @@ angular.module("openshiftConsole")
       completeBuilds: completeBuilds,
       lastCompleteByBuildConfig: lastCompleteByBuildConfig,
       interestingBuilds: interestingBuilds,
-      groupBuildConfigsByOutputImage: groupBuildConfigsByOutputImage
+      groupBuildConfigsByOutputImage: groupBuildConfigsByOutputImage,
+      sortByBuildNumber: sortByBuildNumber
     };
   });
