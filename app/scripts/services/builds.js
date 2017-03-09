@@ -254,6 +254,26 @@ angular.module("openshiftConsole")
       return _.toArray(builds).sort(compareBuildNumbers);
     };
 
+    var getJenkinsStatus = function(pipelineBuild) {
+      var json = annotation(pipelineBuild, 'jenkinsStatus');
+      if (!json) {
+        return null;
+      }
+
+      try {
+        return JSON.parse(json);
+      } catch (e) {
+        Logger.error('Could not parse Jenkins status as JSON', json);
+        return null;
+      }
+    };
+
+    var getCurrentStage = function(pipelineBuild) {
+      var jenkinsStatus = getJenkinsStatus(pipelineBuild);
+      var stages = _.get(jenkinsStatus, 'stages', []);
+      return _.last(stages);
+    };
+
     return {
       startBuild: startBuild,
       cancelBuild: cancelBuild,
@@ -271,6 +291,8 @@ angular.module("openshiftConsole")
       lastCompleteByBuildConfig: lastCompleteByBuildConfig,
       interestingBuilds: interestingBuilds,
       groupBuildConfigsByOutputImage: groupBuildConfigsByOutputImage,
-      sortByBuildNumber: sortByBuildNumber
+      sortByBuildNumber: sortByBuildNumber,
+      getJenkinsStatus: getJenkinsStatus,
+      getCurrentStage: getCurrentStage
     };
   });

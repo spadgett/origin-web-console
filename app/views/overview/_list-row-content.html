@@ -18,7 +18,11 @@
     <notification-icon ng-if="!row.expanded" alerts="row.notifications"></notification-icon>
     <span class="build-count">
       <span ng-if="!row.expanded && !row.hidePipelines && (row.recentPipelines | hashSize)" class="pipelines">
-        <build-counts builds="row.recentPipelines" label="Pipelines"></build-counts>
+        <build-counts
+          builds="row.recentPipelines"
+          label="Pipelines"
+          show-running-stage="true">
+        </build-counts>
       </span>
       <span ng-if="!row.expanded && (row.recentBuilds | hashSize)" class="builds">
         <build-counts builds="row.recentBuilds" label="Builds"></build-counts>
