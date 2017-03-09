@@ -72,10 +72,10 @@ function OverviewController($scope,
   // might not be the active deployment if failed or cancelled.
   var mostRecentByDeploymentConfig = {};
 
-  // `overview.state` tracks common state that is shared by overview and
-  // `overview-list-row`. This avoids having to the same values as attributes
-  // again and again for different types, but lets us update these maps in one
-  // place as needed from watch callbacks here in the overview controller.
+  // `overview.state` tracks common state that is shared with overview-list-row.
+  // This avoids having to pass the same values as attributes again and again
+  // for different types, but lets us update these maps in one place as needed
+  // from watch callbacks in the overview controller.
   //
   // NOTE: Do not change or remove properties without updating overview-list-row.
   var state = overview.state = {
@@ -237,14 +237,12 @@ function OverviewController($scope,
   };
 
   var updatePipelineOtherResources = function() {
-    // Find deployment configs no associated with a pipeline.
+    // Find deployment configs not associated with a pipeline.
     var otherDeploymentConfigs = _.filter(overview.filteredDeploymentConfigs, function(deploymentConfig) {
       var name = getName(deploymentConfig);
       return _.isEmpty(state.pipelinesForDeploymentConfig[name]);
     });
     overview.filteredDeploymentConfigsWithNoPipeline = _.sortBy(otherDeploymentConfigs, 'metadata.name');
-
-    // TODO: Track resources that are not associated with a pipeline.
     overview.pipelineViewHasOtherResources =
       !_.isEmpty(overview.filteredDeploymentConfigsWithNoPipeline) ||
       !_.isEmpty(overview.filteredReplicationControllers) ||
@@ -296,10 +294,9 @@ function OverviewController($scope,
     overview.filteredStatefulSets = filterItems(overview.statefulSets);
     overview.filteredMonopods = filterItems(overview.monopods);
     overview.filteredPipelineBuildConfigs = filterItems(overview.pipelineBuildConfigs);
+    overview.filterActive = isFilterActive();
     updateApps();
     updatePipelineOtherResources();
-
-    overview.filterActive = isFilterActive();
     updateShowGetStarted();
   };
 
@@ -536,6 +533,7 @@ function OverviewController($scope,
     }
   };
 
+  // Update the label suggestions used when viewBy === 'pipeline'.
   var updatePipelineLabelSuggestions = function(pipelineBuildConfigs) {
     if (_.isEmpty(pipelineBuildConfigs)) {
       return;
@@ -871,7 +869,6 @@ function OverviewController($scope,
   // Updates `state.pipelinesForDeploymentConfig`
   //   key: deployment config name
   //   value: array of pipeline build configs
-  //          TODO: sort by name?
   var groupPipelineBuildConfigsByDeploymentConfig = function() {
     var pipelineBuildConfigs = [];
     overview.deploymentConfigsByPipeline = {};
@@ -946,7 +943,8 @@ function OverviewController($scope,
     if(!state.builds || !overview.buildConfigs) {
       return;
     }
-    // reset these maps
+
+    // Reset these maps.
     overview.recentPipelinesByBuildConfig = {};
     state.recentBuildsByBuildConfig = {};
     state.recentPipelinesByDeploymentConfig = {};
