@@ -51,16 +51,8 @@
     {{row.apiObject.spec.strategy.type | sentenceCase}}&nbsp;<ellipsis-pulser color="dark" size="sm" display="inline" msg="in progress"></ellipsis-pulser>
   </div>
 </div>
-<div ng-if="row.current && !row.isDeploymentInProgress() && !row.expanded" class="list-pf-details animate-if hidden-xs hidden-sm">
-  <div class="additional-info-item">
-    <div ng-if="row.apiObject.kind === 'Pod'">
-      <pod-donut pods="[row.apiObject]" mini="true"></pod-donut>
-    </div>
-    <div ng-if="row.apiObject.kind !== 'Pod'">
-      <pod-donut pods="row.getPods(row.current)" mini="true"></pod-donut>
-    </div>
-  </div>
-  <div ng-if="row.state.showMetrics" class="additional-info-item truncate metrics-collapsed">
+<div ng-if="row.current && !row.isDeploymentInProgress() && !row.expanded" class="list-pf-details">
+  <div ng-if="row.state.showMetrics" class="truncate metrics-collapsed hidden-xs hidden-sm">
     <div ng-if="row.apiObject.kind === 'Pod'">
       <metrics-summary
         pods="[row.apiObject]"
@@ -74,19 +66,13 @@
       </metrics-summary>
     </div>
   </div>
-  <!-- Decide what to show when no metrics, if anything -->
-  <div ng-if="!row.state.showMetrics" class="additional-info-item truncate">
-    <span ng-if="row.apiObject.kind === 'Pod'">
-      <span class="pficon fa-fw pficon-image"></span>
-      <image-names
-        pod-template="row.apiObject"
-        pods="[row.apiObject]"></image-names>
-    </span>
-    <span ng-if="row.apiObject.kind !== 'Pod' && row.current">
-      <span class="pficon fa-fw pficon-image"></span>
-      <image-names
-        pod-template="row.current | podTemplate"
-        pods="row.getPods(row.current)"></image-names>
-    </span>
+  <!-- If metrics are not available, don't show anything -->
+  <div class="pods hidden-xs">
+    <div ng-if="row.apiObject.kind === 'Pod'">
+      <pod-donut pods="[row.apiObject]" mini="true"></pod-donut>
+    </div>
+    <div ng-if="row.apiObject.kind !== 'Pod'">
+      <pod-donut pods="row.getPods(row.current)" mini="true"></pod-donut>
+    </div>
   </div>
 </div>

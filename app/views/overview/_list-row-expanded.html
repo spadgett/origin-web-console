@@ -3,7 +3,43 @@
     <alerts alerts="row.notifications"></alerts>
     <div ng-if="row.current">
       <div class="row">
-        <div ng-if="row.previous" class="col-sm-5 col-md-3">
+        <div ng-if="row.state.breakpoint !== 'xs'">
+          <div ng-class="{
+                'col-sm-7 col-md-8 col-lg-9': !row.state.showMetrics && !row.previous,
+                'col-sm-12 col-md-4 col-lg-5': row.state.showMetrics && !row.previous,
+                'hidden-sm col-md-3 col-lg-5': row.previous
+              }">
+            <!-- TODO: markup semantics suggest div.component-label in <pod-template> should be an h4,
+                       but only here on the overview -->
+            <pod-template
+              pod-template="row.current | podTemplate"
+              images-by-docker-reference="row.state.imagesByDockerReference"
+              builds="row.state.builds"></pod-template>
+          </div>
+          <div ng-if="row.state.showMetrics && !row.previous" class="col-sm-7 col-md-4 col-lg-4">
+            <div ng-if="row.apiObject.kind === 'Pod'">
+              <deployment-metrics
+                pods="[row.apiObject]"
+                containers="row.apiObject.spec.containers"
+                profile="compact"
+                alerts="row.state.alerts"
+                class="overview-metrics">
+              </deployment-metrics>
+              <h4>Usage <small>Last 15 Minutes</small></h4>
+            </div>
+            <div ng-if="row.apiObject.kind !== 'Pod'">
+              <deployment-metrics
+                pods="row.getPods(row.current)"
+                containers="row.current.spec.template.spec.containers"
+                profile="compact"
+                alerts="row.sate.alerts"
+                class="overview-metrics">
+              </deployment-metrics>
+              <h4>Average Usage <small>Last 15 Minutes</small></h4>
+            </div>
+          </div>
+        </div>
+        <div ng-if="row.previous" class="col-sm-5 col-md-4 col-lg-3">
           <deployment-donut
             rc="row.previous"
             deployment-config="row.apiObject"
@@ -16,12 +52,12 @@
             alerts="row.state.alerts">
           </deployment-donut>
         </div>
-        <div ng-if="row.previous" class="col-sm-2 col-md-1">
+        <div ng-if="row.previous" class="col-sm-2 col-md-1 col-lg-1">
           <div class="deployment-connector-arrow" aria-hidden="true">
             &rarr;
           </div>
         </div>
-        <div class="col-sm-4 col-md-3" ng-class="{ 'col-sm-5': row.previous }">
+        <div class="col-sm-5 col-md-4 col-lg-3">
           <div ng-if="row.apiObject.kind === 'Pod'">
             <a ng-href="{{row.apiObject | navigateResourceURL}}">
               <pod-donut pods="[row.apiObject]"></pod-donut>
@@ -42,7 +78,7 @@
           </div>
         </div>
         <div ng-if="row.state.breakpoint === 'xs' && !row.state.previous">
-          <div class="col-sm-8 col-md-9">
+          <div class="col-sm-12">
             <uib-tabset class="list-row-tabset">
               <uib-tab active="row.selectedTab.networking" ng-if="row.services | hashSize">
                 <uib-tab-heading>Networking</uib-tab-heading>
@@ -53,7 +89,6 @@
               </uib-tab>
               <uib-tab active="row.selectedTab.containers">
                 <uib-tab-heading>Containers</uib-tab-heading>
-
                 <!-- TODO: markup semantics suggest div.component-label in <pod-template> should be an h4,
                            but only here on the overview -->
                 <pod-template
@@ -66,7 +101,6 @@
                 <!-- Use ng-if to avoid requesting metrics when the tab is not active. -->
                 <div ng-if="row.selectedTab.metrics">
                   <div ng-if="row.apiObject.kind === 'Pod'">
-                    <h4>Usage <small>Last 15 Minutes</small></h4>
                     <deployment-metrics
                       pods="[row.apiObject]"
                       containers="row.apiObject.spec.containers"
@@ -74,9 +108,9 @@
                       alerts="row.state.alerts"
                       class="overview-metrics">
                     </deployment-metrics>
+                    <h4>Usage <small>Last 15 Minutes</small></h4>
                   </div>
                   <div ng-if="row.apiObject.kind !== 'Pod'">
-                    <h4>Average Usage <small>Last 15 Minutes</small></h4>
                     <deployment-metrics
                       pods="row.getPods(row.current)"
                       containers="row.current.spec.template.spec.containers"
@@ -84,6 +118,7 @@
                       alerts="row.sate.alerts"
                       class="overview-metrics">
                     </deployment-metrics>
+                    <h4>Average Usage <small>Last 15 Minutes</small></h4>
                   </div>
                 </div>
               </uib-tab>
@@ -113,42 +148,6 @@
                 </overview-builds>
               </uib-tab>
             </uib-tabset>
-          </div>
-        </div>
-        <div ng-if="row.state.breakpoint !== 'xs'">
-          <div ng-if="row.state.showMetrics && !row.previous" class="col-md-4 col-lg-3">
-            <div ng-if="row.apiObject.kind === 'Pod'">
-              <h4>Usage <small>Last 15 Minutes</small></h4>
-              <deployment-metrics
-                pods="[row.apiObject]"
-                containers="row.apiObject.spec.containers"
-                profile="compact"
-                alerts="row.state.alerts"
-                class="overview-metrics">
-              </deployment-metrics>
-            </div>
-            <div ng-if="row.apiObject.kind !== 'Pod'">
-              <h4>Average Usage <small>Last 15 Minutes</small></h4>
-              <deployment-metrics
-                pods="row.getPods(row.current)"
-                containers="row.current.spec.template.spec.containers"
-                profile="compact"
-                alerts="row.sate.alerts"
-                class="overview-metrics">
-              </deployment-metrics>
-            </div>
-          </div>
-          <div class="col-sm-12 col-md-5 col-lg-6"
-               ng-class="{
-                 'col-sm-8': !row.state.showMetrics,
-                 'hidden-sm col-md-4 col-lg-4': row.previous
-               }">
-            <!-- TODO: markup semantics suggest div.component-label in <pod-template> should be an h4,
-                       but only here on the overview -->
-            <pod-template
-              pod-template="row.current | podTemplate"
-              images-by-docker-reference="row.state.imagesByDockerReference"
-              builds="row.state.builds"></pod-template>
           </div>
         </div>
       </div>
