@@ -65,8 +65,14 @@
   }
   .data-toolbar-filter {
     display: flex;
-    .label-filter, .name-filter {
+    .label-filter,
+    .name-filter {
       flex-grow: 1;
+    }
+    .label-filter,
+    .name-filter input {
+      // Avoid double border since the input is directly beside the filter select.
+      border-left: 0;
     }
     .label-filter .label-filter-key .selectize-input.not-full {
       // FIXME: temp workaround for problem created by
