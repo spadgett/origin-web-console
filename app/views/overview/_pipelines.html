@@ -2,6 +2,6 @@
   <div class="section-title no-border hidden-xs">Pipelines</div>
   <div ng-repeat="pipeline in overviewPipelines.recentPipelines | orderObjectsByDate : true track by (pipeline | uid)"
        class="build-pipeline-wrapper animate-repeat animate-slide">
-    <build-pipeline build="pipeline" build-config-name-on-expanded="true"></build-pipeline>
+    <build-pipeline build="pipeline" build-config-name-on-expanded="true" expand-only-running="true"></build-pipeline>
   </div>
 </div>
