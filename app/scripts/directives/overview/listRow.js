@@ -108,8 +108,8 @@ function OverviewListRow($filter,
     return 'overview/expand/' + uid;
   };
 
-  row.toggleExpand = function(e) {
-    if ($(e.target).closest("a").length > 0) {
+  row.toggleExpand = function(e, always) {
+    if (!always && $(e.target).closest("a").length > 0) {
       return;
     }
 

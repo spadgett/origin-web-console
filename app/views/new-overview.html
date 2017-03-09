@@ -34,8 +34,8 @@
       <div ng-if="!overview.renderOptions.showGetStarted && !overview.renderOptions.showLoading">
         <div class="middle-header header-toolbar">
           <div class="container-fluid toolbar-container">
-            <div class="data-toolbar">
-              <div class="data-toolbar-filter">
+            <div class="data-toolbar" role="toolbar" aria-label="Filter Toolbar">
+              <div class="data-toolbar-filter" role="group">
                 <ui-select
                   class="data-toolbar-dropdown"
                   ng-model="overview.filterBy"
