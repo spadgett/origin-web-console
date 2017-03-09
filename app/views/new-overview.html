@@ -95,7 +95,7 @@
               <span ng-if="overview.viewBy !== 'pipeline'">
                 Showing <strong>{{overview.filteredSize}}</strong> of <strong>{{overview.size}}</strong> items
               </span>
-              <span ng-if="overview.viewBy === 'pipeline' && {{overview.pipelineBuildConfigs | hashSize}}">
+              <span ng-if="overview.viewBy === 'pipeline' && overview.pipelineBuildConfigs | hashSize">
                 Showing <strong>{{overview.filteredPipelineBuildConfigs | hashSize}}</strong> of <strong>{{overview.pipelineBuildConfigs | hashSize}}</strong> pipelines
               </span>
             </div>
