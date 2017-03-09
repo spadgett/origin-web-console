@@ -102,9 +102,19 @@
     margin-right: 5px;
     vertical-align: 8px;
   }
+  // TODO: improve on this as it's pretty hacky
   .deployment-connector-arrow {
+    display: inline-block;
     font-size: 300%;
+    line-height: 1;
+    margin: 50px 0 0 10px;
+    text-align: center;
     .text-muted();
+    @media (max-width: @screen-xs-max) {
+      margin: -3px auto 0 -4px;
+      transform: rotate(90deg);
+      width: 100%
+    }
   }
   .expanded-section {
     margin-top: 20px;
@@ -148,17 +158,10 @@
     // if no actions-dropdown-kebab is present, still take up space
     min-width: 19px;
   }
-  .list-pf-content {
-    @media (min-width: @screen-md-min) {
-      // Prevent the row from shrinking slightly on expand.
-      min-height: 45px;
-    }
-    .row h4:first-child {
-      margin-top: 0;
-    }
-  }
   .list-pf-details {
-    max-width: 500px;
+    @media (min-width: @screen-sm-min) {
+      justify-content: flex-end;
+    }
   }
   .list-pf-expansion.in {
     .deployment-donut > div[row] {
@@ -185,6 +188,17 @@
     }
     > .list-pf-container {
       cursor: pointer;
+      > .list-pf-content {
+        @media (max-width: @screen-xs-max) {
+          align-items: stretch;
+          flex-direction: column;
+        }
+        @media (min-width: @screen-sm-min) {
+          // Prevent the row from shrinking slightly on expand.
+          min-height: 45px;
+          padding-right: 15px;
+        }
+      }
       .toggle-expand-link {
         color: inherit;
       }
@@ -193,6 +207,9 @@
   .list-pf-name {
     display: flex;
     flex-direction: column;
+    @media (max-width: @screen-sm-max) {
+      width: auto !important;
+    }
     @media (min-width: @screen-md-min) {
       align-items: center;
       flex-direction: row;
