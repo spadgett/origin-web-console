@@ -11,6 +11,6 @@
     </div>
     <span am-time-ago="build.metadata.creationTimestamp" class="build-timestamp"></span>
     <div ng-include="'views/directives/_build-pipeline-links.html'" class="build-links"></div>
-    <build-close build="build" hide-build="hideBuild"></build-close>
+    <build-close ng-if="!hideCloseButton" build="build" hide-build="hideBuild"></build-close>
   </div>
 </div>
