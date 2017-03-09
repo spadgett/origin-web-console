@@ -313,13 +313,13 @@
                          state="overview.state">
                     </overview-list-row>
                     <overview-list-row
-                         ng-repeat="replicationController in overview.replicationControllers track by (replicationController | uid)"
+                         ng-repeat="replicationController in overview.vanillaReplicationControllers track by (replicationController | uid)"
                          api-object="replicationController"
                          current="replicationController"
                          state="overview.state">
                     </overview-list-row>
                     <overview-list-row
-                         ng-repeat="replicaSet in overview.replicaSets track by (replicaSet | uid)"
+                         ng-repeat="replicaSet in overview.vanillaReplicaSets track by (replicaSet | uid)"
                          api-object="replicaSet"
                          state="overview.state">
                     </overview-list-row>
