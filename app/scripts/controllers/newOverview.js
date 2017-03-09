@@ -66,6 +66,7 @@ function OverviewController($scope,
 
   var imageStreams;
   var labelSuggestions = {};
+  var pipelineLabelSuggestions = {};
 
   // The most recent replication controller by deployment config name. This
   // might not be the active deployment if failed or cancelled.
@@ -312,6 +313,11 @@ function OverviewController($scope,
     updateFilterDisabledState();
     filterFields = overview.viewBy === 'app' ? ['metadata.name', 'metadata.labels.app'] : ['metadata.name'];
     updateFilter();
+    if (overview.viewBy === 'pipeline') {
+      LabelFilter.setLabelSuggestions(pipelineLabelSuggestions);
+    } else {
+      LabelFilter.setLabelSuggestions(labelSuggestions);
+    }
   });
 
   if (!window.OPENSHIFT_CONSTANTS.DISABLE_OVERVIEW_METRICS) {
@@ -525,7 +531,20 @@ function OverviewController($scope,
     }
 
     LabelFilter.addLabelSuggestionsFromResources(objects, labelSuggestions);
-    LabelFilter.setLabelSuggestions(labelSuggestions);
+    if (overview.viewBy !== 'pipeline') {
+      LabelFilter.setLabelSuggestions(labelSuggestions);
+    }
+  };
+
+  var updatePipelineLabelSuggestions = function(pipelineBuildConfigs) {
+    if (_.isEmpty(pipelineBuildConfigs)) {
+      return;
+    }
+
+    LabelFilter.addLabelSuggestionsFromResources(pipelineBuildConfigs, pipelineLabelSuggestions);
+    if (overview.viewBy === 'pipeline') {
+      LabelFilter.setLabelSuggestions(pipelineLabelSuggestions);
+    }
   };
 
   // Get all resources that own pods (replication controllers, replica sets,
@@ -876,9 +895,7 @@ function OverviewController($scope,
     });
 
     overview.pipelineBuildConfigs = _.sortBy(pipelineBuildConfigs, 'metadata.name');
-    // TODO: Change label suggestions based on `viewBy` state. Suggest pipeline
-    // labels when viewBy === 'pipeline' and other labels in other states.
-    updateLabelSuggestions(overview.pipelineBuildConfigs);
+    updatePipelineLabelSuggestions(overview.pipelineBuildConfigs);
     updateFilterDisabledState();
   };
 
