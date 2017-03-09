@@ -28,7 +28,12 @@
           <a ng-href="{{build | navigateResourceURL}}"><span
               ng-if="build | annotation : 'buildNumber'">#{{build | annotation : 'buildNumber'}}</span><span
               ng-if="!(build | annotation : 'buildNumber')">{{build.metadata.name}}</span></a>
-          {{build.status.phase | lowercase}}
+          <span ng-switch="build.status.phase" class="hide-ng-leave">
+            <span ng-switch-when="Failed">failed</span>
+            <span ng-switch-when="Error">encountered an error</span>
+            <span ng-switch-when="Cancelled">was cancelled</span>
+            <span ng-switch-default>is {{build.status.phase | lowercase}}</span>
+          </span>
           <ellipsis-pulser ng-if="build | isIncompleteBuild" color="dark" size="sm" display="inline" msg=""></ellipsis-pulser>
           <small class="text-muted mar-left-md">created <span am-time-ago="build.metadata.creationTimestamp"></span></small>
         </span>
