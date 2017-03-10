@@ -57,6 +57,7 @@ function OverviewController($scope,
   var annotation = $filter('annotation');
   var getBuildConfigName = $filter('buildConfigForBuild');
   var deploymentIsInProgress = $filter('deploymentIsInProgress');
+  var getErrorDetails = $filter('getErrorDetails');
   var imageObjectRef = $filter('imageObjectRef');
   var isJenkinsPipelineStrategy = $filter('isJenkinsPipelineStrategy');
   var isNewerResource = $filter('isNewerResource');
@@ -1000,6 +1001,19 @@ function OverviewController($scope,
   LabelFilter.onActiveFiltersChanged(function() {
     $scope.$evalAsync(updateFilter);
   });
+
+  overview.startBuild = function(buildConfig) {
+    BuildsService
+      .startBuild(buildConfig.metadata.name, { namespace: buildConfig.metadata.namespace })
+      .then(_.noop, function(result) {
+        var buildType = isJenkinsPipelineStrategy(buildConfig) ? 'pipeline' : 'build';
+        state.alerts["start-build"] = {
+          type: "error",
+          message: "An error occurred while starting the " + buildType + ".",
+          details: getErrorDetails(result)
+        };
+      });
+  };
 
   var watches = [];
   ProjectsService.get($routeParams.project).then(_.spread(function(project, context) {
