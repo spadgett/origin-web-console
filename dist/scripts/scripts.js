@@ -376,7 +376,7 @@ pollInterval:x
 })), Va.push(h.watch("replicationcontrollers", c, function(a) {
 v.replicationControllers = a.by("metadata.name"), ya(), Ba(), Fa(v.vanillaReplicationControllers), ka(v.vanillaReplicationControllers), ua(v.vanillaReplicationControllers), da(), o.log("replicationcontrollers (subscribe)", v.replicationControllers);
 })), Va.push(h.watch("deploymentconfigs", c, function(a) {
-v.deploymentConfigs = a.by("metadata.name"), Ba(), Fa(v.deploymentConfigs), ua(v.deploymentConfigs), ra(), Ra(), Sa(), da(), o.log("deploymentconfigs (subscribe)", v.deploymentConfigs);
+v.deploymentConfigs = a.by("metadata.name"), Ba(), Fa(v.deploymentConfigs), Fa(v.vanillaReplicationControllers), ua(v.deploymentConfigs), ra(), Ra(), Sa(), da(), o.log("deploymentconfigs (subscribe)", v.deploymentConfigs);
 })), Va.push(h.watch({
 group:"extensions",
 resource:"replicasets"
@@ -394,7 +394,7 @@ pollInterval:x
 group:"extensions",
 resource:"deployments"
 }, c, function(a) {
-v.deployments = a.by("metadata.name"), Da(), Fa(v.deployments), ua(v.deployments), da(), o.log("deployments (subscribe)", v.deployments);
+v.deployments = a.by("metadata.name"), Da(), Fa(v.deployments), Fa(v.vanillaReplicaSets), ua(v.deployments), da(), o.log("deployments (subscribe)", v.deployments);
 })), Va.push(h.watch({
 group:"extensions",
 resource:"horizontalpodautoscalers"

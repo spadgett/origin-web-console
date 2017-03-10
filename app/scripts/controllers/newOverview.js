@@ -1092,6 +1092,10 @@ function OverviewController($scope,
       overview.deploymentConfigs = dcData.by("metadata.name");
       groupReplicationControllers();
       updateServicesForObjects(overview.deploymentConfigs);
+      // `overview.vanillaReplicationControllers` is not populated until
+      // deployment configs load. Make sure the services for these are updated
+      // if deployment configs load after replication controllers.
+      updateServicesForObjects(overview.vanillaReplicationControllers);
       updateLabelSuggestions(overview.deploymentConfigs);
       updateAllDeploymentWarnings();
       groupBuildConfigsByDeploymentConfig();
@@ -1134,6 +1138,7 @@ function OverviewController($scope,
       overview.deployments = deploymentData.by('metadata.name');
       groupReplicaSets();
       updateServicesForObjects(overview.deployments);
+      updateServicesForObjects(overview.vanillaReplicaSets);
       updateLabelSuggestions(overview.deployments);
       updateFilter();
       Logger.log("deployments (subscribe)", overview.deployments);
