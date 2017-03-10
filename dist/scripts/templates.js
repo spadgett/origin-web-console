@@ -8832,7 +8832,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
 
   $templateCache.put('views/directives/route-service-bar-chart.html',
     "<div class=\"route-service-bar-chart\">\n" +
-    "<h5>Service Weights</h5>\n" +
+    "<h5>Traffic Split</h5>\n" +
     "<div ng-repeat=\"backend in routeServices.backends\">\n" +
     "<div class=\"service-name\" title=\"{{backend.name}}\">\n" +
     "{{backend.name}}\n" +
