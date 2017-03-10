@@ -823,7 +823,7 @@ function OverviewController($scope,
       state.recentPipelinesByDeploymentConfig[dcName] = state.recentPipelinesByDeploymentConfig[dcName] || [];
       state.recentPipelinesByDeploymentConfig[dcName].push(build);
     });
-      updatePipelineOtherResources();
+    updatePipelineOtherResources();
   };
 
   // Group build configs by their output image. This lets us match them to
@@ -1082,6 +1082,7 @@ function OverviewController($scope,
       groupPods();
       groupReplicationControllers();
       updateServicesForObjects(overview.vanillaReplicationControllers);
+      updateServicesForObjects(overview.monopods);
       updatePodWarnings(overview.vanillaReplicationControllers);
       updateLabelSuggestions(overview.vanillaReplicationControllers);
       updateFilter();
@@ -1112,6 +1113,7 @@ function OverviewController($scope,
       groupPods();
       groupReplicaSets();
       updateServicesForObjects(overview.vanillaReplicaSets);
+      updateServicesForObjects(overview.monopods);
       updatePodWarnings(overview.vanillaReplicaSets);
       updateLabelSuggestions(overview.vanillaReplicaSets);
       updateFilter();
@@ -1125,6 +1127,7 @@ function OverviewController($scope,
       overview.statefulSets = statefulSetData.by('metadata.name');
       groupPods();
       updateServicesForObjects(overview.statefulSets);
+      updateServicesForObjects(overview.monopods);
       updatePodWarnings(overview.statefulSets);
       updateLabelSuggestions(overview.statefulSets);
       updateFilter();

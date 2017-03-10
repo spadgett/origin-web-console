@@ -374,19 +374,19 @@ v.routes = a.by("metadata.name"), Ha(), o.log("routes (subscribe)", v.routes);
 poll:w,
 pollInterval:x
 })), Va.push(h.watch("replicationcontrollers", c, function(a) {
-v.replicationControllers = a.by("metadata.name"), ya(), Ba(), Fa(v.vanillaReplicationControllers), ka(v.vanillaReplicationControllers), ua(v.vanillaReplicationControllers), da(), o.log("replicationcontrollers (subscribe)", v.replicationControllers);
+v.replicationControllers = a.by("metadata.name"), ya(), Ba(), Fa(v.vanillaReplicationControllers), Fa(v.monopods), ka(v.vanillaReplicationControllers), ua(v.vanillaReplicationControllers), da(), o.log("replicationcontrollers (subscribe)", v.replicationControllers);
 })), Va.push(h.watch("deploymentconfigs", c, function(a) {
 v.deploymentConfigs = a.by("metadata.name"), Ba(), Fa(v.deploymentConfigs), Fa(v.vanillaReplicationControllers), ua(v.deploymentConfigs), ra(), Ra(), Sa(), da(), o.log("deploymentconfigs (subscribe)", v.deploymentConfigs);
 })), Va.push(h.watch({
 group:"extensions",
 resource:"replicasets"
 }, c, function(a) {
-v.replicaSets = a.by("metadata.name"), ya(), Da(), Fa(v.vanillaReplicaSets), ka(v.vanillaReplicaSets), ua(v.vanillaReplicaSets), da(), o.log("replicasets (subscribe)", v.replicaSets);
+v.replicaSets = a.by("metadata.name"), ya(), Da(), Fa(v.vanillaReplicaSets), Fa(v.monopods), ka(v.vanillaReplicaSets), ua(v.vanillaReplicaSets), da(), o.log("replicasets (subscribe)", v.replicaSets);
 })), Va.push(h.watch({
 group:"apps",
 resource:"statefulsets"
 }, c, function(a) {
-v.statefulSets = a.by("metadata.name"), ya(), Fa(v.statefulSets), ka(v.statefulSets), ua(v.statefulSets), da(), o.log("statefulsets (subscribe)", v.statefulSets);
+v.statefulSets = a.by("metadata.name"), ya(), Fa(v.statefulSets), Fa(v.monopods), ka(v.statefulSets), ua(v.statefulSets), da(), o.log("statefulsets (subscribe)", v.statefulSets);
 }, {
 poll:w,
 pollInterval:x
