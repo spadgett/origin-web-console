@@ -191,10 +191,12 @@ return a.concat(b, c);
 }, xa = function(a) {
 return "Succeeded" !== a.status.phase && "Failed" !== a.status.phase && (!G(a, "openshift.io/deployer-pod-for.name") && (!z(a, "openshift.io/build.name") && "slave" !== G(a, "jenkins")));
 }, ya = function() {
+if (v.pods && v.replicationControllers && v.replicaSets && v.statefulSets) {
 var a = wa();
 M.podsByOwnerUID = n.groupBySelector(v.pods, a, {
 key:"metadata.uid"
 }), v.monopods = _.filter(M.podsByOwnerUID[""], xa);
+}
 }, za = function(a) {
 if (_.get(a, "status.replicas")) return !0;
 var b = z(a, "deploymentConfig");

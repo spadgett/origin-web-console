@@ -587,6 +587,12 @@ function OverviewController($scope,
 
   // Group all pods by owner, tracked in the `state.podsByOwnerUID` map.
   var groupPods = function() {
+    // Make sure the pod owners have loaded before grouping the pods. Otherwise
+    // the pods themselves appear briefly in separate rows as the page loads.
+    if (!overview.pods || !overview.replicationControllers || !overview.replicaSets || !overview.statefulSets) {
+      return;
+    }
+
     var podOwners = getPodOwners();
     state.podsByOwnerUID = LabelsService.groupBySelector(overview.pods, podOwners, { key: 'metadata.uid' });
     overview.monopods = _.filter(state.podsByOwnerUID[''], showMonopod);
