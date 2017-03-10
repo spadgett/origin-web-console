@@ -42,9 +42,8 @@
             <route-warnings route="route" service="service"></route-warnings>
           </h3>
           <div>
-            <span class="nowrap">Route
-              <a ng-href="{{route | navigateResourceURL}}">{{route.metadata.name}}</a></span><span ng-if="route.spec.port.targetPort">,
-              target port {{route.spec.port.targetPort}}</span>
+            Route <a ng-href="{{route | navigateResourceURL}}">{{route.metadata.name}}</a></span><span ng-if="route.spec.port.targetPort">,
+            target port {{route.spec.port.targetPort}}</span>
           </div>
           <div ng-if="route | hasAlternateBackends">
             <route-service-bar-chart route="route" highlight-service="service.metadata.name"></route-service-bar-chart>

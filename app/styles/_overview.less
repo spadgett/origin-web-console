@@ -153,7 +153,9 @@
       line-height: 1.4;
       margin-bottom: 5px;
       margin-top: 0;
-      .truncate();
+      a {
+        .word-break();
+      }
     }
     .section-title {
       .h4();
@@ -201,6 +203,9 @@
       // Avoid breaking long identifiers like image stream names in empty state message.
       max-width: none;
       .text-center();
+      a {
+        .word-break();
+      }
     }
     .list-pf-content {
       max-width: 100%;
@@ -329,6 +334,9 @@
   .overview-routes {
     + .overview-routes {
       .mar-top-md();
+    }
+    a {
+      .word-break();
     }
   }
   .overview-row-inline-actions {
