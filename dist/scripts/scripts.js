@@ -469,7 +469,7 @@ if (!_.get(a, "status.startTimestamp")) return !1;
 if ("Complete" !== _.get(a, "status.phase")) return !0;
 var c = _.get(a, "status.completionTimestamp");
 if (!c) return !1;
-var d = moment().subtract(5, "m");
+var d = moment().subtract(3, "m");
 return moment(c).isAfter(d);
 };
 }

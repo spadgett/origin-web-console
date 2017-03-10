@@ -46,7 +46,7 @@ function OverviewBuilds($filter) {
       return false;
     }
 
-    var fiveMinutesAgo = moment().subtract(5, 'm');
-    return moment(completed).isAfter(fiveMinutesAgo);
+    var threeMinutesAgo = moment().subtract(3, 'm');
+    return moment(completed).isAfter(threeMinutesAgo);
   };
 }
