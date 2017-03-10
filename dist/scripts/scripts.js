@@ -200,7 +200,7 @@ key:"metadata.uid"
 }, za = function(a) {
 if (_.get(a, "status.replicas")) return !0;
 var b = z(a, "deploymentConfig");
-return !b || B(a);
+return !!b && B(a);
 }, Aa = function(a) {
 return z(a, "deploymentConfig");
 }, Ba = function() {

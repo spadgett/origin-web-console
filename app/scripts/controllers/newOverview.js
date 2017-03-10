@@ -606,7 +606,9 @@ function OverviewController($scope,
     }
     var dcName = annotation(replicationController, 'deploymentConfig');
     if (!dcName) {
-      return true;
+      // Scaled down replication controllers with deleted deployment configs
+      // should not be visible.
+      return false;
     }
     return deploymentIsInProgress(replicationController);
   };
