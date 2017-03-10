@@ -11179,7 +11179,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<project-header class=\"top-header\"></project-header>\n" +
     "<project-page class=\"overview-new\">\n" +
     "<div class=\"middle-section\">\n" +
-    "<div class=\"middle-container\">\n" +
+    "<div class=\"middle-container\" in-view-container>\n" +
     "\n" +
     "<div ng-if=\"overview.renderOptions.showGetStarted\">\n" +
     "<div class=\"container-fluid\">\n" +
@@ -12260,6 +12260,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
 
 
   $templateCache.put('views/overview/_metrics-summary.html',
+    "<div in-view=\"metricsSummary.updateInView($inview)\" in-view-options=\"{ debounce: 50 }\">\n" +
     "<div ng-repeat=\"metric in metricsSummary.metrics\" class=\"metrics-summary\">\n" +
     "<div class=\"usage-value\">\n" +
     "<span class=\"fade-inline\" ng-hide=\"metric.currentUsage | isNil\">\n" +
@@ -12271,6 +12272,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "<div class=\"usage-label\">\n" +
     "{{metric.usageUnits(metric.currentUsage) | capitalize}} {{metric.label}}\n" +
+    "</div>\n" +
     "</div>\n" +
     "</div>"
   );

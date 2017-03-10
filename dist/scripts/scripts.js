@@ -476,17 +476,17 @@ c.currentStage = b.getCurrentStage(e);
 }
 
 function MetricsSummary(a, b, c, d) {
-var e = this, f = function(a) {
+var e, f = this, g = !0, h = function(a) {
 return a >= 1024;
 };
-e.metrics = [ {
+f.metrics = [ {
 label:"Memory",
 convert:b.bytesToMiB,
 formatUsage:function(a) {
-return f(a) && (a /= 1024), c.formatUsage(a);
+return h(a) && (a /= 1024), c.formatUsage(a);
 },
 usageUnits:function(a) {
-return f(a) ? "GiB" :"MiB";
+return h(a) ? "GiB" :"MiB";
 },
 datasets:[ "memory/usage" ],
 type:"pod_container"
@@ -510,47 +510,51 @@ return "KiB/s";
 datasets:[ "network/tx_rate", "network/rx_rate" ],
 type:"pod"
 } ];
-var g, h = function() {
-var a = _.find(e.pods, "metadata.namespace");
+var i = function() {
+var a = _.find(f.pods, "metadata.namespace");
 if (!a) return null;
 var b = {
-pods:e.pods,
+pods:f.pods,
 containerName:_.head(a.spec.containers).name,
 namespace:a.metadata.namespace,
 start:"-1mn",
 bucketDuration:"1mn"
 };
 return b;
-}, i = function(a) {
+}, j = function(a) {
 return null === a.value || void 0 === a.value;
-}, j = function(a, b) {
+}, k = function(a, b) {
 var c = null, d = {};
 _.each(a.datasets, function(e) {
 _.each(b[e], function(b, e) {
 var f = _.last(b);
-if (!i(f)) {
+if (!j(f)) {
 d[e] = !0;
 var g = a.convert(f.value);
 c = (c || 0) + g;
 }
 });
 }), null === c ? delete a.currentUsage :a.currentUsage = c / _.size(d);
-}, k = function(a) {
-_.each(e.metrics, function(b) {
-j(b, a);
+}, l = function(a) {
+_.each(f.metrics, function(b) {
+k(b, a);
 });
-}, l = function() {
-e.error = !0;
 }, m = function() {
-if (!e.error) {
-var a = h();
-a && d.getPodMetrics(a).then(k, l);
+f.error = !0;
+}, n = function() {
+if (!f.error && !g) {
+var a = i();
+a && (e = Date.now(), d.getPodMetrics(a).then(l, m));
 }
 };
-e.$onInit = function() {
-g = a(m, c.getDefaultUpdateInterval(), !1), m();
-}, e.$onDestroy = function() {
-g && (a.cancel(g), g = null);
+f.updateInView = function(a) {
+g = !a, a && (!e || Date.now() > e + c.getDefaultUpdateInterval()) && n();
+};
+var o;
+f.$onInit = function() {
+o = a(n, c.getDefaultUpdateInterval(), !1), n();
+}, f.$onDestroy = function() {
+o && (a.cancel(o), o = null);
 };
 }
 

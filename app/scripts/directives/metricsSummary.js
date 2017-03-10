@@ -24,6 +24,14 @@ function MetricsSummary($interval,
                         MetricsService) {
   var metricsSummary = this;
 
+  // Wait until the charts are in view before fetching metrics.
+  var paused = true;
+
+  // Track when we last requested metrics. When we scroll into view, this
+  // helps decide whether to update immediately or wait until the next
+  // interval tick.
+  var lastUpdated;
+
   // TODO: Move to MetricsCharts ?
   // Should we display the current usage as GiB when showing compact metrics?
   var displayAsGiB = function(usageInMiB) {
@@ -120,7 +128,7 @@ function MetricsSummary($interval,
   };
 
   var update = function() {
-    if (metricsSummary.error) {
+    if (metricsSummary.error || paused) {
       return;
     }
 
@@ -129,7 +137,19 @@ function MetricsSummary($interval,
       return;
     }
 
+    lastUpdated = Date.now();
     MetricsService.getPodMetrics(config).then(processData, metricsFailed);
+  };
+
+  // Pause or resume metrics updates when the element scrolls into and
+  // out of view.
+  metricsSummary.updateInView = function(inview) {
+    paused = !inview;
+
+    // Update now if in view and it's been longer than updateInterval.
+    if (inview && (!lastUpdated || Date.now() > (lastUpdated + MetricsCharts.getDefaultUpdateInterval()))) {
+      update();
+    }
   };
 
   var intervalPromise;
