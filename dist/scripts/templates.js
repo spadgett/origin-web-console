@@ -12032,7 +12032,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "<div ng-if=\"row.apiObject.kind === 'DeploymentConfig' && !row.current && !row.expanded\" class=\"list-pf-details hidden-xs hidden-sm\">\n" +
     "<span>\n" +
-    "No deployments for <a ng-href=\"{{row.apiObject | navigateResourceURL}}\">{{row.apiObject.metadata.name}}</a>.\n" +
+    "No deployments for <a ng-href=\"{{row.apiObject | navigateResourceURL}}\">{{row.apiObject.metadata.name}}</a>\n" +
     "</span>\n" +
     "</div>\n" +
     "<div ng-if=\"row.isDeploymentInProgress()\" class=\"list-pf-details\">\n" +
