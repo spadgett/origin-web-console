@@ -20,24 +20,52 @@
 @mini-log-line-height: (@mini-log-font-size + 2);
 @mini-log-num-lines: 7;
 
-.overview-new {
-  .build-count {
-    .builds,
-    .pipelines {
-      display: block;
-    }
-    .icon-count {
-      margin-left: 5px;
-      &, [data-toggle="tooltip"] {
-        cursor: help;
-      }
-    }
-    .running-stage {
-      .small();
-      .text-muted();
-      margin-left: 3px;
+.build-count {
+  .builds,
+  .pipelines {
+    display: block;
+  }
+  .icon-count {
+    margin-left: 5px;
+    &, [data-toggle="tooltip"] {
+      cursor: help;
     }
   }
+  .running-stage {
+    .small();
+    .text-muted();
+    margin-left: 3px;
+  }
+}
+
+.mini-log {
+  background-color: @color-pf-black-100;
+  border: 1px solid @color-pf-black-300;
+  color: @color-pf-black-700;
+  font-family: @font-family-monospace;
+  font-size: @mini-log-font-size;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  padding: 5px;
+  .truncate();
+  .mini-log-content {
+    line-height: @mini-log-line-height;
+    min-height: (@mini-log-num-lines * @mini-log-line-height);
+    .mini-log-line {
+      white-space: pre;
+    }
+  }
+}
+
+.notification-icon-count {
+  display: inline-block;
+  margin: 0 5px 0 0;
+  [data-toggle="tooltip"] {
+    cursor: help;
+  }
+}
+
+.overview-new {
   .build-pipeline {
     border-color: @overview-border-gray;
   }
@@ -288,36 +316,11 @@
       padding-right: 20px;
     }
   }
-  .mini-log {
-    background-color: @color-pf-black-100;
-    border: 1px solid @color-pf-black-300;
-    color: @color-pf-black-700;
-    font-family: @font-family-monospace;
-    font-size: @mini-log-font-size;
-    margin-bottom: 5px;
-    margin-top: 5px;
-    padding: 5px;
-    .truncate();
-    .mini-log-content {
-      line-height: @mini-log-line-height;
-      min-height: (@mini-log-num-lines * @mini-log-line-height);
-      .mini-log-line {
-        white-space: pre;
-      }
-    }
-  }
   .networking-section .row + .row:before {
     content: '';
     display: block;
     border-top: 1px solid @list-pf-border-color;
     margin: 0 20px 10px;
-  }
-  .notification-icon {
-    display: inline-block;
-    margin: 0 5px 0 0;
-    [data-toggle="tooltip"] {
-      cursor: help;
-    }
   }
   overview-list-row + overview-list-row .list-pf-item.active {
     // avoid double borders when list-pf-item is open

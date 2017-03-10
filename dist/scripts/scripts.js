@@ -458,22 +458,6 @@ return b.weight / c * 100 + "%";
 };
 }
 
-function OverviewBuilds(a) {
-var b, c = a("canI");
-this.$onInit = function() {
-b = c("builds/log", "get");
-}, this.showLogs = function(a) {
-if (this.hideLog) return !1;
-if (!b) return !1;
-if (!_.get(a, "status.startTimestamp")) return !1;
-if ("Complete" !== _.get(a, "status.phase")) return !0;
-var c = _.get(a, "status.completionTimestamp");
-if (!c) return !1;
-var d = moment().subtract(3, "m");
-return moment(c).isAfter(d);
-};
-}
-
 function BuildCounts(a, b) {
 var c = this;
 c.interestingPhases = [ "New", "Pending", "Running", "Failed", "Error" ];
@@ -489,119 +473,6 @@ var e = _.head(a.Running);
 c.currentStage = b.getCurrentStage(e);
 });
 }, 200);
-}
-
-function OverviewListRow(a, b, c, d, e) {
-var f = this, g = a("deploymentIsInProgress"), h = a("getErrorDetails"), i = a("isJenkinsPipelineStrategy"), j = function(a) {
-var b = _.get(a, "spec.triggers");
-_.isEmpty(b) || (f.imageChangeTriggers = _.filter(b, function(a) {
-return "ImageChange" === a.type && _.get(a, "imageChangeParams.automatic");
-}));
-}, k = function(a) {
-a && !f.current && "DeploymentConfig" !== a.kind && "Deployment" !== a.kind && (f.current = a);
-}, l = function(a) {
-k(a), j(a);
-};
-f.$onChanges = function(a) {
-a.apiObject && l(a.apiObject.currentValue);
-};
-var m = function(a) {
-var b = _.get(a, "metadata.uid");
-return b ? _.get(f, [ "state", "notificationsByObjectUID", b ]) :null;
-}, n = [], o = function(a) {
-if (!f.state.hpaByResource) return null;
-var b = _.get(a, "kind"), c = _.get(a, "metadata.name");
-return _.get(f.state.hpaByResource, [ b, c ], n);
-}, p = function() {
-_.isEmpty(f.services) ? _.set(f, "selectedTab.networking", !0) :_.set(f, "selectedTab.networking", !0);
-}, q = function(a) {
-var b = _.get(a, "metadata.uid");
-return b ? "overview/expand/" + b :null;
-};
-f.toggleExpand = function(a, b) {
-if (b || !($(a.target).closest("a").length > 0)) {
-var c = q(f.apiObject);
-c && (f.expanded = !f.expanded, sessionStorage.setItem(c, f.expanded ? "true" :"false"));
-}
-};
-var r = function() {
-var a = q(f.apiObject);
-if (!a) return void (f.expanded = !1);
-var b = sessionStorage.getItem(a);
-return !b && f.state.expandAll ? void (f.expanded = !0) :void (f.expanded = "true" === b);
-};
-f.$onInit = function() {
-p(), r();
-}, f.$doCheck = function() {
-f.notifications = m(f.apiObject), f.hpa = o(f.apiObject), f.current && _.isEmpty(f.hpa) && (f.hpa = o(f.current));
-var a = _.get(f, "apiObject.metadata.uid");
-a && (f.services = _.get(f, [ "state", "servicesByObjectUID", a ]), f.buildConfigs = _.get(f, [ "state", "buildConfigsByObjectUID", a ]));
-var b, c = _.get(f, "apiObject.kind");
-"DeploymentConfig" === c && (b = _.get(f, "apiObject.metadata.name"), f.pipelines = _.get(f, [ "state", "pipelinesForDeploymentConfig", b ]), f.recentBuilds = _.get(f, [ "state", "recentBuildsByDeploymentConfig", b ]), f.recentPipelines = _.get(f, [ "state", "recentPipelinesByDeploymentConfig", b ]));
-}, f.getPods = function(a) {
-var b = _.get(a, "metadata.uid");
-return _.get(f, [ "state", "podsByOwnerUID", b ]);
-}, f.firstPod = function(a) {
-var b = f.getPods(a);
-return _.find(b);
-}, f.isScalable = function() {
-return !!_.isEmpty(f.hpa) && !f.isDeploymentInProgress();
-}, f.isDeploymentInProgress = function() {
-return !(!f.current || !f.previous) || g(f.current);
-}, f.startBuild = function(a) {
-c.startBuild(a.metadata.name, {
-namespace:a.metadata.namespace
-}).then(_.noop, function(b) {
-var c = i(a) ? "pipeline" :"build";
-f.state.alerts["start-build"] = {
-type:"error",
-message:"An error occurred while starting the " + c + ".",
-details:h(b)
-};
-});
-}, f.startDeployment = function() {
-d.startLatestDeployment(f.apiObject, {
-namespace:f.apiObject.metadata.namespace
-}, {
-alerts:f.state.alerts
-});
-}, f.cancelDeployment = function() {
-var a = f.current;
-if (a) {
-var c = a.metadata.name, e = _.get(f, "apiObject.status.latestVersion"), h = b.open({
-animation:!0,
-templateUrl:"views/modals/confirm.html",
-controller:"ConfirmModalController",
-resolve:{
-modalConfig:function() {
-return {
-message:"Cancel deployment " + c + "?",
-details:e ? "This will attempt to stop the in-progress deployment and rollback to the previous deployment, #" + e + ". It may take some time to complete." :"This will attempt to stop the in-progress deployment and may take some time to complete.",
-okButtonText:"Yes, cancel",
-okButtonClass:"btn-danger",
-cancelButtonText:"No, don't cancel"
-};
-}
-}
-});
-h.result.then(function() {
-return a.metadata.uid !== f.current.metadata.uid ? void (f.state.alerts["cancel-deployment"] = {
-type:"error",
-message:"Deployment " + c + " no longer latest."
-}) :(a = f.current, g(a) ? void d.cancelRunningDeployment(a, {
-namespace:a.metadata.namespace
-}, {
-alerts:f.state.alerts
-}) :void (f.state.alerts["cancel-deployment"] = {
-type:"error",
-message:"Deployment " + c + " is no longer in progress."
-}));
-});
-}
-}, f.urlForImageChangeTrigger = function(b) {
-var c = a("stripTag")(_.get(b, "imageChangeParams.from.name")), d = _.get(f, "apiObject.metadata.namespace"), g = _.get(b, "imageChangeParams.from.namespace", d);
-return e.resourceURL(c, "ImageStream", g);
-};
 }
 
 function MetricsSummary(a, b, c, d) {
@@ -725,6 +596,135 @@ return _.escape(a.message);
 });
 });
 }, 200);
+}
+
+function OverviewBuilds(a) {
+var b, c = a("canI");
+this.$onInit = function() {
+b = c("builds/log", "get");
+}, this.showLogs = function(a) {
+if (this.hideLog) return !1;
+if (!b) return !1;
+if (!_.get(a, "status.startTimestamp")) return !1;
+if ("Complete" !== _.get(a, "status.phase")) return !0;
+var c = _.get(a, "status.completionTimestamp");
+if (!c) return !1;
+var d = moment().subtract(3, "m");
+return moment(c).isAfter(d);
+};
+}
+
+function OverviewListRow(a, b, c, d, e) {
+var f = this, g = a("deploymentIsInProgress"), h = a("getErrorDetails"), i = a("isJenkinsPipelineStrategy"), j = function(a) {
+var b = _.get(a, "spec.triggers");
+_.isEmpty(b) || (f.imageChangeTriggers = _.filter(b, function(a) {
+return "ImageChange" === a.type && _.get(a, "imageChangeParams.automatic");
+}));
+}, k = function(a) {
+a && !f.current && "DeploymentConfig" !== a.kind && "Deployment" !== a.kind && (f.current = a);
+}, l = function(a) {
+k(a), j(a);
+};
+f.$onChanges = function(a) {
+a.apiObject && l(a.apiObject.currentValue);
+};
+var m = function(a) {
+var b = _.get(a, "metadata.uid");
+return b ? _.get(f, [ "state", "notificationsByObjectUID", b ]) :null;
+}, n = [], o = function(a) {
+if (!f.state.hpaByResource) return null;
+var b = _.get(a, "kind"), c = _.get(a, "metadata.name");
+return _.get(f.state.hpaByResource, [ b, c ], n);
+}, p = function() {
+_.isEmpty(f.services) ? _.set(f, "selectedTab.networking", !0) :_.set(f, "selectedTab.networking", !0);
+}, q = function(a) {
+var b = _.get(a, "metadata.uid");
+return b ? "overview/expand/" + b :null;
+};
+f.toggleExpand = function(a, b) {
+if (b || !($(a.target).closest("a").length > 0)) {
+var c = q(f.apiObject);
+c && (f.expanded = !f.expanded, sessionStorage.setItem(c, f.expanded ? "true" :"false"));
+}
+};
+var r = function() {
+var a = q(f.apiObject);
+if (!a) return void (f.expanded = !1);
+var b = sessionStorage.getItem(a);
+return !b && f.state.expandAll ? void (f.expanded = !0) :void (f.expanded = "true" === b);
+};
+f.$onInit = function() {
+p(), r();
+}, f.$doCheck = function() {
+f.notifications = m(f.apiObject), f.hpa = o(f.apiObject), f.current && _.isEmpty(f.hpa) && (f.hpa = o(f.current));
+var a = _.get(f, "apiObject.metadata.uid");
+a && (f.services = _.get(f, [ "state", "servicesByObjectUID", a ]), f.buildConfigs = _.get(f, [ "state", "buildConfigsByObjectUID", a ]));
+var b, c = _.get(f, "apiObject.kind");
+"DeploymentConfig" === c && (b = _.get(f, "apiObject.metadata.name"), f.pipelines = _.get(f, [ "state", "pipelinesForDeploymentConfig", b ]), f.recentBuilds = _.get(f, [ "state", "recentBuildsByDeploymentConfig", b ]), f.recentPipelines = _.get(f, [ "state", "recentPipelinesByDeploymentConfig", b ]));
+}, f.getPods = function(a) {
+var b = _.get(a, "metadata.uid");
+return _.get(f, [ "state", "podsByOwnerUID", b ]);
+}, f.firstPod = function(a) {
+var b = f.getPods(a);
+return _.find(b);
+}, f.isScalable = function() {
+return !!_.isEmpty(f.hpa) && !f.isDeploymentInProgress();
+}, f.isDeploymentInProgress = function() {
+return !(!f.current || !f.previous) || g(f.current);
+}, f.startBuild = function(a) {
+c.startBuild(a.metadata.name, {
+namespace:a.metadata.namespace
+}).then(_.noop, function(b) {
+var c = i(a) ? "pipeline" :"build";
+f.state.alerts["start-build"] = {
+type:"error",
+message:"An error occurred while starting the " + c + ".",
+details:h(b)
+};
+});
+}, f.startDeployment = function() {
+d.startLatestDeployment(f.apiObject, {
+namespace:f.apiObject.metadata.namespace
+}, {
+alerts:f.state.alerts
+});
+}, f.cancelDeployment = function() {
+var a = f.current;
+if (a) {
+var c = a.metadata.name, e = _.get(f, "apiObject.status.latestVersion"), h = b.open({
+animation:!0,
+templateUrl:"views/modals/confirm.html",
+controller:"ConfirmModalController",
+resolve:{
+modalConfig:function() {
+return {
+message:"Cancel deployment " + c + "?",
+details:e ? "This will attempt to stop the in-progress deployment and rollback to the previous deployment, #" + e + ". It may take some time to complete." :"This will attempt to stop the in-progress deployment and may take some time to complete.",
+okButtonText:"Yes, cancel",
+okButtonClass:"btn-danger",
+cancelButtonText:"No, don't cancel"
+};
+}
+}
+});
+h.result.then(function() {
+return a.metadata.uid !== f.current.metadata.uid ? void (f.state.alerts["cancel-deployment"] = {
+type:"error",
+message:"Deployment " + c + " no longer latest."
+}) :(a = f.current, g(a) ? void d.cancelRunningDeployment(a, {
+namespace:a.metadata.namespace
+}, {
+alerts:f.state.alerts
+}) :void (f.state.alerts["cancel-deployment"] = {
+type:"error",
+message:"Deployment " + c + " is no longer in progress."
+}));
+});
+}
+}, f.urlForImageChangeTrigger = function(b) {
+var c = a("stripTag")(_.get(b, "imageChangeParams.from.name")), d = _.get(f, "apiObject.metadata.namespace"), g = _.get(b, "imageChangeParams.from.namespace", d);
+return e.resourceURL(c, "ImageStream", g);
+};
 }
 
 window.OPENSHIFT_CONSTANTS = {
@@ -13546,17 +13546,7 @@ return e ? void (c.imageIDs = [ e ]) :void (c.imageIDs = b.getImageIDs(c.pods, a
 c.$watchGroup([ "podTemplate", "pods" ], e);
 }
 };
-} ]), angular.module("openshiftConsole").component("overviewBuilds", {
-controller:[ "$filter", OverviewBuilds ],
-controllerAs:"overviewBuilds",
-bindings:{
-buildConfigs:"<",
-recentBuildsByBuildConfig:"<",
-context:"<",
-hideLog:"<"
-},
-templateUrl:"views/overview/_builds.html"
-}), angular.module("openshiftConsole").component("buildCounts", {
+} ]), angular.module("openshiftConsole").component("buildCounts", {
 controller:[ "$scope", "BuildsService", BuildCounts ],
 controllerAs:"buildCounts",
 bindings:{
@@ -13565,17 +13555,6 @@ showRunningStage:"<",
 label:"@"
 },
 templateUrl:"views/overview/_build-counts.html"
-}), angular.module("openshiftConsole").component("overviewListRow", {
-controller:[ "$filter", "$uibModal", "BuildsService", "DeploymentsService", "Navigate", OverviewListRow ],
-controllerAs:"row",
-bindings:{
-apiObject:"<",
-current:"<",
-previous:"<",
-state:"<",
-hidePipelines:"<"
-},
-templateUrl:"views/overview/_list-row.html"
 }), angular.module("openshiftConsole").component("metricsSummary", {
 controller:[ "$interval", "ConversionService", "MetricsCharts", "MetricsService", MetricsSummary ],
 controllerAs:"metricsSummary",
@@ -13593,6 +13572,34 @@ numLines:"<",
 context:"<"
 },
 templateUrl:"views/overview/_mini-log.html"
+}), angular.module("openshiftConsole").component("notificationIcon", {
+controller:[ "$scope", NotificationIcon ],
+controllerAs:"notification",
+bindings:{
+alerts:"<"
+},
+templateUrl:"views/overview/_notification-icon.html"
+}), angular.module("openshiftConsole").component("overviewBuilds", {
+controller:[ "$filter", OverviewBuilds ],
+controllerAs:"overviewBuilds",
+bindings:{
+buildConfigs:"<",
+recentBuildsByBuildConfig:"<",
+context:"<",
+hideLog:"<"
+},
+templateUrl:"views/overview/_builds.html"
+}), angular.module("openshiftConsole").component("overviewListRow", {
+controller:[ "$filter", "$uibModal", "BuildsService", "DeploymentsService", "Navigate", OverviewListRow ],
+controllerAs:"row",
+bindings:{
+apiObject:"<",
+current:"<",
+previous:"<",
+state:"<",
+hidePipelines:"<"
+},
+templateUrl:"views/overview/_list-row.html"
 }), angular.module("openshiftConsole").component("overviewNetworking", {
 controllerAs:"networking",
 bindings:{
@@ -13606,13 +13613,6 @@ bindings:{
 recentPipelines:"<"
 },
 templateUrl:"views/overview/_pipelines.html"
-}), angular.module("openshiftConsole").component("notificationIcon", {
-controller:[ "$scope", NotificationIcon ],
-controllerAs:"notification",
-bindings:{
-alerts:"<"
-},
-templateUrl:"views/overview/_notification-icon.html"
 }), angular.module("openshiftConsole").directive("istagSelect", [ "DataService", function(a) {
 return {
 require:"^form",

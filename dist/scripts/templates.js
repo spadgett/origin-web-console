@@ -12349,10 +12349,9 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
 
 
   $templateCache.put('views/overview/_notification-icon.html',
-    "<div ng-if=\"notification.byType.error\" class=\"notification-icon animate-if\">\n" +
+    "<div ng-if=\"notification.byType.error\" class=\"notification-icon-count animate-if\">\n" +
     "<span dynamic-content=\"{{notification.byType.error}}\" data-toggle=\"tooltip\" data-trigger=\"hover\">\n" +
     "<span class=\"pficon pficon-error-circle-o\" aria-hidden=\"true\"></span>\n" +
-    "<span class=\"notification-icon-label\">\n" +
     "{{notification.countByType.error}}\n" +
     "<span ng-if=\"notification.countByType.error === 1\">\n" +
     "Error\n" +
@@ -12361,19 +12360,16 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "Errors\n" +
     "</span>\n" +
     "</span>\n" +
-    "</span>\n" +
     "</div>\n" +
-    "<div ng-if=\"notification.byType.warning\" class=\"notification-icon animate-if\">\n" +
+    "<div ng-if=\"notification.byType.warning\" class=\"notification-icon-count animate-if\">\n" +
     "<span dynamic-content=\"{{notification.byType.warning}}\" data-toggle=\"tooltip\" data-trigger=\"hover\">\n" +
     "<span class=\"pficon pficon-warning-triangle-o\" aria-hidden=\"true\"></span>\n" +
-    "<span class=\"notification-icon-label\">\n" +
     "{{notification.countByType.warning}}\n" +
     "<span ng-if=\"notification.countByType.warning === 1\">\n" +
     "Warning\n" +
     "</span>\n" +
     "<span ng-if=\"notification.countByType.warning !== 1\">\n" +
     "Warnings\n" +
-    "</span>\n" +
     "</span>\n" +
     "</span>\n" +
     "</div>"
