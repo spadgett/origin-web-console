@@ -12,6 +12,7 @@ angular.module('openshiftConsole').controller('NewOverviewController', [
   'DataService',
   'DeploymentsService',
   'HPAService',
+  'HTMLService',
   'ImageStreamResolver',
   'KeywordService',
   'LabelFilter',
@@ -22,7 +23,6 @@ angular.module('openshiftConsole').controller('NewOverviewController', [
   'ProjectsService',
   'ResourceAlertsService',
   'RoutesService',
-  'BREAKPOINTS',
   OverviewController
 ]);
 
@@ -36,6 +36,7 @@ function OverviewController($scope,
                             DataService,
                             DeploymentsService,
                             HPAService,
+                            HTMLService,
                             ImageStreamResolver,
                             KeywordService,
                             LabelFilter,
@@ -45,8 +46,7 @@ function OverviewController($scope,
                             Navigate,
                             ProjectsService,
                             ResourceAlertsService,
-                            RoutesService,
-                            BREAKPOINTS) {
+                            RoutesService) {
   var overview = this;
   var limitWatches = $filter('isIE')() || $filter('isEdge')();
   var DEFAULT_POLL_INTERVAL = 60 * 1000; // milliseconds
@@ -103,29 +103,13 @@ function OverviewController($scope,
   });
   AlertMessageService.clearAlerts();
 
-  var getBreakpoint = function() {
-    if (window.innerWidth < BREAKPOINTS.screenSmMin) {
-      return 'xs';
-    }
-
-    if (window.innerWidth < BREAKPOINTS.screenMdMin) {
-      return 'sm';
-    }
-
-    if (window.innerWidth < BREAKPOINTS.screenLgMin) {
-      return 'md';
-    }
-
-    return 'lg';
-  };
-
   // Track the breakpoint ourselves so we can remove elements from the page,
   // rather than hiding them using CSS. This avoids rendering charts more than
   // once for the responsive layout, which switches to tabs at smaller screen
   // widths.
-  overview.state.breakpoint = getBreakpoint();
+  overview.state.breakpoint = HTMLService.getBreakpoint();
   var onResize = _.throttle(function() {
-    var breakpoint = getBreakpoint();
+    var breakpoint = HTMLService.getBreakpoint();
     if (overview.state.breakpoint !== breakpoint) {
       $scope.$evalAsync(function() {
         overview.state.breakpoint = breakpoint;
@@ -133,7 +117,7 @@ function OverviewController($scope,
     }
   }, 50);
 
-  $(window).on('resize', onResize);
+  $(window).on('resize.overview', onResize);
 
   overview.renderOptions = {
     showGetStarted: false,
@@ -1196,7 +1180,7 @@ function OverviewController($scope,
 
     $scope.$on('$destroy', function() {
       DataService.unwatchAll(watches);
-      $(window).off('resize', onResize);
+      $(window).off('resize.overview', onResize);
     });
   }));
 }
