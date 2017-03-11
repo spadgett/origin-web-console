@@ -11947,8 +11947,10 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
 
 
   $templateCache.put('views/overview/_list-row-actions.html',
-    "<div class=\"list-pf-actions\">\n" +
-    "<div ng-if=\"row.apiObject.kind === 'DeploymentConfig'\">\n" +
+    " <div class=\"list-pf-actions\">\n" +
+    "<div ng-if=\"row.canIDoAny()\">\n" +
+    "<div ng-switch=\"row.apiObject.kind\">\n" +
+    "<div ng-switch-when=\"DeploymentConfig\">\n" +
     "<div uib-dropdown>\n" +
     "<a href=\"\" uib-dropdown-toggle class=\"actions-dropdown-kebab\"><i class=\"fa fa-ellipsis-v\"></i><span class=\"sr-only\">Actions</span></a>\n" +
     "<ul class=\"dropdown-menu dropdown-menu-right\" uib-dropdown-menu role=\"menu\">\n" +
@@ -11964,36 +11966,38 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<li ng-if=\"'deploymentconfigs' | canI : 'update'\" role=\"menuitem\">\n" +
     "<a ng-href=\"{{row.apiObject | editResourceURL}}\">Edit</a>\n" +
     "</li>\n" +
-    "<li ng-if=\"row.current\" role=\"menuitem\">\n" +
+    "<li ng-if=\"row.current && ('deploymentconfigs/log' | canI : 'get')\" role=\"menuitem\">\n" +
     "<a ng-href=\"{{row.current | navigateResourceURL}}?tab=logs\">View Logs</a>\n" +
     "</li>\n" +
     "</ul>\n" +
     "</div>\n" +
     "</div>\n" +
-    "<div ng-if=\"row.apiObject.kind === 'Pod'\">\n" +
+    "<div ng-switch-when=\"Pod\">\n" +
     "<div uib-dropdown>\n" +
     "<a href=\"\" uib-dropdown-toggle class=\"actions-dropdown-kebab\"><i class=\"fa fa-ellipsis-v\"></i><span class=\"sr-only\">Actions</span></a>\n" +
     "<ul class=\"dropdown-menu dropdown-menu-right\" uib-dropdown-menu role=\"menu\">\n" +
-    "<li role=\"menuitem\">\n" +
+    "<li role=\"menuitem\" ng-if=\"'pods' | canI : 'update'\">\n" +
     "<a ng-href=\"{{row.apiObject | editYamlURL}}\">Edit YAML</a>\n" +
     "</li>\n" +
-    "<li role=\"menuitem\">\n" +
+    "<li role=\"menuitem\" ng-if=\"('pods/log' | canI : 'get')\">\n" +
     "<a ng-href=\"{{row.apiObject | navigateResourceURL}}?tab=logs\">View Logs</a>\n" +
     "</li>\n" +
     "</ul>\n" +
     "</div>\n" +
     "</div>\n" +
-    "<div ng-if=\"row.apiObject.kind === 'ReplicationController' || row.apiObject.kind === 'Deployment' || row.apiObject.kind === 'ReplicaSet' || row.apiObject.kind === 'StatefulSet'\">\n" +
+    "<div ng-switch-default>\n" +
     "<div uib-dropdown>\n" +
     "<a href=\"\" uib-dropdown-toggle class=\"actions-dropdown-kebab\"><i class=\"fa fa-ellipsis-v\"></i><span class=\"sr-only\">Actions</span></a>\n" +
     "<ul class=\"dropdown-menu dropdown-menu-right\" uib-dropdown-menu role=\"menu\">\n" +
-    "<li role=\"menuitem\">\n" +
+    "<li role=\"menuitem\" ng-if=\"row.rgv | canI : 'update'\">\n" +
     "<a ng-href=\"{{row.apiObject | editYamlURL}}\">Edit YAML</a>\n" +
     "</li>\n" +
-    "<li ng-if=\"pod = row.firstPod(row.current)\" role=\"menuitem\">\n" +
+    "<li ng-if=\"(pod = row.firstPod(row.current)) && ('pods/log' | canI : 'get')\" role=\"menuitem\">\n" +
     "<a ng-href=\"{{pod | navigateResourceURL}}?tab=logs\">View Logs</a>\n" +
     "</li>\n" +
     "</ul>\n" +
+    "</div>\n" +
+    "</div>\n" +
     "</div>\n" +
     "</div>\n" +
     "</div>"

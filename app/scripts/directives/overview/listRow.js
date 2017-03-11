@@ -4,6 +4,7 @@ angular.module('openshiftConsole').component('overviewListRow', {
   controller: [
     '$filter',
     '$uibModal',
+    'APIService',
     'BuildsService',
     'DeploymentsService',
     'Navigate',
@@ -23,11 +24,13 @@ angular.module('openshiftConsole').component('overviewListRow', {
 
 function OverviewListRow($filter,
                          $uibModal,
+                         APIService,
                          BuildsService,
                          DeploymentsService,
                          Navigate) {
   var row = this;
 
+  var canI = $filter('canI');
   var deploymentIsInProgress = $filter('deploymentIsInProgress');
   var getErrorDetails = $filter('getErrorDetails');
   var isJenkinsPipelineStrategy = $filter('isJenkinsPipelineStrategy');
@@ -56,6 +59,7 @@ function OverviewListRow($filter,
   };
 
   var updateAPIObject = function(apiObject) {
+    row.rgv = APIService.objectToResourceGroupVersion(apiObject);
     updateCurrent(apiObject);
     updateTriggers(apiObject);
   };
@@ -196,6 +200,52 @@ function OverviewListRow($filter,
     }
 
     return deploymentIsInProgress(row.current);
+  };
+
+  row.canIDoAny = function() {
+    var kind = _.get(row, 'apiObject.kind');
+    switch (kind) {
+    case 'DeploymentConfig':
+      // Edit is displayed.
+      if (canI('deploymentconfigs', 'update')) {
+        return true;
+      }
+      // View logs is displayed.
+      if (row.current && canI('deploymentconfigs/log', 'get')) {
+        return true;
+      }
+      // Start pipeline or build is displayed.
+      if ((_.size(row.buildConfigs) === 1 || _.size(row.pipelines) === 1) &&
+           canI('buildconfigs/instantiate')) {
+        return true;
+      }
+
+      return false;
+
+    case 'Pod':
+      // View log is displayed.
+      if (canI('pods/log', 'get')) {
+        return true;
+      }
+      // Edit YAML is displayed.
+      if (canI('pods', 'update')) {
+        return true;
+      }
+
+      return false;
+
+    default:
+      // View log is displayed.
+      if (row.firstPod(row.current) && canI('pods/log', 'get')) {
+        return true;
+      }
+      // Edit YAML is displayed.
+      if (canI(row.rgv, 'update')) {
+        return true;
+      }
+
+      return false;
+    }
   };
 
   row.startBuild = function(buildConfig) {

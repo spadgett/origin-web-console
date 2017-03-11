@@ -614,84 +614,96 @@ return moment(c).isAfter(d);
 };
 }
 
-function OverviewListRow(a, b, c, d, e) {
-var f = this, g = a("deploymentIsInProgress"), h = a("getErrorDetails"), i = a("isJenkinsPipelineStrategy"), j = function(a) {
+function OverviewListRow(a, b, c, d, e, f) {
+var g = this, h = a("canI"), i = a("deploymentIsInProgress"), j = a("getErrorDetails"), k = a("isJenkinsPipelineStrategy"), l = function(a) {
 var b = _.get(a, "spec.triggers");
-_.isEmpty(b) || (f.imageChangeTriggers = _.filter(b, function(a) {
+_.isEmpty(b) || (g.imageChangeTriggers = _.filter(b, function(a) {
 return "ImageChange" === a.type && _.get(a, "imageChangeParams.automatic");
 }));
-}, k = function(a) {
-a && !f.current && "DeploymentConfig" !== a.kind && "Deployment" !== a.kind && (f.current = a);
-}, l = function(a) {
-k(a), j(a);
+}, m = function(a) {
+a && !g.current && "DeploymentConfig" !== a.kind && "Deployment" !== a.kind && (g.current = a);
+}, n = function(a) {
+g.rgv = c.objectToResourceGroupVersion(a), m(a), l(a);
 };
-f.$onChanges = function(a) {
-a.apiObject && l(a.apiObject.currentValue);
+g.$onChanges = function(a) {
+a.apiObject && n(a.apiObject.currentValue);
 };
-var m = function(a) {
+var o = function(a) {
 var b = _.get(a, "metadata.uid");
-return b ? _.get(f, [ "state", "notificationsByObjectUID", b ]) :null;
-}, n = [], o = function(a) {
-if (!f.state.hpaByResource) return null;
+return b ? _.get(g, [ "state", "notificationsByObjectUID", b ]) :null;
+}, p = [], q = function(a) {
+if (!g.state.hpaByResource) return null;
 var b = _.get(a, "kind"), c = _.get(a, "metadata.name");
-return _.get(f.state.hpaByResource, [ b, c ], n);
-}, p = function() {
-_.isEmpty(f.services) ? _.set(f, "selectedTab.networking", !0) :_.set(f, "selectedTab.networking", !0);
-}, q = function(a) {
+return _.get(g.state.hpaByResource, [ b, c ], p);
+}, r = function() {
+_.isEmpty(g.services) ? _.set(g, "selectedTab.networking", !0) :_.set(g, "selectedTab.networking", !0);
+}, s = function(a) {
 var b = _.get(a, "metadata.uid");
 return b ? "overview/expand/" + b :null;
 };
-f.toggleExpand = function(a, b) {
+g.toggleExpand = function(a, b) {
 if (b || !($(a.target).closest("a").length > 0)) {
-var c = q(f.apiObject);
-c && (f.expanded = !f.expanded, sessionStorage.setItem(c, f.expanded ? "true" :"false"));
+var c = s(g.apiObject);
+c && (g.expanded = !g.expanded, sessionStorage.setItem(c, g.expanded ? "true" :"false"));
 }
 };
-var r = function() {
-var a = q(f.apiObject);
-if (!a) return void (f.expanded = !1);
+var t = function() {
+var a = s(g.apiObject);
+if (!a) return void (g.expanded = !1);
 var b = sessionStorage.getItem(a);
-return !b && f.state.expandAll ? void (f.expanded = !0) :void (f.expanded = "true" === b);
+return !b && g.state.expandAll ? void (g.expanded = !0) :void (g.expanded = "true" === b);
 };
-f.$onInit = function() {
-p(), r();
-}, f.$doCheck = function() {
-f.notifications = m(f.apiObject), f.hpa = o(f.apiObject), f.current && _.isEmpty(f.hpa) && (f.hpa = o(f.current));
-var a = _.get(f, "apiObject.metadata.uid");
-a && (f.services = _.get(f, [ "state", "servicesByObjectUID", a ]), f.buildConfigs = _.get(f, [ "state", "buildConfigsByObjectUID", a ]));
-var b, c = _.get(f, "apiObject.kind");
-"DeploymentConfig" === c && (b = _.get(f, "apiObject.metadata.name"), f.pipelines = _.get(f, [ "state", "pipelinesForDeploymentConfig", b ]), f.recentBuilds = _.get(f, [ "state", "recentBuildsByDeploymentConfig", b ]), f.recentPipelines = _.get(f, [ "state", "recentPipelinesByDeploymentConfig", b ]));
-}, f.getPods = function(a) {
+g.$onInit = function() {
+r(), t();
+}, g.$doCheck = function() {
+g.notifications = o(g.apiObject), g.hpa = q(g.apiObject), g.current && _.isEmpty(g.hpa) && (g.hpa = q(g.current));
+var a = _.get(g, "apiObject.metadata.uid");
+a && (g.services = _.get(g, [ "state", "servicesByObjectUID", a ]), g.buildConfigs = _.get(g, [ "state", "buildConfigsByObjectUID", a ]));
+var b, c = _.get(g, "apiObject.kind");
+"DeploymentConfig" === c && (b = _.get(g, "apiObject.metadata.name"), g.pipelines = _.get(g, [ "state", "pipelinesForDeploymentConfig", b ]), g.recentBuilds = _.get(g, [ "state", "recentBuildsByDeploymentConfig", b ]), g.recentPipelines = _.get(g, [ "state", "recentPipelinesByDeploymentConfig", b ]));
+}, g.getPods = function(a) {
 var b = _.get(a, "metadata.uid");
-return _.get(f, [ "state", "podsByOwnerUID", b ]);
-}, f.firstPod = function(a) {
-var b = f.getPods(a);
+return _.get(g, [ "state", "podsByOwnerUID", b ]);
+}, g.firstPod = function(a) {
+var b = g.getPods(a);
 return _.find(b);
-}, f.isScalable = function() {
-return !!_.isEmpty(f.hpa) && !f.isDeploymentInProgress();
-}, f.isDeploymentInProgress = function() {
-return !(!f.current || !f.previous) || g(f.current);
-}, f.startBuild = function(a) {
-c.startBuild(a.metadata.name, {
+}, g.isScalable = function() {
+return !!_.isEmpty(g.hpa) && !g.isDeploymentInProgress();
+}, g.isDeploymentInProgress = function() {
+return !(!g.current || !g.previous) || i(g.current);
+}, g.canIDoAny = function() {
+var a = _.get(g, "apiObject.kind");
+switch (a) {
+case "DeploymentConfig":
+return !!h("deploymentconfigs", "update") || (!(!g.current || !h("deploymentconfigs/log", "get")) || !(1 !== _.size(g.buildConfigs) && 1 !== _.size(g.pipelines) || !h("buildconfigs/instantiate")));
+
+case "Pod":
+return !!h("pods/log", "get") || !!h("pods", "update");
+
+default:
+return !(!g.firstPod(g.current) || !h("pods/log", "get")) || !!h(g.rgv, "update");
+}
+}, g.startBuild = function(a) {
+d.startBuild(a.metadata.name, {
 namespace:a.metadata.namespace
 }).then(_.noop, function(b) {
-var c = i(a) ? "pipeline" :"build";
-f.state.alerts["start-build"] = {
+var c = k(a) ? "pipeline" :"build";
+g.state.alerts["start-build"] = {
 type:"error",
 message:"An error occurred while starting the " + c + ".",
-details:h(b)
+details:j(b)
 };
 });
-}, f.startDeployment = function() {
-d.startLatestDeployment(f.apiObject, {
-namespace:f.apiObject.metadata.namespace
+}, g.startDeployment = function() {
+e.startLatestDeployment(g.apiObject, {
+namespace:g.apiObject.metadata.namespace
 }, {
-alerts:f.state.alerts
+alerts:g.state.alerts
 });
-}, f.cancelDeployment = function() {
-var a = f.current;
+}, g.cancelDeployment = function() {
+var a = g.current;
 if (a) {
-var c = a.metadata.name, e = _.get(f, "apiObject.status.latestVersion"), h = b.open({
+var c = a.metadata.name, d = _.get(g, "apiObject.status.latestVersion"), f = b.open({
 animation:!0,
 templateUrl:"views/modals/confirm.html",
 controller:"ConfirmModalController",
@@ -699,7 +711,7 @@ resolve:{
 modalConfig:function() {
 return {
 message:"Cancel deployment " + c + "?",
-details:e ? "This will attempt to stop the in-progress deployment and rollback to the previous deployment, #" + e + ". It may take some time to complete." :"This will attempt to stop the in-progress deployment and may take some time to complete.",
+details:d ? "This will attempt to stop the in-progress deployment and rollback to the previous deployment, #" + d + ". It may take some time to complete." :"This will attempt to stop the in-progress deployment and may take some time to complete.",
 okButtonText:"Yes, cancel",
 okButtonClass:"btn-danger",
 cancelButtonText:"No, don't cancel"
@@ -707,23 +719,23 @@ cancelButtonText:"No, don't cancel"
 }
 }
 });
-h.result.then(function() {
-return a.metadata.uid !== f.current.metadata.uid ? void (f.state.alerts["cancel-deployment"] = {
+f.result.then(function() {
+return a.metadata.uid !== g.current.metadata.uid ? void (g.state.alerts["cancel-deployment"] = {
 type:"error",
 message:"Deployment " + c + " no longer latest."
-}) :(a = f.current, g(a) ? void d.cancelRunningDeployment(a, {
+}) :(a = g.current, i(a) ? void e.cancelRunningDeployment(a, {
 namespace:a.metadata.namespace
 }, {
-alerts:f.state.alerts
-}) :void (f.state.alerts["cancel-deployment"] = {
+alerts:g.state.alerts
+}) :void (g.state.alerts["cancel-deployment"] = {
 type:"error",
 message:"Deployment " + c + " is no longer in progress."
 }));
 });
 }
-}, f.urlForImageChangeTrigger = function(b) {
-var c = a("stripTag")(_.get(b, "imageChangeParams.from.name")), d = _.get(f, "apiObject.metadata.namespace"), g = _.get(b, "imageChangeParams.from.namespace", d);
-return e.resourceURL(c, "ImageStream", g);
+}, g.urlForImageChangeTrigger = function(b) {
+var c = a("stripTag")(_.get(b, "imageChangeParams.from.name")), d = _.get(g, "apiObject.metadata.namespace"), e = _.get(b, "imageChangeParams.from.namespace", d);
+return f.resourceURL(c, "ImageStream", e);
 };
 }
 
@@ -13593,7 +13605,7 @@ hideLog:"<"
 },
 templateUrl:"views/overview/_builds.html"
 }), angular.module("openshiftConsole").component("overviewListRow", {
-controller:[ "$filter", "$uibModal", "BuildsService", "DeploymentsService", "Navigate", OverviewListRow ],
+controller:[ "$filter", "$uibModal", "APIService", "BuildsService", "DeploymentsService", "Navigate", OverviewListRow ],
 controllerAs:"row",
 bindings:{
 apiObject:"<",
