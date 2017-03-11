@@ -213,7 +213,7 @@ function OverviewController($scope,
   };
 
   // Group a collection of resources by app label. Returns a map where the key
-  // is the app label value and the value is an array of object, sorted by
+  // is the app label value and the value is an array of objects, sorted by
   // `metadata.name`.
   var groupByApp = function(collection) {
     return AppsService.groupByApp(collection, 'metadata.name');
@@ -301,7 +301,7 @@ function OverviewController($scope,
   };
 
   // Track view-by state in localStorage.
-  var viewByKey = $routeParams.project + '/view-by';
+  var viewByKey = $routeParams.project + '/overview/view-by';
   overview.viewBy = localStorage.getItem(viewByKey) || 'app';
   $scope.$watch(function() {
     return overview.viewBy;
