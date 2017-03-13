@@ -119,10 +119,8 @@ function OverviewController($scope,
 
   $(window).on('resize.overview', onResize);
 
-  overview.renderOptions = {
-    showGetStarted: false,
-    showLoading: true
-  };
+  overview.showGetStarted = false;
+  overview.showLoading = true;
 
   overview.filterByOptions = [{
     id: 'name',
@@ -190,8 +188,8 @@ function OverviewController($scope,
 
     state.expandAll = loaded && overview.size === 1;
 
-    overview.renderOptions.showGetStarted = loaded && projectEmpty;
-    overview.renderOptions.showLoading = !loaded && projectEmpty;
+    overview.showGetStarted = loaded && projectEmpty;
+    overview.showLoading = !loaded && projectEmpty;
 
     overview.everythingFiltered = !projectEmpty && !overview.filteredSize;
   };

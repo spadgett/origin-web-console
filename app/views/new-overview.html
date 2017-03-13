@@ -3,7 +3,7 @@
   <div class="middle-section">
     <div class="middle-container">
       <!-- Empty states -->
-      <div ng-if="overview.renderOptions.showGetStarted">
+      <div ng-if="overview.showGetStarted">
         <div class="container-fluid">
           <tasks></tasks>
           <alerts alerts="overview.state.alerts"></alerts>
@@ -28,10 +28,10 @@
           </div>
         </div>
       </div>
-      <div ng-if="overview.renderOptions.showLoading" class="container-fluid loading-message">
+      <div ng-if="overview.showLoading" class="container-fluid loading-message">
         Loading...
       </div>
-      <div ng-if="!overview.renderOptions.showGetStarted && !overview.renderOptions.showLoading">
+      <div ng-if="!overview.showGetStarted && !overview.showLoading">
         <div class="middle-header header-toolbar">
           <div class="container-fluid toolbar-container">
             <div class="data-toolbar" role="toolbar" aria-label="Filter Toolbar">

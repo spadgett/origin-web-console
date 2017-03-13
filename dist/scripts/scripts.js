@@ -29,10 +29,7 @@ v.state.breakpoint !== b && a.$evalAsync(function() {
 v.state.breakpoint = b;
 });
 }, 50);
-$(window).on("resize.overview", N), v.renderOptions = {
-showGetStarted:!1,
-showLoading:!0
-}, v.filterByOptions = [ {
+$(window).on("resize.overview", N), v.showGetStarted = !1, v.showLoading = !0, v.filterByOptions = [ {
 id:"name",
 label:"Name"
 }, {
@@ -59,7 +56,7 @@ return _.size(v.filteredDeploymentConfigs) + _.size(v.filteredReplicationControl
 }, S = function() {
 v.size = Q(), v.filteredSize = R();
 var a = 0 === v.size, b = v.deploymentConfigs && v.replicationControllers && v.deployments && v.replicaSets && v.statefulSets && v.pods;
-M.expandAll = b && 1 === v.size, v.renderOptions.showGetStarted = b && a, v.renderOptions.showLoading = !b && a, v.everythingFiltered = !a && !v.filteredSize;
+M.expandAll = b && 1 === v.size, v.showGetStarted = b && a, v.showLoading = !b && a, v.everythingFiltered = !a && !v.filteredSize;
 }, T = function(a) {
 return e.groupByApp(a, "metadata.name");
 }, U = function() {

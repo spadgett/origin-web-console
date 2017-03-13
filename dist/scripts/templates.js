@@ -11181,7 +11181,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div class=\"middle-section\">\n" +
     "<div class=\"middle-container\">\n" +
     "\n" +
-    "<div ng-if=\"overview.renderOptions.showGetStarted\">\n" +
+    "<div ng-if=\"overview.showGetStarted\">\n" +
     "<div class=\"container-fluid\">\n" +
     "<tasks></tasks>\n" +
     "<alerts alerts=\"overview.state.alerts\"></alerts>\n" +
@@ -11205,10 +11205,10 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "</div>\n" +
     "</div>\n" +
-    "<div ng-if=\"overview.renderOptions.showLoading\" class=\"container-fluid loading-message\">\n" +
+    "<div ng-if=\"overview.showLoading\" class=\"container-fluid loading-message\">\n" +
     "Loading...\n" +
     "</div>\n" +
-    "<div ng-if=\"!overview.renderOptions.showGetStarted && !overview.renderOptions.showLoading\">\n" +
+    "<div ng-if=\"!overview.showGetStarted && !overview.showLoading\">\n" +
     "<div class=\"middle-header header-toolbar\">\n" +
     "<div class=\"container-fluid toolbar-container\">\n" +
     "<div class=\"data-toolbar\" role=\"toolbar\" aria-label=\"Filter Toolbar\">\n" +
