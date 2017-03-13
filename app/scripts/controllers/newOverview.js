@@ -808,8 +808,8 @@ function OverviewController($scope,
     buildConfigsByOutputImage = BuildsService.groupBuildConfigsByOutputImage(overview.buildConfigs);
   };
 
-  var getBuildConfigsForDeploymentConfig = function(deploymentConfig) {
-    var uid = getUID(deploymentConfig);
+  var getBuildConfigsForObject = function(apiObject) {
+    var uid = getUID(apiObject);
     if (!uid) {
       return;
     }
@@ -824,7 +824,7 @@ function OverviewController($scope,
   //   value: array of builds, sorted in descending order by creation date
   var updateRecentBuildsForDeploymentConfig = function(deploymentConfig) {
     var builds = [];
-    var buildConfigs = getBuildConfigsForDeploymentConfig(deploymentConfig);
+    var buildConfigs = getBuildConfigsForObject(deploymentConfig);
     _.each(buildConfigs, function(buildConfig) {
       var recentForConfig = _.get(state, ['recentBuildsByBuildConfig', buildConfig.metadata.name], []);
       builds = builds.concat(recentForConfig);
@@ -835,8 +835,8 @@ function OverviewController($scope,
     _.set(state, ['recentBuildsByDeploymentConfig', dcName], builds);
   };
 
-  var setBuildConfigsForDeploymentConfig = function(buildConfigs, deploymentConfig) {
-    var uid = getUID(deploymentConfig);
+  var setBuildConfigsForObject = function(buildConfigs, apiObject) {
+    var uid = getUID(apiObject);
     if (!uid) {
       return;
     }
@@ -904,7 +904,7 @@ function OverviewController($scope,
       });
 
       buildConfigs = _.sortBy(buildConfigs, 'metadata.name');
-      setBuildConfigsForDeploymentConfig(buildConfigs, deploymentConfig);
+      setBuildConfigsForObject(buildConfigs, deploymentConfig);
       updateRecentBuildsForDeploymentConfig(deploymentConfig);
     });
   };
