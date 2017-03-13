@@ -693,10 +693,10 @@ function OverviewController($scope,
       }
 
       var deployment = overview.deployments[deploymentName];
-      var visibleRelicaSets = _.filter(replicaSets, function(replicaSet) {
+      var visibleReplicaSets = _.filter(replicaSets, function(replicaSet) {
         return isReplicaSetVisible(replicaSet, deployment);
       });
-      var ordered = DeploymentsService.sortByRevision(visibleRelicaSets);
+      var ordered = DeploymentsService.sortByRevision(visibleReplicaSets);
       overview.replicaSetsByDeployment[deploymentName] = ordered;
       // TODO: Need to check if this really works for failed / canceled rollouts.
       // It might need to be reworked.
