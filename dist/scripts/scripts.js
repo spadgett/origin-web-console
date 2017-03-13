@@ -193,7 +193,7 @@ key:"metadata.uid"
 }, xa = function(a) {
 if (_.get(a, "status.replicas")) return !0;
 var b = z(a, "deploymentConfig");
-return !!b && B(a);
+return !b || B(a);
 }, ya = function(a) {
 return z(a, "deploymentConfig");
 }, za = function() {
@@ -203,7 +203,7 @@ v.replicationControllersByDeploymentConfig = {}, v.currentByDeploymentConfig = {
 var b = {};
 _.each(v.replicationControllers, function(c) {
 var d = ya(c) || "";
-d && v.deploymentConfigs[d] || a.push(c);
+(!d || !v.deploymentConfigs[d] && _.get(c, "status.replicas")) && a.push(c);
 var e = K[d];
 e && !F(c, e) || (K[d] = c), xa(c) && _.set(b, [ d, c.metadata.name ], c);
 }), _.each(b, function(a, b) {

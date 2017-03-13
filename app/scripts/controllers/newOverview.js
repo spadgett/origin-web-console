@@ -587,10 +587,9 @@ function OverviewController($scope,
     }
     var dcName = annotation(replicationController, 'deploymentConfig');
     if (!dcName) {
-      // Scaled down replication controllers with deleted deployment configs
-      // should not be visible.
-      return false;
+      return true;
     }
+
     return deploymentIsInProgress(replicationController);
   };
 
@@ -617,7 +616,7 @@ function OverviewController($scope,
     var rcByDC = {};
     _.each(overview.replicationControllers, function(replicationController) {
       var dcName = getDeploymentConfigName(replicationController) || '';
-      if (!dcName || !overview.deploymentConfigs[dcName]) {
+      if (!dcName || (!overview.deploymentConfigs[dcName] && _.get(replicationController, 'status.replicas'))) {
         vanillaReplicationControllers.push(replicationController);
       }
 
