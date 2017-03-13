@@ -62,7 +62,6 @@ function OverviewController($scope,
   var isJenkinsPipelineStrategy = $filter('isJenkinsPipelineStrategy');
   var isNewerResource = $filter('isNewerResource');
   var label = $filter('label');
-  var orderObjectsByDate = $filter('orderObjectsByDate');
   var getPodTemplate = $filter('podTemplate');
 
   var imageStreams;
@@ -639,7 +638,7 @@ function OverviewController($scope,
 
     // Sort the visible replication controllers.
     _.each(rcByDC, function(replicationControllers, dcName) {
-      var ordered = orderObjectsByDate(replicationControllers, true);
+      var ordered = DeploymentsService.sortByDeploymentVersion(replicationControllers, true);
       overview.replicationControllersByDeploymentConfig[dcName] = ordered;
       // "Current" is considered the most recent visible replication
       // controller, even if the deployment hasn't completed.

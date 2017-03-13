@@ -401,6 +401,45 @@ angular.module("openshiftConsole")
       return byDC;
     };
 
+    // Sorts replication controllers that are part of a deployment config by
+    // the deployment version annotation.
+    DeploymentsService.prototype.sortByDeploymentVersion = function(replicationControllers, descending) {
+      var compareDeployments = function(left, right) {
+        var leftVersion = annotation(left, 'deploymentVersion');
+        var rightVersion = annotation(right, 'deploymentVersion');
+
+        // Fall back to sorting by name if no deployment versions.
+        var leftName, rightName;
+        if (!leftVersion && !rightVersion) {
+          leftName = _.get(left, 'metadata.name', '');
+          rightName = _.get(right, 'metadata.name', '');
+          if (descending) {
+            return rightName.localeCompare(leftName);
+          }
+          return leftName.localeCompare(rightName);
+        }
+
+        if (!leftVersion) {
+          return descending ? 1 : -1;
+        }
+
+        if (!rightVersion) {
+          return descending ? -1 : 1;
+        }
+
+        leftVersion = parseInt(leftVersion, 10);
+        rightVersion = parseInt(rightVersion, 10);
+        if (descending) {
+          return rightVersion - leftVersion;
+        }
+        return leftVersion - rightVersion;
+      };
+
+      return _.toArray(replicationControllers).sort(compareDeployments);
+    };
+
+    // Sorts replica sets that are part of a deployment by the revision annotation.
+    // TODO: Make descending sort optional.
     DeploymentsService.prototype.sortByRevision = function(replicaSets) {
       var self = this;
       var revisionAsNumber = function(replicaSet) {
