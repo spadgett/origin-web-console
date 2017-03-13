@@ -12053,7 +12053,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "</div>\n" +
     "<div ng-if=\"row.current && !row.isDeploymentInProgress() && !row.expanded\" class=\"list-pf-details\">\n" +
-    "<div ng-if=\"row.state.showMetrics\" class=\"truncate metrics-collapsed hidden-xs hidden-sm\">\n" +
+    "<div ng-if=\"row.state.showMetrics && row.state.breakpoint === 'md' || row.state.breakpoint === 'lg'\" class=\"truncate metrics-collapsed\">\n" +
     "<div ng-if=\"row.apiObject.kind === 'Pod'\">\n" +
     "<metrics-summary pods=\"[row.apiObject]\" containers=\"row.apiObject.spec.containers\">\n" +
     "</metrics-summary>\n" +
