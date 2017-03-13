@@ -602,7 +602,6 @@ function OverviewController($scope,
 
   // Group replication controllers by deployment config and filter the visible
   // replication controllers.
-  // TODO: Handle deleted deployment configs and orphaned replication controllers.
   var groupReplicationControllers = function() {
     if (!overview.deploymentConfigs || !overview.replicationControllers) {
       return;
@@ -697,13 +696,7 @@ function OverviewController($scope,
       });
       var ordered = DeploymentsService.sortByRevision(visibleReplicaSets);
       overview.replicaSetsByDeployment[deploymentName] = ordered;
-      // TODO: Need to check if this really works for failed / canceled rollouts.
-      // It might need to be reworked.
       overview.currentByDeployment[deploymentName] = _.head(ordered);
-      // var deploymentRevision = DeploymentsService.getRevision(deployment);
-      // overview.currentByDeployment[deploymentName] = _.find(replicaSets, function(replicaSet) {
-      //   return DeploymentsService.getRevision(replicaSet) === deploymentRevision;
-      // });
     });
     overview.vanillaReplicaSets = _.sortBy(overview.replicaSetsByDeployment[''], 'metadata.name');
 
