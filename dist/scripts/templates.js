@@ -535,7 +535,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div class=\"sidebar-left collapse navbar-collapse navbar-collapse-1\">\n" +
     "<sidebar></sidebar>\n" +
     "</div>\n" +
-    "<div id=\"container-main\" class=\"middle\">\n" +
+    "<div id=\"container-main\" class=\"middle\" in-view-container>\n" +
     "<div ng-transclude>\n" +
     "</div>\n" +
     "</div>\n" +
@@ -7639,7 +7639,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
 
 
   $templateCache.put('views/directives/metrics-compact.html',
-    "<div in-view=\"updateInView($inview)\" in-view-options=\"{ debounce: 50 }\">\n" +
+    "<div in-view=\"updateInView($inview)\" in-view-options=\"{ throttle: 50 }\">\n" +
     "<div ng-repeat=\"metric in metrics\" ng-if=\"!metric.compactCombineWith\" class=\"metrics-compact\">\n" +
     "<div ng-attr-id=\"{{metric.chartID}}\" class=\"metrics-sparkline\"></div>\n" +
     "<div class=\"metrics-usage\">\n" +
@@ -11179,7 +11179,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<project-header class=\"top-header\"></project-header>\n" +
     "<project-page class=\"overview-new\">\n" +
     "<div class=\"middle-section\">\n" +
-    "<div class=\"middle-container\" in-view-container>\n" +
+    "<div class=\"middle-container\">\n" +
     "\n" +
     "<div ng-if=\"overview.renderOptions.showGetStarted\">\n" +
     "<div class=\"container-fluid\">\n" +
@@ -11592,7 +11592,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "\n" +
     "<div class=\"middle-section\">\n" +
     "<div class=\"middle-container\">\n" +
-    "<div class=\"middle-content surface-shaded\" in-view-container>\n" +
+    "<div class=\"middle-content surface-shaded\">\n" +
     "<div class=\"container-fluid surface-shaded\">\n" +
     "<tasks></tasks>\n" +
     "<alerts alerts=\"alerts\"></alerts>\n" +
@@ -12264,7 +12264,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
 
 
   $templateCache.put('views/overview/_metrics-summary.html',
-    "<div in-view=\"metricsSummary.updateInView($inview)\" in-view-options=\"{ debounce: 50 }\">\n" +
+    "<div in-view=\"metricsSummary.updateInView($inview)\" in-view-options=\"{ throttle: 50 }\">\n" +
     "<div ng-repeat=\"metric in metricsSummary.metrics\" class=\"metrics-summary\">\n" +
     "<div class=\"usage-value\">\n" +
     "<span class=\"fade-inline\" ng-hide=\"metric.currentUsage | isNil\">\n" +

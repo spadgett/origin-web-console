@@ -1,4 +1,4 @@
-<div in-view="metricsSummary.updateInView($inview)" in-view-options="{ debounce: 50 }">
+<div in-view="metricsSummary.updateInView($inview)" in-view-options="{ throttle: 50 }">
   <div ng-repeat="metric in metricsSummary.metrics" class="metrics-summary">
     <div class="usage-value">
       <span class="fade-inline" ng-hide="metric.currentUsage | isNil">
