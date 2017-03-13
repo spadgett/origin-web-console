@@ -228,11 +228,7 @@ v.replicaSetsByDeployment[b] = e, v.currentByDeployment[b] = _.head(e);
 }), v.vanillaReplicaSets = _.sortBy(v.replicaSetsByDeployment[""], "metadata.name"), pa());
 }, Ca = {}, Da = function(a) {
 a && v.services && _.each(a, function(a) {
-var b = [], c = O(a), d = H(a) || {
-metadata:{
-labels:{}
-}
-};
+var b = [], c = O(a), d = H(a);
 _.each(Ca, function(a, c) {
 a.matches(d) && b.push(v.services[c]);
 }), L.servicesByObjectUID[c] = _.sortBy(b, "metadata.name");

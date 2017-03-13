@@ -718,7 +718,7 @@ function OverviewController($scope,
     _.each(apiObjects, function(apiObject) {
       var services = [];
       var uid = getUID(apiObject);
-      var podTemplate = getPodTemplate(apiObject) || { metadata: { labels: {} } };
+      var podTemplate = getPodTemplate(apiObject);
       _.each(selectorsByService, function(selector, serviceName) {
         if (selector.matches(podTemplate)) {
           services.push(overview.services[serviceName]);
