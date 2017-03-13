@@ -218,14 +218,16 @@ angular.module("openshiftConsole")
       return buildConfigsByOutputImage;
     };
 
+    // Sort by date first, falling back to build number in case two builds
+    // have the same date.
+    var sortBuilds = function(builds, descending) {
+      var compareDates = function(left, right) {
+        var leftDate = _.get(left, 'metadata.creationTimestamp', '');
+        var rightDate = _.get(right, 'metadata.creationTimestamp', '');
 
-    var sortByBuildNumber = function(builds, descending) {
-      var compareBuildNumbers = function(left, right) {
-        var leftNumber = annotation(left, 'buildNumber');
-        var rightNumber = annotation(right, 'buildNumber');
-
+        // In the event the builds have identical dates, sort by name.
         var leftName, rightName;
-        if (!leftNumber && !rightNumber) {
+        if (leftDate === rightDate) {
           leftName = _.get(left, 'metadata.name', '');
           rightName = _.get(right, 'metadata.name', '');
           if (descending) {
@@ -234,24 +236,16 @@ angular.module("openshiftConsole")
           return leftName.localeCompare(rightName);
         }
 
-        if (!leftNumber) {
-          return descending ? 1 : -1;
-        }
-
-        if (!rightNumber) {
-          return descending ? -1 : 1;
-        }
-
-        rightNumber = parseInt(rightNumber, 10);
-        leftNumber = parseInt(leftNumber, 10);
+        // The date format can be sorted using straight string comparison.
+        // Example Date: 2016-02-02T21:53:07Z
         if (descending) {
-          return rightNumber - leftNumber;
+          return rightDate.localeCompare(leftDate);
         }
 
-        return leftNumber - rightNumber;
+        return leftDate.localeCompare(rightDate);
       };
 
-      return _.toArray(builds).sort(compareBuildNumbers);
+      return _.toArray(builds).sort(compareDates);
     };
 
     var getJenkinsStatus = function(pipelineBuild) {
@@ -291,7 +285,7 @@ angular.module("openshiftConsole")
       lastCompleteByBuildConfig: lastCompleteByBuildConfig,
       interestingBuilds: interestingBuilds,
       groupBuildConfigsByOutputImage: groupBuildConfigsByOutputImage,
-      sortByBuildNumber: sortByBuildNumber,
+      sortBuilds: sortBuilds,
       getJenkinsStatus: getJenkinsStatus,
       getCurrentStage: getCurrentStage
     };

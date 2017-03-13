@@ -169,7 +169,7 @@ function OverviewListRow($filter,
     var kind = _.get(row, 'apiObject.kind');
     if (kind === 'DeploymentConfig') {
       name = _.get(row, 'apiObject.metadata.name');
-      row.pipelines = _.get(row, ['state', 'pipelinesForDeploymentConfig', name]);
+      row.pipelines = _.get(row, ['state', 'pipelinesByDeploymentConfig', name]);
       row.recentBuilds = _.get(row, ['state', 'recentBuildsByDeploymentConfig', name]);
       row.recentPipelines = _.get(row, ['state', 'recentPipelinesByDeploymentConfig', name]);
     }

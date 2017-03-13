@@ -12,7 +12,7 @@ imagesByDockerReference:{},
 limitRanges:{},
 limitWatches:w,
 notificationsByObjectUID:{},
-pipelinesForDeploymentConfig:{},
+pipelinesByDeploymentConfig:{},
 podsByOwnerUID:{},
 quotas:{},
 recentPipelinesByDeploymentConfig:{},
@@ -64,7 +64,7 @@ v.filteredDeploymentConfigsByApp = T(v.filteredDeploymentConfigs), v.filteredRep
 }, V = function() {
 var a = _.filter(v.deploymentConfigs, function(a) {
 var b = O(a);
-return _.isEmpty(M.pipelinesForDeploymentConfig[b]);
+return _.isEmpty(M.pipelinesByDeploymentConfig[b]);
 });
 v.deploymentConfigsNoPipeline = _.sortBy(a, "metadata.name"), v.pipelineViewHasOtherResources = !(_.isEmpty(v.deploymentConfigsNoPipeline) && _.isEmpty(v.vanillaReplicationControllers) && _.isEmpty(v.deployments) && _.isEmpty(v.vanillaReplicaSets) && _.isEmpty(v.statefulSets) && _.isEmpty(v.monopods));
 }, W = function() {
@@ -269,7 +269,7 @@ var b = [], c = La(a);
 _.each(c, function(a) {
 var c = _.get(M, [ "recentBuildsByBuildConfig", a.metadata.name ], []);
 b = b.concat(c);
-}), b = f.sortByBuildNumber(b, !0);
+});
 var d = O(a);
 _.set(M, [ "recentBuildsByDeploymentConfig", d ], b);
 }, Na = function(a, b) {
@@ -277,12 +277,12 @@ var c = P(b);
 c && _.set(M, [ "buildConfigsByObjectUID", c ], a);
 }, Oa = function() {
 var a = [];
-v.deploymentConfigsByPipeline = {}, M.pipelinesForDeploymentConfig = {}, _.each(v.buildConfigs, function(b) {
+v.deploymentConfigsByPipeline = {}, M.pipelinesByDeploymentConfig = {}, _.each(v.buildConfigs, function(b) {
 if (E(b)) {
 a.push(b);
 var c = f.usesDeploymentConfigs(b), d = O(b);
 _.set(v, [ "deploymentConfigsByPipeline", d ], c), _.each(c, function(a) {
-M.pipelinesForDeploymentConfig[a] = M.pipelinesForDeploymentConfig[a] || [], M.pipelinesForDeploymentConfig[a].push(b);
+M.pipelinesByDeploymentConfig[a] = M.pipelinesByDeploymentConfig[a] || [], M.pipelinesByDeploymentConfig[a].push(b);
 });
 }
 }), v.pipelineBuildConfigs = _.sortBy(a, "metadata.name"), V(), ua(v.pipelineBuildConfigs), W();
@@ -308,8 +308,10 @@ var a = {};
 _.each(f.interestingBuilds(M.builds), function(b) {
 var c = A(b);
 E(b) ? Ia(b) :(a[c] = a[c] || [], a[c].push(b));
+}), M.recentPipelinesByDeploymentConfig = _.mapValues(M.recentPipelinesByDeploymentConfig, function(a) {
+return f.sortBuilds(a, !0);
 }), M.recentBuildsByBuildConfig = _.mapValues(a, function(a) {
-return f.sortByBuildNumber(a, !0);
+return f.sortBuilds(a, !0);
 }), Ra();
 }
 }, Ta = function() {
@@ -660,7 +662,7 @@ g.notifications = o(g.apiObject), g.hpa = q(g.apiObject), g.current && _.isEmpty
 var a = _.get(g, "apiObject.metadata.uid");
 a && (g.services = _.get(g, [ "state", "servicesByObjectUID", a ]), g.buildConfigs = _.get(g, [ "state", "buildConfigsByObjectUID", a ]));
 var b, c = _.get(g, "apiObject.kind");
-"DeploymentConfig" === c && (b = _.get(g, "apiObject.metadata.name"), g.pipelines = _.get(g, [ "state", "pipelinesForDeploymentConfig", b ]), g.recentBuilds = _.get(g, [ "state", "recentBuildsByDeploymentConfig", b ]), g.recentPipelines = _.get(g, [ "state", "recentPipelinesByDeploymentConfig", b ]));
+"DeploymentConfig" === c && (b = _.get(g, "apiObject.metadata.name"), g.pipelines = _.get(g, [ "state", "pipelinesByDeploymentConfig", b ]), g.recentBuilds = _.get(g, [ "state", "recentBuildsByDeploymentConfig", b ]), g.recentPipelines = _.get(g, [ "state", "recentPipelinesByDeploymentConfig", b ]));
 }, g.getPods = function(a) {
 var b = _.get(a, "metadata.uid");
 return _.get(g, [ "state", "podsByOwnerUID", b ]);
@@ -2124,11 +2126,11 @@ var c = _.get(a, "spec.output.to"), d = w(c, a.metadata.namespace);
 d && (b[d] = b[d] || [], b[d].push(a));
 }), b;
 }, y = function(a, b) {
-var d = function(a, d) {
-var e, f, g = c(a, "buildNumber"), h = c(d, "buildNumber");
-return g || h ? g ? h ? (h = parseInt(h, 10), g = parseInt(g, 10), b ? h - g :g - h) :b ? -1 :1 :b ? 1 :-1 :(e = _.get(a, "metadata.name", ""), f = _.get(d, "metadata.name", ""), b ? f.localeCompare(e) :e.localeCompare(f));
+var c = function(a, c) {
+var d, e, f = _.get(a, "metadata.creationTimestamp", ""), g = _.get(c, "metadata.creationTimestamp", "");
+return f === g ? (d = _.get(a, "metadata.name", ""), e = _.get(c, "metadata.name", ""), b ? e.localeCompare(d) :d.localeCompare(e)) :b ? g.localeCompare(f) :f.localeCompare(g);
 };
-return _.toArray(a).sort(d);
+return _.toArray(a).sort(c);
 }, z = function(a) {
 var b = c(a, "jenkinsStatus");
 if (!b) return null;
@@ -2158,7 +2160,7 @@ completeBuilds:t,
 lastCompleteByBuildConfig:u,
 interestingBuilds:v,
 groupBuildConfigsByOutputImage:x,
-sortByBuildNumber:y,
+sortBuilds:y,
 getJenkinsStatus:z,
 getCurrentStage:A
 };

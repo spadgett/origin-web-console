@@ -88,7 +88,7 @@ function OverviewController($scope,
     limitRanges: {},
     limitWatches: limitWatches,
     notificationsByObjectUID: {},
-    pipelinesForDeploymentConfig: {},
+    pipelinesByDeploymentConfig: {},
     podsByOwnerUID: {},
     quotas: {},
     recentPipelinesByDeploymentConfig: {},
@@ -223,7 +223,7 @@ function OverviewController($scope,
     // Find deployment configs not associated with a pipeline.
     var otherDeploymentConfigs = _.filter(overview.deploymentConfigs, function(deploymentConfig) {
       var name = getName(deploymentConfig);
-      return _.isEmpty(state.pipelinesForDeploymentConfig[name]);
+      return _.isEmpty(state.pipelinesByDeploymentConfig[name]);
     });
     overview.deploymentConfigsNoPipeline = _.sortBy(otherDeploymentConfigs, 'metadata.name');
     overview.pipelineViewHasOtherResources =
@@ -838,8 +838,8 @@ function OverviewController($scope,
       var recentForConfig = _.get(state, ['recentBuildsByBuildConfig', buildConfig.metadata.name], []);
       builds = builds.concat(recentForConfig);
     });
-    builds = BuildsService.sortByBuildNumber(builds, true);
 
+    // These builds are only used to show a count, so don't need to be sorted.
     var dcName = getName(deploymentConfig);
     _.set(state, ['recentBuildsByDeploymentConfig', dcName], builds);
   };
@@ -857,13 +857,13 @@ function OverviewController($scope,
   // "pipeline.alpha.openshift.io/uses" annotation pointing to a deployment
   // config.
   //
-  // Updates `state.pipelinesForDeploymentConfig`
+  // Updates `state.pipelinesByDeploymentConfig`
   //   key: deployment config name
   //   value: array of pipeline build configs
   var groupPipelineBuildConfigsByDeploymentConfig = function() {
     var pipelineBuildConfigs = [];
     overview.deploymentConfigsByPipeline = {};
-    state.pipelinesForDeploymentConfig = {};
+    state.pipelinesByDeploymentConfig = {};
     _.each(overview.buildConfigs, function(buildConfig) {
       if (!isJenkinsPipelineStrategy(buildConfig)) {
         return;
@@ -877,8 +877,8 @@ function OverviewController($scope,
       var bcName = getName(buildConfig);
       _.set(overview, ['deploymentConfigsByPipeline', bcName], dcNames);
       _.each(dcNames, function(dcName) {
-        state.pipelinesForDeploymentConfig[dcName] = state.pipelinesForDeploymentConfig[dcName] || [];
-        state.pipelinesForDeploymentConfig[dcName].push(buildConfig);
+        state.pipelinesByDeploymentConfig[dcName] = state.pipelinesByDeploymentConfig[dcName] || [];
+        state.pipelinesByDeploymentConfig[dcName].push(buildConfig);
       });
     });
 
@@ -952,9 +952,14 @@ function OverviewController($scope,
       }
     });
 
-    state.recentBuildsByBuildConfig = _.mapValues(recentByConfig, function(builds) {
-      return BuildsService.sortByBuildNumber(builds, true);
+    state.recentPipelinesByDeploymentConfig = _.mapValues(state.recentPipelinesByDeploymentConfig, function(builds) {
+      return BuildsService.sortBuilds(builds, true);
     });
+
+    state.recentBuildsByBuildConfig = _.mapValues(recentByConfig, function(builds) {
+      return BuildsService.sortBuilds(builds, true);
+    });
+
     groupRecentBuildsByDeploymentConfig();
   };
 
