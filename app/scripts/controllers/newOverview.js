@@ -1138,18 +1138,18 @@ function OverviewController($scope,
       overview.horizontalPodAutoscalers = hpaData.by("metadata.name");
       groupHPAs();
       Logger.log("autoscalers (subscribe)", overview.horizontalPodAutoscalers);
-    }, {poll: limitWatches, pollInterval: 60 * 1000}));
+    }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
 
     // Always poll quotas instead of watching, its not worth the overhead of maintaining websocket connections
     watches.push(DataService.watch('resourcequotas', context, function(quotaData) {
       state.quotas = quotaData.by("metadata.name");
       updateQuotaWarnings();
-    }, {poll: true, pollInterval: 60 * 1000}));
+    }, {poll: true, pollInterval: DEFAULT_POLL_INTERVAL}));
 
     watches.push(DataService.watch('appliedclusterresourcequotas', context, function(clusterQuotaData) {
       state.clusterQuotas = clusterQuotaData.by("metadata.name");
       updateQuotaWarnings();
-    }, {poll: true, pollInterval: 60 * 1000}));
+    }, {poll: true, pollInterval: DEFAULT_POLL_INTERVAL}));
 
     // List limit ranges in this project to determine if there is a default
     // CPU request for autoscaling.
@@ -1163,7 +1163,7 @@ function OverviewController($scope,
                                                            state.imageStreamImageRefByDockerReference);
       updateReferencedImageStreams();
       Logger.log("imagestreams (subscribe)", imageStreams);
-    }, {poll: limitWatches, pollInterval: 60 * 1000}));
+    }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
 
     var samplePipelineTemplate = Constants.SAMPLE_PIPELINE_TEMPLATE;
     if (samplePipelineTemplate) {

@@ -395,24 +395,24 @@ resource:"horizontalpodautoscalers"
 v.horizontalPodAutoscalers = a.by("metadata.name"), Ha(), p.log("autoscalers (subscribe)", v.horizontalPodAutoscalers);
 }, {
 poll:w,
-pollInterval:6e4
+pollInterval:x
 })), Ua.push(h.watch("resourcequotas", c, function(a) {
 M.quotas = a.by("metadata.name"), Ta();
 }, {
 poll:!0,
-pollInterval:6e4
+pollInterval:x
 })), Ua.push(h.watch("appliedclusterresourcequotas", c, function(a) {
 M.clusterQuotas = a.by("metadata.name"), Ta();
 }, {
 poll:!0,
-pollInterval:6e4
+pollInterval:x
 })), h.list("limitranges", c, function(a) {
 M.limitRanges = a.by("metadata.name");
 }), Ua.push(h.watch("imagestreams", c, function(a) {
 y = a.by("metadata.name"), l.buildDockerRefMapForImageStreams(y, M.imageStreamImageRefByDockerReference), d(), p.log("imagestreams (subscribe)", y);
 }, {
 poll:w,
-pollInterval:6e4
+pollInterval:x
 }));
 var e = g.SAMPLE_PIPELINE_TEMPLATE;
 e && h.get("templates", e.name, {
