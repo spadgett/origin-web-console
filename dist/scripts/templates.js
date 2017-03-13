@@ -12285,7 +12285,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
   $templateCache.put('views/overview/_mini-log.html',
     "<div ng-if=\"miniLog.lines.length\" class=\"mini-log\">\n" +
     "<div class=\"mini-log-content\">\n" +
-    "<div ng-repeat=\"line in miniLog.lines track by line.id\" class=\"mini-log-line\">{{::line.text}}</div>\n" +
+    "<div ng-repeat=\"line in miniLog.lines track by line.id\" ng-bind-html=\"::line.markup\" class=\"mini-log-line\"></div>\n" +
     "</div>\n" +
     "</div>"
   );

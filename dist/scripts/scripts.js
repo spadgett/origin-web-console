@@ -551,33 +551,36 @@ o && (a.cancel(o), o = null);
 };
 }
 
-function MiniLogController(a, b, c, d) {
-var e, f, g, h = this, i = b("annotation"), j = h.numLines || 7, k = [];
-h.lines = [];
-var l = _.throttle(function() {
+function MiniLogController(a, b, c, d, e) {
+var f, g, h, i = this, j = b("annotation"), k = i.numLines || 7, l = [];
+i.lines = [];
+var m = _.throttle(function() {
 a.$evalAsync(function() {
-h.lines = _.clone(k);
+i.lines = _.clone(l);
 });
-}, 200), m = 0, n = function(a) {
-a && (m++, k.push({
-text:a,
-id:m
-}), k.length > j && (k = _.takeRight(k, j)), l());
-}, o = function() {
-g && (g.stop(), g = null);
+}, 200), n = 0, o = function(a) {
+if (a) {
+var b = ansi_up.escape_for_html(a), c = ansi_up.ansi_to_html(b), d = e.linkify(c, "_blank", !0);
+n++, l.push({
+markup:d,
+id:n
+}), l.length > k && (l = _.takeRight(l, k)), m();
+}
 }, p = function() {
+h && (h.stop(), h = null);
+}, q = function() {
 var a = {
 follow:!0,
-tailLines:j
+tailLines:k
 };
-g = d.createStream(f, e, h.context, a), g.start(), g.onMessage(n), g.onClose(function() {
-g = null;
+h = d.createStream(g, f, i.context, a), h.start(), h.onMessage(o), h.onClose(function() {
+h = null;
 });
 };
-h.$onInit = function() {
-"ReplicationController" === h.apiObject.kind ? (f = "deploymentconfigs/log", e = i(h.apiObject, "deploymentConfig")) :(f = c.kindToResource(h.apiObject.kind) + "/log", e = h.apiObject.metadata.name), p();
-}, h.$onDestroy = function() {
-o();
+i.$onInit = function() {
+"ReplicationController" === i.apiObject.kind ? (g = "deploymentconfigs/log", f = j(i.apiObject, "deploymentConfig")) :(g = c.kindToResource(i.apiObject.kind) + "/log", f = i.apiObject.metadata.name), q();
+}, i.$onDestroy = function() {
+p();
 };
 }
 
@@ -13577,7 +13580,7 @@ containers:"<"
 templateUrl:"views/overview/_metrics-summary.html"
 }), angular.module("openshiftConsole").component("miniLog", {
 controllerAs:"miniLog",
-controller:[ "$scope", "$filter", "APIService", "DataService", MiniLogController ],
+controller:[ "$scope", "$filter", "APIService", "DataService", "HTMLService", MiniLogController ],
 bindings:{
 apiObject:"<",
 numLines:"<",

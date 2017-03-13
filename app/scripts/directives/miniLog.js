@@ -7,6 +7,7 @@ angular.module('openshiftConsole').component('miniLog', {
     '$filter',
     'APIService',
     'DataService',
+    'HTMLService',
     MiniLogController
   ],
   bindings: {
@@ -17,7 +18,11 @@ angular.module('openshiftConsole').component('miniLog', {
   templateUrl: 'views/overview/_mini-log.html'
 });
 
-function MiniLogController($scope, $filter, APIService, DataService) {
+function MiniLogController($scope,
+                           $filter,
+                           APIService,
+                           DataService,
+                           HTMLService) {
   var miniLog = this;
 
   var name, logSubresource, streamer;
@@ -41,9 +46,13 @@ function MiniLogController($scope, $filter, APIService, DataService) {
       return;
     }
 
+    var escaped = ansi_up.escape_for_html(msg);
+    var html = ansi_up.ansi_to_html(escaped);
+    var linkifiedHTML = HTMLService.linkify(html, '_blank', true);
+
     lineNum++;
     buffer.push({
-      text: msg,
+      markup: linkifiedHTML,
       id: lineNum
     });
 

@@ -1,5 +1,7 @@
 <div ng-if="miniLog.lines.length" class="mini-log">
   <div class="mini-log-content">
-    <div ng-repeat="line in miniLog.lines track by line.id" class="mini-log-line">{{::line.text}}</div>
+    <div ng-repeat="line in miniLog.lines track by line.id"
+         ng-bind-html="::line.markup"
+         class="mini-log-line"></div>
   </div>
 </div>
