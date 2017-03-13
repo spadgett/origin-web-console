@@ -1034,33 +1034,6 @@ function OverviewController($scope,
       Logger.log("pods (subscribe)", overview.pods);
     }));
 
-    watches.push(DataService.watch("services", context, function(serviceData) {
-      overview.services = serviceData.by("metadata.name");
-      groupServices();
-      Logger.log("services (subscribe)", overview.services);
-    }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
-
-    watches.push(DataService.watch("builds", context, function(buildData) {
-      state.builds = buildData.by("metadata.name");
-      groupBuilds();
-      Logger.log("builds (subscribe)", state.builds);
-    }));
-
-    watches.push(DataService.watch("buildConfigs", context, function(buildConfigData) {
-      overview.buildConfigs = buildConfigData.by("metadata.name");
-      groupBuildConfigsByOutputImage();
-      groupBuildConfigsByDeploymentConfig();
-      groupBuilds();
-      updateFilter();
-      Logger.log("buildconfigs (subscribe)", overview.buildConfigs);
-    }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
-
-    watches.push(DataService.watch("routes", context, function(routesData) {
-      overview.routes = routesData.by("metadata.name");
-      groupRoutes();
-      Logger.log("routes (subscribe)", overview.routes);
-    }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
-
     watches.push(DataService.watch("replicationcontrollers", context, function(rcData) {
       overview.replicationControllers = rcData.by("metadata.name");
       groupPods();
@@ -1105,6 +1078,25 @@ function OverviewController($scope,
     }));
 
     watches.push(DataService.watch({
+      group: "extensions",
+      resource: "deployments"
+    }, context, function(deploymentData) {
+      overview.deployments = deploymentData.by('metadata.name');
+      groupReplicaSets();
+      updateServicesForObjects(overview.deployments);
+      updateServicesForObjects(overview.vanillaReplicaSets);
+      updateLabelSuggestions(overview.deployments);
+      updateFilter();
+      Logger.log("deployments (subscribe)", overview.deployments);
+    }));
+
+    watches.push(DataService.watch("builds", context, function(buildData) {
+      state.builds = buildData.by("metadata.name");
+      groupBuilds();
+      Logger.log("builds (subscribe)", state.builds);
+    }));
+
+    watches.push(DataService.watch({
       group: "apps",
       resource: "statefulsets"
     }, context, function(statefulSetData) {
@@ -1118,18 +1110,26 @@ function OverviewController($scope,
       Logger.log("statefulsets (subscribe)", overview.statefulSets);
     }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
 
-    watches.push(DataService.watch({
-      group: "extensions",
-      resource: "deployments"
-    }, context, function(deploymentData) {
-      overview.deployments = deploymentData.by('metadata.name');
-      groupReplicaSets();
-      updateServicesForObjects(overview.deployments);
-      updateServicesForObjects(overview.vanillaReplicaSets);
-      updateLabelSuggestions(overview.deployments);
+    watches.push(DataService.watch("services", context, function(serviceData) {
+      overview.services = serviceData.by("metadata.name");
+      groupServices();
+      Logger.log("services (subscribe)", overview.services);
+    }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
+
+    watches.push(DataService.watch("routes", context, function(routesData) {
+      overview.routes = routesData.by("metadata.name");
+      groupRoutes();
+      Logger.log("routes (subscribe)", overview.routes);
+    }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
+
+    watches.push(DataService.watch("buildConfigs", context, function(buildConfigData) {
+      overview.buildConfigs = buildConfigData.by("metadata.name");
+      groupBuildConfigsByOutputImage();
+      groupBuildConfigsByDeploymentConfig();
+      groupBuilds();
       updateFilter();
-      Logger.log("deployments (subscribe)", overview.deployments);
-    }));
+      Logger.log("buildconfigs (subscribe)", overview.buildConfigs);
+    }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
 
     watches.push(DataService.watch({
       group: "extensions",
@@ -1151,12 +1151,6 @@ function OverviewController($scope,
       updateQuotaWarnings();
     }, {poll: true, pollInterval: DEFAULT_POLL_INTERVAL}));
 
-    // List limit ranges in this project to determine if there is a default
-    // CPU request for autoscaling.
-    DataService.list("limitranges", context, function(response) {
-      state.limitRanges = response.by("metadata.name");
-    });
-
     watches.push(DataService.watch("imagestreams", context, function(imageStreamData) {
       imageStreams = imageStreamData.by("metadata.name");
       ImageStreamResolver.buildDockerRefMapForImageStreams(imageStreams,
@@ -1164,6 +1158,12 @@ function OverviewController($scope,
       updateReferencedImageStreams();
       Logger.log("imagestreams (subscribe)", imageStreams);
     }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
+
+    // List limit ranges in this project to determine if there is a default
+    // CPU request for autoscaling.
+    DataService.list("limitranges", context, function(response) {
+      state.limitRanges = response.by("metadata.name");
+    });
 
     var samplePipelineTemplate = Constants.SAMPLE_PIPELINE_TEMPLATE;
     if (samplePipelineTemplate) {

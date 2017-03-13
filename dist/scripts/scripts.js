@@ -349,23 +349,6 @@ v.pods && l.fetchReferencedImageStreamImages(v.pods, M.imagesByDockerReference, 
 };
 Ua.push(h.watch("pods", c, function(a) {
 v.pods = a.by("metadata.name"), xa(), d(), sa(), Ea(v.monopods), ja(v.monopods), ta(v.monopods), ca(), p.log("pods (subscribe)", v.pods);
-})), Ua.push(h.watch("services", c, function(a) {
-v.services = a.by("metadata.name"), Fa(), p.log("services (subscribe)", v.services);
-}, {
-poll:w,
-pollInterval:x
-})), Ua.push(h.watch("builds", c, function(a) {
-M.builds = a.by("metadata.name"), Sa(), p.log("builds (subscribe)", M.builds);
-})), Ua.push(h.watch("buildConfigs", c, function(a) {
-v.buildConfigs = a.by("metadata.name"), Ka(), Qa(), Sa(), ca(), p.log("buildconfigs (subscribe)", v.buildConfigs);
-}, {
-poll:w,
-pollInterval:x
-})), Ua.push(h.watch("routes", c, function(a) {
-v.routes = a.by("metadata.name"), Ga(), p.log("routes (subscribe)", v.routes);
-}, {
-poll:w,
-pollInterval:x
 })), Ua.push(h.watch("replicationcontrollers", c, function(a) {
 v.replicationControllers = a.by("metadata.name"), xa(), Aa(), Ea(v.vanillaReplicationControllers), Ea(v.monopods), ja(v.vanillaReplicationControllers), ta(v.vanillaReplicationControllers), ca(), p.log("replicationcontrollers (subscribe)", v.replicationControllers);
 })), Ua.push(h.watch("deploymentconfigs", c, function(a) {
@@ -376,6 +359,13 @@ resource:"replicasets"
 }, c, function(a) {
 v.replicaSets = a.by("metadata.name"), xa(), Ca(), Ea(v.vanillaReplicaSets), Ea(v.monopods), ja(v.vanillaReplicaSets), ta(v.vanillaReplicaSets), ca(), p.log("replicasets (subscribe)", v.replicaSets);
 })), Ua.push(h.watch({
+group:"extensions",
+resource:"deployments"
+}, c, function(a) {
+v.deployments = a.by("metadata.name"), Ca(), Ea(v.deployments), Ea(v.vanillaReplicaSets), ta(v.deployments), ca(), p.log("deployments (subscribe)", v.deployments);
+})), Ua.push(h.watch("builds", c, function(a) {
+M.builds = a.by("metadata.name"), Sa(), p.log("builds (subscribe)", M.builds);
+})), Ua.push(h.watch({
 group:"apps",
 resource:"statefulsets"
 }, c, function(a) {
@@ -383,11 +373,21 @@ v.statefulSets = a.by("metadata.name"), xa(), Ea(v.statefulSets), Ea(v.monopods)
 }, {
 poll:w,
 pollInterval:x
-})), Ua.push(h.watch({
-group:"extensions",
-resource:"deployments"
-}, c, function(a) {
-v.deployments = a.by("metadata.name"), Ca(), Ea(v.deployments), Ea(v.vanillaReplicaSets), ta(v.deployments), ca(), p.log("deployments (subscribe)", v.deployments);
+})), Ua.push(h.watch("services", c, function(a) {
+v.services = a.by("metadata.name"), Fa(), p.log("services (subscribe)", v.services);
+}, {
+poll:w,
+pollInterval:x
+})), Ua.push(h.watch("routes", c, function(a) {
+v.routes = a.by("metadata.name"), Ga(), p.log("routes (subscribe)", v.routes);
+}, {
+poll:w,
+pollInterval:x
+})), Ua.push(h.watch("buildConfigs", c, function(a) {
+v.buildConfigs = a.by("metadata.name"), Ka(), Qa(), Sa(), ca(), p.log("buildconfigs (subscribe)", v.buildConfigs);
+}, {
+poll:w,
+pollInterval:x
 })), Ua.push(h.watch({
 group:"extensions",
 resource:"horizontalpodautoscalers"
@@ -406,14 +406,14 @@ M.clusterQuotas = a.by("metadata.name"), Ta();
 }, {
 poll:!0,
 pollInterval:x
-})), h.list("limitranges", c, function(a) {
-M.limitRanges = a.by("metadata.name");
-}), Ua.push(h.watch("imagestreams", c, function(a) {
+})), Ua.push(h.watch("imagestreams", c, function(a) {
 y = a.by("metadata.name"), l.buildDockerRefMapForImageStreams(y, M.imageStreamImageRefByDockerReference), d(), p.log("imagestreams (subscribe)", y);
 }, {
 poll:w,
 pollInterval:x
-}));
+})), h.list("limitranges", c, function(a) {
+M.limitRanges = a.by("metadata.name");
+});
 var e = g.SAMPLE_PIPELINE_TEMPLATE;
 e && h.get("templates", e.name, {
 namespace:e.namespace
