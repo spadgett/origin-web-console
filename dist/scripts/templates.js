@@ -12045,7 +12045,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "{{row.apiObject.spec.strategy.type}} deployment {{row.current | deploymentStatus | lowercase}}&thinsp;<ellipsis-pulser color=\"dark\" size=\"sm\" display=\"inline\" msg=\"\"></ellipsis-pulser>\n" +
     "</span>\n" +
     "<span ng-if=\"'replicationcontrollers' | canI : 'update'\">\n" +
-    "<a href=\"\" ng-click=\"row.cancelDeployment()\" role=\"button\">Cancel Deployment</a>\n" +
+    "<a href=\"\" ng-click=\"row.cancelDeployment()\" role=\"button\">Cancel</a>\n" +
     "</span>\n" +
     "</div>\n" +
     "<div ng-if=\"row.apiObject.kind === 'Deployment'\">\n" +

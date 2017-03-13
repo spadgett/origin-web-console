@@ -42,7 +42,7 @@
       {{row.current | deploymentStatus | lowercase}}&thinsp;<ellipsis-pulser color="dark" size="sm" display="inline" msg=""></ellipsis-pulser>
     </span>
     <span ng-if="'replicationcontrollers' | canI : 'update'">
-      <a href="" ng-click="row.cancelDeployment()" role="button">Cancel Deployment</a>
+      <a href="" ng-click="row.cancelDeployment()" role="button">Cancel</a>
     </span>
   </div>
   <div ng-if="row.apiObject.kind === 'Deployment'">
