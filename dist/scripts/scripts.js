@@ -720,7 +720,7 @@ cancelButtonText:"No, don't cancel"
 f.result.then(function() {
 return a.metadata.uid !== g.current.metadata.uid ? void (g.state.alerts["cancel-deployment"] = {
 type:"error",
-message:"Deployment " + c + " no longer latest."
+message:"Deployment #" + d + " is no longer the latest."
 }) :(a = g.current, i(a) ? void e.cancelRunningDeployment(a, {
 namespace:a.metadata.namespace
 }, {

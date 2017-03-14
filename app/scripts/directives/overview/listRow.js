@@ -290,7 +290,7 @@ function OverviewListRow($filter,
       if (replicationController.metadata.uid !== row.current.metadata.uid) {
         row.state.alerts["cancel-deployment"] = {
           type: "error",
-          message: "Deployment " + rcName + " no longer latest."
+          message: "Deployment #" + latestVersion + " is no longer the latest."
         };
         return;
       }
