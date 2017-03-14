@@ -1138,6 +1138,14 @@ function OverviewController($scope,
       Logger.log("autoscalers (subscribe)", overview.horizontalPodAutoscalers);
     }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
 
+    watches.push(DataService.watch("imagestreams", context, function(imageStreamData) {
+      imageStreams = imageStreamData.by("metadata.name");
+      ImageStreamResolver.buildDockerRefMapForImageStreams(imageStreams,
+                                                           state.imageStreamImageRefByDockerReference);
+      updateReferencedImageStreams();
+      Logger.log("imagestreams (subscribe)", imageStreams);
+    }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
+
     // Always poll quotas instead of watching, its not worth the overhead of maintaining websocket connections
     watches.push(DataService.watch('resourcequotas', context, function(quotaData) {
       state.quotas = quotaData.by("metadata.name");
@@ -1148,14 +1156,6 @@ function OverviewController($scope,
       state.clusterQuotas = clusterQuotaData.by("metadata.name");
       updateQuotaWarnings();
     }, {poll: true, pollInterval: DEFAULT_POLL_INTERVAL}));
-
-    watches.push(DataService.watch("imagestreams", context, function(imageStreamData) {
-      imageStreams = imageStreamData.by("metadata.name");
-      ImageStreamResolver.buildDockerRefMapForImageStreams(imageStreams,
-                                                           state.imageStreamImageRefByDockerReference);
-      updateReferencedImageStreams();
-      Logger.log("imagestreams (subscribe)", imageStreams);
-    }, {poll: limitWatches, pollInterval: DEFAULT_POLL_INTERVAL}));
 
     // List limit ranges in this project to determine if there is a default
     // CPU request for autoscaling.

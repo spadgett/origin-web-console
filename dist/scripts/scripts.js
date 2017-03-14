@@ -396,6 +396,11 @@ v.horizontalPodAutoscalers = a.by("metadata.name"), Ga(), p.log("autoscalers (su
 }, {
 poll:w,
 pollInterval:x
+})), Ta.push(h.watch("imagestreams", c, function(a) {
+y = a.by("metadata.name"), l.buildDockerRefMapForImageStreams(y, L.imageStreamImageRefByDockerReference), d(), p.log("imagestreams (subscribe)", y);
+}, {
+poll:w,
+pollInterval:x
 })), Ta.push(h.watch("resourcequotas", c, function(a) {
 L.quotas = a.by("metadata.name"), Sa();
 }, {
@@ -405,11 +410,6 @@ pollInterval:x
 L.clusterQuotas = a.by("metadata.name"), Sa();
 }, {
 poll:!0,
-pollInterval:x
-})), Ta.push(h.watch("imagestreams", c, function(a) {
-y = a.by("metadata.name"), l.buildDockerRefMapForImageStreams(y, L.imageStreamImageRefByDockerReference), d(), p.log("imagestreams (subscribe)", y);
-}, {
-poll:w,
 pollInterval:x
 })), h.list("limitranges", c, function(a) {
 L.limitRanges = a.by("metadata.name");
