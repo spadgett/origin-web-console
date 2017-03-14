@@ -41,7 +41,7 @@
             <span ng-if="!(route | isWebRoute)">{{route | routeLabel}}</span>
             <route-warnings route="route" service="service"></route-warnings>
           </h3>
-          <div>
+          <div class="overview-route">
             Route <a ng-href="{{route | navigateResourceURL}}">{{route.metadata.name}}</a><span ng-if="route.spec.port.targetPort">,
             target port {{route.spec.port.targetPort}}</span>
           </div>

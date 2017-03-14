@@ -128,8 +128,7 @@
     }
   }
   .data-toolbar-label {
-    margin-right: 5px;
-    vertical-align: 8px;
+    margin-right: 7px;
   }
   // TODO: improve on this as it's pretty hacky
   .deployment-connector-arrow {
@@ -154,9 +153,8 @@
       line-height: 1.4;
       margin-bottom: 5px;
       margin-top: 0;
-      a {
-        .word-break();
-      }
+      width: 100%; // IE
+      .word-break();
     }
     .section-title {
       .h4();
@@ -200,16 +198,20 @@
     }
     .empty-state-message {
       margin-bottom: 30px;
-      margin-top: 30px;
+      margin-top: 20px;
       // Avoid breaking long identifiers like image stream names in empty state message.
       max-width: none;
+      padding: 0;
       .text-center();
-      a {
+      p {
         .word-break();
       }
     }
     .list-pf-content {
       max-width: 100%;
+    }
+    .list-pf-container {
+      display: block; // so that .word-break() will work in IE
     }
     .pod-donut {
       .text-center();
@@ -226,6 +228,8 @@
         @media (max-width: @screen-xs-max) {
           align-items: stretch;
           flex-direction: column;
+          width: 100%; // IE
+          .word-break();
         }
         @media (min-width: @screen-sm-min) {
           // Prevent the row from shrinking slightly on expand.
@@ -332,13 +336,11 @@
     // avoid double borders when list-pf-item is open
     margin-top: -1px;
   }
-  .overview-routes {
-    + .overview-routes {
-      .mar-top-md();
-    }
-    a {
-      .word-break();
-    }
+  .overview-route {
+    .word-break();
+  }
+  .overview-routes + .overview-routes {
+    .mar-top-md();
   }
   .overview-row-inline-actions {
     .mar-left-md();
@@ -375,6 +377,8 @@
     .text-muted();
   }
   .view-by-options {
+    align-items: center;
+    display: flex;
     @media (max-width: @screen-xs-max) {
       margin-top: 10px;
     }
