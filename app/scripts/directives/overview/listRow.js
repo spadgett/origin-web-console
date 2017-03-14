@@ -95,14 +95,6 @@ function OverviewListRow($filter,
     return _.get(row.state.hpaByResource, [kind, name], NO_HPA);
   };
 
-  var setInitialTab = function() {
-    if (!_.isEmpty(row.services)) {
-      _.set(row, 'selectedTab.networking', true);
-    } else {
-      _.set(row, 'selectedTab.networking', true);
-    }
-  };
-
   var expandedKey = function(apiObject) {
     var uid = _.get(apiObject, 'metadata.uid');
     if (!uid) {
@@ -144,7 +136,7 @@ function OverviewListRow($filter,
   };
 
   row.$onInit = function() {
-    setInitialTab();
+    _.set(row, 'selectedTab.networking', true);
     setInitialExpandedState();
   };
 

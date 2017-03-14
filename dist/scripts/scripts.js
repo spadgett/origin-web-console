@@ -635,26 +635,24 @@ return b ? _.get(g, [ "state", "notificationsByObjectUID", b ]) :null;
 if (!g.state.hpaByResource) return null;
 var b = _.get(a, "kind"), c = _.get(a, "metadata.name");
 return _.get(g.state.hpaByResource, [ b, c ], p);
-}, r = function() {
-_.isEmpty(g.services) ? _.set(g, "selectedTab.networking", !0) :_.set(g, "selectedTab.networking", !0);
-}, s = function(a) {
+}, r = function(a) {
 var b = _.get(a, "metadata.uid");
 return b ? "overview/expand/" + b :null;
 };
 g.toggleExpand = function(a, b) {
 if (b || !($(a.target).closest("a").length > 0)) {
-var c = s(g.apiObject);
+var c = r(g.apiObject);
 c && (g.expanded = !g.expanded, sessionStorage.setItem(c, g.expanded ? "true" :"false"));
 }
 };
-var t = function() {
-var a = s(g.apiObject);
+var s = function() {
+var a = r(g.apiObject);
 if (!a) return void (g.expanded = !1);
 var b = sessionStorage.getItem(a);
 return !b && g.state.expandAll ? void (g.expanded = !0) :void (g.expanded = "true" === b);
 };
 g.$onInit = function() {
-r(), t();
+_.set(g, "selectedTab.networking", !0), s();
 }, g.$doCheck = function() {
 g.notifications = o(g.apiObject), g.hpa = q(g.apiObject), g.current && _.isEmpty(g.hpa) && (g.hpa = q(g.current));
 var a = _.get(g, "apiObject.metadata.uid");
