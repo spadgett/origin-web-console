@@ -12137,12 +12137,12 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div ng-if=\"row.apiObject.kind === 'Pod'\">\n" +
     "<deployment-metrics pods=\"[row.apiObject]\" containers=\"row.apiObject.spec.containers\" profile=\"compact\" alerts=\"row.state.alerts\" class=\"overview-metrics\">\n" +
     "</deployment-metrics>\n" +
-    "<h4>Usage <small>Last 15 Minutes</small></h4>\n" +
+    "<h4 class=\"h5\">Usage <small>Last 15 Minutes</small></h4>\n" +
     "</div>\n" +
     "<div ng-if=\"row.apiObject.kind !== 'Pod'\">\n" +
     "<deployment-metrics pods=\"row.getPods(row.current)\" containers=\"row.current.spec.template.spec.containers\" profile=\"compact\" alerts=\"row.sate.alerts\" class=\"overview-metrics\">\n" +
     "</deployment-metrics>\n" +
-    "<h4>Average Usage <small>Last 15 Minutes</small></h4>\n" +
+    "<h4 class=\"h5\">Average Usage <small>Last 15 Minutes</small></h4>\n" +
     "</div>\n" +
     "</div>\n" +
     "</div>\n" +
@@ -12186,12 +12186,12 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div ng-if=\"row.apiObject.kind === 'Pod'\">\n" +
     "<deployment-metrics pods=\"[row.apiObject]\" containers=\"row.apiObject.spec.containers\" profile=\"compact\" alerts=\"row.state.alerts\" class=\"overview-metrics\">\n" +
     "</deployment-metrics>\n" +
-    "<h4>Usage <small>Last 15 Minutes</small></h4>\n" +
+    "<h4 class=\"h5\">Usage <small>Last 15 Minutes</small></h4>\n" +
     "</div>\n" +
     "<div ng-if=\"row.apiObject.kind !== 'Pod'\">\n" +
     "<deployment-metrics pods=\"row.getPods(row.current)\" containers=\"row.current.spec.template.spec.containers\" profile=\"compact\" alerts=\"row.sate.alerts\" class=\"overview-metrics\">\n" +
     "</deployment-metrics>\n" +
-    "<h4>Average Usage <small>Last 15 Minutes</small></h4>\n" +
+    "<h4 class=\"h5\">Average Usage <small>Last 15 Minutes</small></h4>\n" +
     "</div>\n" +
     "</div>\n" +
     "</uib-tab>\n" +
@@ -12336,8 +12336,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<route-warnings route=\"route\" service=\"service\"></route-warnings>\n" +
     "</h3>\n" +
     "<div>\n" +
-    "<span class=\"nowrap\">Route\n" +
-    "<a ng-href=\"{{route | navigateResourceURL}}\">{{route.metadata.name}}</a></span><span ng-if=\"route.spec.port.targetPort\">, target port {{route.spec.port.targetPort}}</span>\n" +
+    "Route <a ng-href=\"{{route | navigateResourceURL}}\">{{route.metadata.name}}</a><span ng-if=\"route.spec.port.targetPort\">, target port {{route.spec.port.targetPort}}</span>\n" +
     "</div>\n" +
     "<div ng-if=\"route | hasAlternateBackends\">\n" +
     "<route-service-bar-chart route=\"route\" highlight-service=\"service.metadata.name\"></route-service-bar-chart>\n" +
