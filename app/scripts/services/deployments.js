@@ -405,12 +405,12 @@ angular.module("openshiftConsole")
     // the deployment version annotation.
     DeploymentsService.prototype.sortByDeploymentVersion = function(replicationControllers, descending) {
       var compareDeployments = function(left, right) {
-        var leftVersion = annotation(left, 'deploymentVersion');
-        var rightVersion = annotation(right, 'deploymentVersion');
+        var leftVersion = parseInt(annotation(left, 'deploymentVersion'), 10);
+        var rightVersion = parseInt(annotation(right, 'deploymentVersion'), 10);
 
         // Fall back to sorting by name if no deployment versions.
         var leftName, rightName;
-        if (!leftVersion && !rightVersion) {
+        if (!_.isFinite(leftVersion) && !_.isFinite(rightVersion)) {
           leftName = _.get(left, 'metadata.name', '');
           rightName = _.get(right, 'metadata.name', '');
           if (descending) {
@@ -427,8 +427,6 @@ angular.module("openshiftConsole")
           return descending ? -1 : 1;
         }
 
-        leftVersion = parseInt(leftVersion, 10);
-        rightVersion = parseInt(rightVersion, 10);
         if (descending) {
           return rightVersion - leftVersion;
         }
