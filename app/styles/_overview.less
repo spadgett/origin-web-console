@@ -26,7 +26,8 @@
     display: block;
   }
   .icon-count {
-    margin-left: 5px;
+    display: inline-block;
+    margin-right: 5px;
     &, [data-toggle="tooltip"] {
       cursor: help;
     }
@@ -34,10 +35,11 @@
   .running-stage {
     .small();
     .text-muted();
-    margin-left: 3px;
   }
 }
-
+.builds-label {
+  margin-right: 5px;
+}
 .mini-log {
   background-color: @color-pf-black-100;
   border: 1px solid @color-pf-black-300;
@@ -56,7 +58,6 @@
     }
   }
 }
-
 .notification-icon-count {
   display: inline-block;
   margin: 0 5px 0 0;
@@ -354,6 +355,9 @@
       width: 40%;
     }
   }
+  :not(.tab-pane) > overview-pipelines > .expanded-section {
+      margin-bottom: 30px;
+    }
   .toolbar-container {
     margin-top: 10px;
     margin-bottom: 5px;
