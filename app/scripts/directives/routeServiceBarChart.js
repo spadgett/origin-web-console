@@ -23,6 +23,11 @@ function RouteServiceBarChart() {
       return 1;
     }
 
+    // Fall back to comparing names if weights are equal.
+    if (right.weight === left.weight) {
+      return left.name.localeCompare(right.name);
+    }
+
     return right.weight - left.weight;
   };
 

@@ -429,7 +429,7 @@ h.unwatchAll(Ta), $(window).off("resize.overview", M);
 
 function RouteServiceBarChart() {
 var a = this, b = function(b, c) {
-return b.name === a.highlightService ? -1 :c.name === a.highlightService ? 1 :c.weight - b.weight;
+return b.name === a.highlightService ? -1 :c.name === a.highlightService ? 1 :c.weight === b.weight ? b.name.localeCompare(c.name) :c.weight - b.weight;
 }, c = function(b) {
 a.total += b.weight, a.max = Math.max(b.weight, a.max || 0), a.backends.push({
 name:b.name,
