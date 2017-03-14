@@ -12077,7 +12077,6 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
 
 
   $templateCache.put('views/overview/_list-row-empty-state.html',
-    "<div class=\"empty-state-message\">\n" +
     "<h2>No deployments.</h2>\n" +
     "<div ng-if=\"row.imageChangeTriggers.length\">\n" +
     "A new deployment will start automatically when\n" +
@@ -12111,7 +12110,6 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<button ng-if=\"'deploymentconfigs' | canI : 'update'\" class=\"btn btn-primary\" ng-click=\"row.startDeployment()\">\n" +
     "Start Deployment\n" +
     "</button>\n" +
-    "</div>\n" +
     "</div>\n" +
     "</div>\n" +
     "</div>"
@@ -12335,7 +12333,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<span ng-if=\"!(route | isWebRoute)\">{{route | routeLabel}}</span>\n" +
     "<route-warnings route=\"route\" service=\"service\"></route-warnings>\n" +
     "</h3>\n" +
-    "<div>\n" +
+    "<div class=\"overview-route\">\n" +
     "Route <a ng-href=\"{{route | navigateResourceURL}}\">{{route.metadata.name}}</a><span ng-if=\"route.spec.port.targetPort\">, target port {{route.spec.port.targetPort}}</span>\n" +
     "</div>\n" +
     "<div ng-if=\"route | hasAlternateBackends\">\n" +
