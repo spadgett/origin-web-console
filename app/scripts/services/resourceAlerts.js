@@ -10,20 +10,6 @@ angular.module("openshiftConsole")
     var deploymentStatus = $filter('deploymentStatus');
     var getGroupedPodWarnings = $filter('groupedPodWarnings');
 
-    var alertHiddenKey = function(alertID, namespace) {
-      return 'hide/alert/' + namespace + '/' + alertID;
-    };
-
-    var isAlertHidden = function(alertID, namespace) {
-      var key = alertHiddenKey(alertID, namespace);
-      return localStorage.getItem(key) === 'true';
-    };
-
-    var hideAlert = function(alertID, namespace) {
-      var key = alertHiddenKey(alertID, namespace);
-      localStorage.setItem(key, 'true');
-    };
-
     var getPodAlerts = function(pods, namespace) {
       if (_.isEmpty(pods)) {
         return {};
@@ -58,7 +44,7 @@ angular.module("openshiftConsole")
 
           case "NonZeroExitTerminatingPod":
             // Allow users to permanently dismiss the non-zero exit code message for terminating pods.
-            if (isAlertHidden(alertID, namespace)) {
+            if (AlertMessageService.isAlertPermanentlyHidden(alertID, namespace)) {
               return;
             }
 
@@ -67,7 +53,7 @@ angular.module("openshiftConsole")
               label: "Don't Show Me Again",
               onClick: function() {
                 // Hide the alert on future page loads.
-                hideAlert(alertID, namespace);
+                AlertMessageService.permanentlyHideAlert(alertID, namespace);
 
                 // Return true close the existing alert.
                 return true;
