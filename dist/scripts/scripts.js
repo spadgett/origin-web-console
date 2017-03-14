@@ -304,6 +304,8 @@ var a = {};
 _.each(f.interestingBuilds(L.builds), function(b) {
 var c = A(b);
 E(b) ? Ha(b) :(a[c] = a[c] || [], a[c].push(b));
+}), v.recentPipelinesByBuildConfig = _.mapValues(v.recentPipelinesByBuildConfig, function(a) {
+return f.sortBuilds(a, !0);
 }), L.recentPipelinesByDeploymentConfig = _.mapValues(L.recentPipelinesByDeploymentConfig, function(a) {
 return f.sortBuilds(a, !0);
 }), L.recentBuildsByBuildConfig = _.mapValues(a, function(a) {

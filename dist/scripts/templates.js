@@ -11390,7 +11390,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "No pipeline runs.\n" +
     "</div>\n" +
     "<div ng-if=\"overview.recentPipelinesByBuildConfig[pipeline.metadata.name] | hashSize\" class=\"build-pipelines\">\n" +
-    "<div ng-repeat=\"pipeline in overview.recentPipelinesByBuildConfig[pipeline.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)\" class=\"row build-pipeline-wrapper animate-repeat\">\n" +
+    "<div ng-repeat=\"pipeline in overview.recentPipelinesByBuildConfig[pipeline.metadata.name] track by (pipeline | uid)\" class=\"row build-pipeline-wrapper animate-repeat\">\n" +
     "<div class=\"col-sm-12\">\n" +
     "<build-pipeline build=\"pipeline\" build-config-name-on-expanded=\"true\" collapse-pending=\"true\"></build-pipeline>\n" +
     "</div>\n" +

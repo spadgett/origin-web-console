@@ -281,7 +281,7 @@
                     No pipeline runs.
                   </div>
                   <div ng-if="overview.recentPipelinesByBuildConfig[pipeline.metadata.name] | hashSize" class="build-pipelines">
-                    <div ng-repeat="pipeline in overview.recentPipelinesByBuildConfig[pipeline.metadata.name] | orderObjectsByDate : true track by (pipeline | uid)"
+                    <div ng-repeat="pipeline in overview.recentPipelinesByBuildConfig[pipeline.metadata.name] track by (pipeline | uid)"
                          class="row build-pipeline-wrapper animate-repeat">
                       <div class="col-sm-12">
                         <build-pipeline build="pipeline" build-config-name-on-expanded="true" collapse-pending="true"></build-pipeline>

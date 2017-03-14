@@ -775,14 +775,14 @@ function OverviewController($scope,
 
   // Adds a recent pipeline build to the following maps:
   //
-  // `state.recentPipelinesByBuildConfig``
+  // `overview.recentPipelinesByBuildConfig``
   //   key: build config name
   //   value: array of pipeline builds
   //
-  // `overview.recentPipelinesByDeploymentConfig`
+  // `state.recentPipelinesByDeploymentConfig`
   //   key: deployment config name
   //   value: array of pipeline builds
-  var groupPipelineByDC = function(build) {
+  var groupPipeline = function(build) {
     var bcName = getBuildConfigName(build);
     var buildConfig = overview.buildConfigs[bcName];
     if (!buildConfig) {
@@ -936,17 +936,19 @@ function OverviewController($scope,
     _.each(BuildsService.interestingBuilds(state.builds), function(build) {
       var bcName = getBuildConfigName(build);
       if(isJenkinsPipelineStrategy(build)) {
-        groupPipelineByDC(build);
+        groupPipeline(build);
       } else {
         recentByConfig[bcName] = recentByConfig[bcName] || [];
         recentByConfig[bcName].push(build);
       }
     });
 
+    overview.recentPipelinesByBuildConfig = _.mapValues(overview.recentPipelinesByBuildConfig, function(builds) {
+      return BuildsService.sortBuilds(builds, true);
+    });
     state.recentPipelinesByDeploymentConfig = _.mapValues(state.recentPipelinesByDeploymentConfig, function(builds) {
       return BuildsService.sortBuilds(builds, true);
     });
-
     state.recentBuildsByBuildConfig = _.mapValues(recentByConfig, function(builds) {
       return BuildsService.sortBuilds(builds, true);
     });
