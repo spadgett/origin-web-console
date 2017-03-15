@@ -12183,13 +12183,14 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "<div ng-if=\"row.state.breakpoint === 'xs' && !row.state.previous\" class=\"row\">\n" +
     "<div class=\"col-sm-12\">\n" +
-    "<uib-tabset class=\"list-row-tabset\">\n" +
+    "\n" +
+    "<uib-tabset ng-if=\"row.current || (row.services | hashSize) || row.recentPipelines.length || row.buildConfigs.length\" class=\"list-row-tabset\">\n" +
     "<uib-tab active=\"row.selectedTab.networking\" ng-if=\"row.services | hashSize\">\n" +
     "<uib-tab-heading>Networking</uib-tab-heading>\n" +
     "<overview-networking services=\"row.services\" routes-by-service=\"row.state.routesByService\">\n" +
     "</overview-networking>\n" +
     "</uib-tab>\n" +
-    "<uib-tab active=\"row.selectedTab.containers\">\n" +
+    "<uib-tab ng-if=\"row.current\" active=\"row.selectedTab.containers\">\n" +
     "<uib-tab-heading>Containers</uib-tab-heading>\n" +
     "\n" +
     "<pod-template pod-template=\"row.current | podTemplate\" images-by-docker-reference=\"row.state.imagesByDockerReference\" builds=\"row.state.builds\"></pod-template>\n" +

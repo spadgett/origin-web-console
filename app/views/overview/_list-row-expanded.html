@@ -87,7 +87,8 @@
 
     <div ng-if="row.state.breakpoint === 'xs' && !row.state.previous" class="row">
       <div class="col-sm-12">
-        <uib-tabset class="list-row-tabset">
+        <!-- Only show the tabset if any of the tabs are visible. -->
+        <uib-tabset ng-if="row.current || (row.services | hashSize) || row.recentPipelines.length || row.buildConfigs.length" class="list-row-tabset">
           <uib-tab active="row.selectedTab.networking" ng-if="row.services | hashSize">
             <uib-tab-heading>Networking</uib-tab-heading>
             <overview-networking
@@ -95,7 +96,7 @@
               routes-by-service="row.state.routesByService">
             </overview-networking>
           </uib-tab>
-          <uib-tab active="row.selectedTab.containers">
+          <uib-tab ng-if="row.current" active="row.selectedTab.containers">
             <uib-tab-heading>Containers</uib-tab-heading>
             <!-- TODO: markup semantics suggest div.component-label in <pod-template> should be an h4,
                        but only here on the overview -->
