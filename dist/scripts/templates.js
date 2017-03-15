@@ -12393,7 +12393,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
   $templateCache.put('views/overview/_pipelines.html',
     "<div ng-if=\"overviewPipelines.recentPipelines.length\" class=\"expanded-section\">\n" +
     "<div class=\"section-title no-border hidden-xs\">Pipelines</div>\n" +
-    "<div ng-repeat=\"pipeline in overviewPipelines.recentPipelines | orderObjectsByDate : true track by (pipeline | uid)\" class=\"build-pipeline-wrapper animate-repeat\">\n" +
+    "<div ng-repeat=\"pipeline in overviewPipelines.recentPipelines track by (pipeline | uid)\" class=\"build-pipeline-wrapper animate-repeat\">\n" +
     "<build-pipeline build=\"pipeline\" build-config-name-on-expanded=\"true\" collapse-pending=\"true\"></build-pipeline>\n" +
     "</div>\n" +
     "</div>"
