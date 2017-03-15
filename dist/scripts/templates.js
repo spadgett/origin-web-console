@@ -12126,7 +12126,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div ng-class=\"{\n" +
     "                'col-sm-7 col-md-8 col-lg-9': !row.state.showMetrics && !row.previous,\n" +
     "                'col-sm-12 col-md-4 col-lg-5': row.state.showMetrics && !row.previous,\n" +
-    "                'hidden-sm col-md-3 col-lg-5': row.previous\n" +
+    "                'hidden-sm col-md-5 col-lg-5': row.previous\n" +
     "              }\">\n" +
     "\n" +
     "<pod-template pod-template=\"row.current | podTemplate\" images-by-docker-reference=\"row.state.imagesByDockerReference\" builds=\"row.state.builds\"></pod-template>\n" +
@@ -12144,7 +12144,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "</div>\n" +
     "</div>\n" +
-    "<div ng-if=\"row.previous\" class=\"col-sm-5 col-md-4 col-lg-3\">\n" +
+    "<div ng-if=\"row.previous\" class=\"col-sm-5 col-md-3\">\n" +
     "<deployment-donut rc=\"row.previous\" deployment-config=\"row.apiObject\" pods=\"row.getPods(row.previous)\" hpa=\"row.hpa\" limit-ranges=\"row.state.limitRanges\" quotas=\"row.state.quotas\" cluster-quotas=\"row.state.clusterQuotas\" scalable=\"false\" alerts=\"row.state.alerts\">\n" +
     "</deployment-donut>\n" +
     "</div>\n" +
@@ -12153,7 +12153,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "&rarr;\n" +
     "</div>\n" +
     "</div>\n" +
-    "<div class=\"col-sm-5 col-md-4 col-lg-3\">\n" +
+    "<div class=\"col-sm-5 col-md-3\">\n" +
     "<div ng-if=\"row.apiObject.kind === 'Pod'\">\n" +
     "<a ng-href=\"{{row.apiObject | navigateResourceURL}}\">\n" +
     "<pod-donut pods=\"[row.apiObject]\"></pod-donut>\n" +
