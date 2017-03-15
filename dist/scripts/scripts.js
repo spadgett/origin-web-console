@@ -2123,10 +2123,13 @@ d && (b[d] = b[d] || [], b[d].push(a));
 }), b;
 }, y = function(a, b) {
 var c = function(a, c) {
-var d, e, f = _.get(a, "metadata.creationTimestamp", ""), g = _.get(c, "metadata.creationTimestamp", "");
-return f === g ? (d = _.get(a, "metadata.name", ""), e = _.get(c, "metadata.name", ""), b ? e.localeCompare(d) :d.localeCompare(e)) :b ? g.localeCompare(f) :f.localeCompare(g);
+var d, e, f = o(a), g = o(c);
+return f || g ? f ? g ? b ? g - f :f - g :b ? -1 :1 :b ? 1 :-1 :(d = _.get(a, "metadata.name", ""), e = _.get(c, "metadata.name", ""), b ? e.localeCompare(d) :d.localeCompare(e));
+}, d = function(a, d) {
+var e = _.get(a, "metadata.creationTimestamp", ""), f = _.get(d, "metadata.creationTimestamp", "");
+return e === f ? c(a, d) :b ? f.localeCompare(e) :e.localeCompare(f);
 };
-return _.toArray(a).sort(c);
+return _.toArray(a).sort(d);
 }, z = function(a) {
 var b = c(a, "jenkinsStatus");
 if (!b) return null;

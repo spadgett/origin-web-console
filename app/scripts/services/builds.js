@@ -221,19 +221,43 @@ angular.module("openshiftConsole")
     // Sort by date first, falling back to build number in case two builds
     // have the same date.
     var sortBuilds = function(builds, descending) {
-      var compareDates = function(left, right) {
-        var leftDate = _.get(left, 'metadata.creationTimestamp', '');
-        var rightDate = _.get(right, 'metadata.creationTimestamp', '');
+      var compareNumbers = function(left, right) {
+        var leftNumber = getBuildNumber(left);
+        var rightNumber = getBuildNumber(right);
 
-        // In the event the builds have identical dates, sort by name.
+        // Fall back to names if no numbers.
         var leftName, rightName;
-        if (leftDate === rightDate) {
+        if (!leftNumber && !rightNumber) {
           leftName = _.get(left, 'metadata.name', '');
           rightName = _.get(right, 'metadata.name', '');
           if (descending) {
             return rightName.localeCompare(leftName);
           }
           return leftName.localeCompare(rightName);
+        }
+
+        if (!leftNumber) {
+          return descending ? 1 : -1;
+        }
+
+        if (!rightNumber) {
+          return descending ? -1 : 1;
+        }
+
+        if (descending) {
+          return rightNumber - leftNumber;
+        }
+
+        return leftNumber - rightNumber;
+      };
+
+      var compareDates = function(left, right) {
+        var leftDate = _.get(left, 'metadata.creationTimestamp', '');
+        var rightDate = _.get(right, 'metadata.creationTimestamp', '');
+
+        // If the builds have identical dates, sort by number.
+        if (leftDate === rightDate) {
+          return compareNumbers(left, right);
         }
 
         // The date format can be sorted using straight string comparison.
@@ -245,6 +269,7 @@ angular.module("openshiftConsole")
         return leftDate.localeCompare(rightDate);
       };
 
+      // Compare dates, falling back to build number, then name, if dates are the same.
       return _.toArray(builds).sort(compareDates);
     };
 
