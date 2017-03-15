@@ -12042,14 +12042,25 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div ng-if=\"row.isDeploymentInProgress()\" class=\"list-pf-details\">\n" +
     "<div ng-if=\"row.apiObject.kind === 'DeploymentConfig'\">\n" +
     "<span class=\"mar-right-sm\">\n" +
+    "<span class=\"hidden-xs\">\n" +
     "{{row.apiObject.spec.strategy.type}} deployment {{row.current | deploymentStatus | lowercase}}&thinsp;<ellipsis-pulser color=\"dark\" size=\"sm\" display=\"inline\" msg=\"\"></ellipsis-pulser>\n" +
+    "</span>\n" +
+    "\n" +
+    "<span class=\"hidden visible-xs-inline nowrap\">\n" +
+    "<ellipsis-pulser color=\"dark\" size=\"sm\" display=\"inline\" msg=\"Deploying\"></ellipsis-pulser>\n" +
+    "</span>\n" +
     "</span>\n" +
     "<span ng-if=\"'replicationcontrollers' | canI : 'update'\">\n" +
     "<a href=\"\" ng-click=\"row.cancelDeployment()\" role=\"button\">Cancel</a>\n" +
     "</span>\n" +
     "</div>\n" +
     "<div ng-if=\"row.apiObject.kind === 'Deployment'\">\n" +
+    "<span class=\"hidden-xs\">\n" +
     "{{row.apiObject.spec.strategy.type | sentenceCase}}&nbsp;<ellipsis-pulser color=\"dark\" size=\"sm\" display=\"inline\" msg=\"in progress\"></ellipsis-pulser>\n" +
+    "</span>\n" +
+    "<span class=\"hidden visible-xs-inline nowrap\">\n" +
+    "<ellipsis-pulser color=\"dark\" size=\"sm\" display=\"inline\" msg=\"Deploying\"></ellipsis-pulser>\n" +
+    "</span>\n" +
     "</div>\n" +
     "</div>\n" +
     "<div ng-if=\"row.current && !row.isDeploymentInProgress() && !row.expanded\" class=\"list-pf-details\">\n" +
