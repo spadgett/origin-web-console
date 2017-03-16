@@ -4528,9 +4528,9 @@ ul.messenger-theme-flat .messenger-message.alert-info .messenger-message-inner:b
 .overview-new .expanded-section{margin-top:20px}
 .overview-new .expanded-section>.row>[class^=col-]{margin-bottom:10px}
 .overview-new .expanded-section h3{line-height:1.4;margin-bottom:5px;margin-top:0;width:100%;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;min-width:0}
-.overview-new .expanded-section .section-title{font-family:inherit;font-weight:500;line-height:1.1;color:inherit;margin-top:10.5px;margin-bottom:10.5px;font-size:14px}
+.overview-new .expanded-section .section-title{font-family:inherit;font-weight:500;line-height:1.1;color:inherit;margin-top:10.5px;margin-bottom:10.5px;font-size:14px;border-bottom:1px solid #dcdcdc;padding-bottom:10px}
 .overview-new .expanded-section .section-title .small,.overview-new .expanded-section .section-title small{font-weight:400;line-height:1;color:#9c9c9c;font-size:75%}
-.overview-new .expanded-section .section-title:not(.no-border){border-bottom:1px solid #dcdcdc;padding-bottom:10px}
+.overview-new .expanded-section .section-title.no-border{border-bottom:0;padding-bottom:0}
 .overview-new .filter-status{margin-bottom:5px}
 .overview-new h1,.overview-new h2{line-height:normal;min-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .overview-new h2{margin-top:0}

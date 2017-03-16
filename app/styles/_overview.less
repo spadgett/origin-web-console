@@ -174,9 +174,11 @@
     }
     .section-title {
       .h4();
-      &:not(.no-border) {
-        border-bottom: 1px solid @list-pf-border-color;
-        padding-bottom: 10px;
+      border-bottom: 1px solid @list-pf-border-color;
+      padding-bottom: 10px;
+      &.no-border {
+        border-bottom: 0;
+        padding-bottom: 0;
       }
     }
   }
