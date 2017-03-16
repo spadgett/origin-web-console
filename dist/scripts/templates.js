@@ -11722,7 +11722,6 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div class=\"col-sm-7\">\n" +
     "<div ng-if=\"!(overviewBuilds.recentBuildsByBuildConfig[buildConfig.metadata.name] | hashSize)\">\n" +
     "No builds.\n" +
-    "\n" +
     "</div>\n" +
     "<div ng-repeat=\"build in overviewBuilds.recentBuildsByBuildConfig[buildConfig.metadata.name] track by (build | uid)\" class=\"mar-bottom-sm animate-repeat\">\n" +
     "<span ng-if=\"overviewBuilds.showLogs(build)\" class=\"small pull-right\">\n" +
@@ -12085,7 +12084,6 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</metrics-summary>\n" +
     "</div>\n" +
     "</div>\n" +
-    "\n" +
     "<div class=\"pods hidden-xs\">\n" +
     "<div ng-if=\"row.apiObject.kind === 'Pod'\">\n" +
     "<pod-donut pods=\"[row.apiObject]\" mini=\"true\"></pod-donut>\n" +
@@ -12108,7 +12106,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "{{row.imageChangeTriggers[0].imageChangeParams.from | imageObjectRef : row.apiObject.metadata.namespace}}</a>.\n" +
     "</span>\n" +
     "<span ng-if=\"row.imageChangeParams.length > 1\">\n" +
-    "one of the images for this deployment config changes.\n" +
+    "one of the images referenced by this deployment config changes.\n" +
     "</span>\n" +
     "</div>\n" +
     "<div ng-if=\"!row.imageChangeTriggers.length\">\n" +
@@ -12119,7 +12117,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div ng-if=\"row.apiObject.kind === 'DeploymentConfig'\">\n" +
     "<div ng-if=\"pipeline = row.pipelines[0]\">\n" +
     "<p>\n" +
-    "This deployment config is part of pipeline\n" +
+    "This deployment config is part of the pipeline\n" +
     "<a ng-href=\"{{pipeline | navigateResourceURL}}\">{{pipeline.metadata.name}}</a>.\n" +
     "</p>\n" +
     "<div ng-if=\"('buildconfigs/instantiate' | canI : 'create')\">\n" +
@@ -12160,7 +12158,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<h4 class=\"h5\">Usage <small>Last 15 Minutes</small></h4>\n" +
     "</div>\n" +
     "<div ng-if=\"row.apiObject.kind !== 'Pod'\">\n" +
-    "<deployment-metrics pods=\"row.getPods(row.current)\" containers=\"row.current.spec.template.spec.containers\" profile=\"compact\" alerts=\"row.sate.alerts\" class=\"overview-metrics\">\n" +
+    "<deployment-metrics pods=\"row.getPods(row.current)\" containers=\"row.current.spec.template.spec.containers\" profile=\"compact\" alerts=\"row.state.alerts\" class=\"overview-metrics\">\n" +
     "</deployment-metrics>\n" +
     "<h4 class=\"h5\">Average Usage <small>Last 15 Minutes</small></h4>\n" +
     "</div>\n" +
@@ -12216,7 +12214,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<h4 class=\"h5\">Usage <small>Last 15 Minutes</small></h4>\n" +
     "</div>\n" +
     "<div ng-if=\"row.apiObject.kind !== 'Pod'\">\n" +
-    "<deployment-metrics pods=\"row.getPods(row.current)\" containers=\"row.current.spec.template.spec.containers\" profile=\"compact\" alerts=\"row.sate.alerts\" class=\"overview-metrics\">\n" +
+    "<deployment-metrics pods=\"row.getPods(row.current)\" containers=\"row.current.spec.template.spec.containers\" profile=\"compact\" alerts=\"row.state.alerts\" class=\"overview-metrics\">\n" +
     "</deployment-metrics>\n" +
     "<h4 class=\"h5\">Average Usage <small>Last 15 Minutes</small></h4>\n" +
     "</div>\n" +
@@ -12324,9 +12322,6 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<h3>\n" +
     "<a ng-href=\"{{service | navigateResourceURL}}\">{{service.metadata.name}}</a>\n" +
     "</h3>\n" +
-    "\n" +
-    "\n" +
-    "\n" +
     "<span ng-repeat=\"portMapping in service.spec.ports | limitTo : 1\">\n" +
     "{{portMapping.port}}/{{portMapping.protocol}} <span ng-if=\"portMapping.name\">({{portMapping.name}})</span>\n" +
     "<i class=\"fa fa-long-arrow-right text-muted\"></i>\n" +

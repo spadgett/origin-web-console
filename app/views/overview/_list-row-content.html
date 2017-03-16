@@ -75,7 +75,6 @@
       </metrics-summary>
     </div>
   </div>
-  <!-- If metrics are not available, don't show anything -->
   <div class="pods hidden-xs">
     <div ng-if="row.apiObject.kind === 'Pod'">
       <pod-donut pods="[row.apiObject]" mini="true"></pod-donut>

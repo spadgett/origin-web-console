@@ -9,7 +9,6 @@
     <div class="col-sm-7">
       <div ng-if="!(overviewBuilds.recentBuildsByBuildConfig[buildConfig.metadata.name] | hashSize)">
         No builds.
-        <!-- <a href="" ng-if="('buildconfigs/instantiate' | canI : 'create')" ng-click="startBuild(buildConfig)" class="small mar-left-sm">Start Build</a> -->
       </div>
       <div ng-repeat="build in overviewBuilds.recentBuildsByBuildConfig[buildConfig.metadata.name] track by (build | uid)" class="mar-bottom-sm animate-repeat">
         <span ng-if="overviewBuilds.showLogs(build)" class="small pull-right">
