@@ -486,9 +486,11 @@ type:"pod_container"
 }, {
 label:"CPU",
 convert:b.millicoresToCores,
-formatUsage:c.formatUsage,
 usageUnits:function() {
 return "cores";
+},
+formatUsage:function(a) {
+return a < .01 ? "< 0.01" :c.formatUsage(a);
 },
 datasets:[ "cpu/usage_rate" ],
 type:"pod_container"
@@ -496,7 +498,9 @@ type:"pod_container"
 label:"Network",
 units:"KiB/s",
 convert:b.bytesToKiB,
-formatUsage:c.formatUsage,
+formatUsage:function(a) {
+return a < .01 ? "< 0.01" :c.formatUsage(a);
+},
 usageUnits:function() {
 return "KiB/s";
 },

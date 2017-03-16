@@ -55,9 +55,15 @@ function MetricsSummary($interval,
   }, {
     label: "CPU",
     convert: ConversionService.millicoresToCores,
-    formatUsage: MetricsCharts.formatUsage,
     usageUnits: function() {
       return 'cores';
+    },
+    formatUsage: function(value) {
+      if (value < 0.01) {
+        return "< 0.01";
+      }
+
+      return MetricsCharts.formatUsage(value);
     },
     datasets: [ 'cpu/usage_rate' ],
     type: 'pod_container'
@@ -65,7 +71,13 @@ function MetricsSummary($interval,
     label: "Network",
     units: "KiB/s",
     convert: ConversionService.bytesToKiB,
-    formatUsage: MetricsCharts.formatUsage,
+    formatUsage: function(value) {
+      if (value < 0.01) {
+        return "< 0.01";
+      }
+
+      return MetricsCharts.formatUsage(value);
+    },
     usageUnits: function() {
       return 'KiB/s';
     },
