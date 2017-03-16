@@ -11274,10 +11274,21 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "<div ng-if=\"!overview.everythingFiltered || overview.viewBy === 'pipeline'\">\n" +
     "<div ng-if=\"overview.viewBy === 'app'\" ng-repeat=\"app in overview.apps\">\n" +
-    "<h2 ng-if=\"app\">\n" +
+    "<div ng-if=\"app\" class=\"app-heading\">\n" +
+    "<h2>\n" +
     "<div class=\"component-label\">Application</div>\n" +
     "<span ng-bind-html=\"app | highlightKeywords : overview.state.filterKeywords\"></span>\n" +
     "</h2>\n" +
+    "<div ng-if=\"route = overview.bestRouteByApp[app]\" class=\"pull-right\">\n" +
+    "<h3 class=\"overview-route\">\n" +
+    "<span ng-if=\"route | isWebRoute\">\n" +
+    "<a ng-href=\"{{route | routeWebURL}}\" target=\"_blank\">{{route | routeLabel}}</a>\n" +
+    "<i class=\"fa fa-external-link small\" aria-hidden=\"true\"></i>\n" +
+    "</span>\n" +
+    "<span ng-if=\"!(route | isWebRoute)\">{{route | routeLabel}}</span>\n" +
+    "</h3>\n" +
+    "</div>\n" +
+    "</div>\n" +
     "<h2 ng-if=\"!app\">\n" +
     "Other Resources\n" +
     "</h2>\n" +

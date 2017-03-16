@@ -67,6 +67,22 @@
 }
 
 .overview-new {
+  .app-heading {
+    display: flex;
+    justify-content: space-between;
+    // Stack the route at mobile. Use `max-width: @screen-sm-max` to set just
+    // the mobile styles. Otherwise we'd need to reset the default h3 margins
+    // at wider widths.
+    @media (max-width: @screen-sm-max) {
+      flex-direction: column;
+      justify-content: flex-start;
+      .overview-route {
+        .h4();
+        margin-top: -5px;
+        margin-bottom: 15px;
+      }
+    }
+  }
   .build-pipeline {
     border-color: @overview-border-gray;
   }

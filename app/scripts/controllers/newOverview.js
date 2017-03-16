@@ -200,6 +200,62 @@ function OverviewController($scope,
     return AppsService.groupByApp(collection, 'metadata.name');
   };
 
+  var getBestRoute = function(routes) {
+    var bestRoute = null;
+    _.each(routes, function(candidate) {
+      if (!bestRoute) {
+        bestRoute = candidate;
+        return;
+      }
+
+      // Is candidate better than the current display route?
+      bestRoute = RoutesService.getPreferredDisplayRoute(bestRoute, candidate);
+    });
+
+    return bestRoute;
+  };
+
+  // Debounce so we're not reevaluating this too often.
+  var updateRoutesByApp = _.debounce(function() {
+    $scope.$evalAsync(function() {
+      overview.bestRouteByApp = {};
+
+      if (!overview.routes) {
+        return;
+      }
+
+      // Any of the following can have services that have routes.
+      var toCheck = [
+        overview.filteredDeploymentConfigsByApp,
+        overview.filteredReplicationControllersByApp,
+        overview.filteredDeploymentsByApp,
+        overview.filteredReplicaSetsByApp,
+        overview.filteredStatefulSetsByApp,
+        overview.filteredMonopodsByApp
+      ];
+
+      // Find the best route for each app.
+      _.each(overview.apps, function(app) {
+        // Create a map of routes, keyed by route name to avoid adding them twice.
+        var routesForApp = {};
+        _.each(toCheck, function(byApp) {
+          var apiObjects = _.get(byApp, app, []);
+          _.each(apiObjects, function(apiObject) {
+            var uid = getUID(apiObject);
+            var services = _.get(state, ['servicesByObjectUID', uid], []);
+            _.each(services, function(service) {
+              // Only need to get the first route, since they're already sorted by score.
+              var routes = _.get(state, ['routesByService', service.metadata.name], []);
+              _.assign(routesForApp, _.indexBy(routes, 'metadata.name'));
+            });
+          });
+        });
+
+        overview.bestRouteByApp[app] = getBestRoute(routesForApp);
+      });
+    });
+  }, 300, { maxWait: 1500 });
+
   // Group each resource kind by app and update the list of app label values.
   var updateApps = function() {
     overview.filteredDeploymentConfigsByApp = groupByApp(overview.filteredDeploymentConfigs);
@@ -216,6 +272,7 @@ function OverviewController($scope,
                             _.keys(overview.filteredMonopodsByApp));
 
     AppsService.sortAppNames(overview.apps);
+    updateRoutesByApp();
   };
 
   var updatePipelineOtherResources = function() {
@@ -762,6 +819,7 @@ function OverviewController($scope,
   var groupRoutes = function() {
     var routesByService = RoutesService.groupByService(overview.routes, true);
     state.routesByService = _.mapValues(routesByService, RoutesService.sortRoutesByScore);
+    updateRoutesByApp();
   };
 
   // Group HPAs by the object they scale.

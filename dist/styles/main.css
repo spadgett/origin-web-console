@@ -4503,6 +4503,11 @@ ul.messenger-theme-flat .messenger-message.alert-info .messenger-message-inner:b
 .mini-log .mini-log-content{line-height:13px;min-height:91px}
 .mini-log .mini-log-content .mini-log-line{white-space:pre}
 .notification-icon-count{display:inline-block;margin:0 5px 0 0}
+.overview-new .app-heading{display:flex;justify-content:space-between}
+@media (max-width:991px){.overview-new .app-heading{flex-direction:column;justify-content:flex-start}
+.overview-new .app-heading .overview-route{font-family:inherit;font-weight:500;line-height:1.1;color:inherit;font-size:14px;margin-top:-5px;margin-bottom:15px}
+.overview-new .app-heading .overview-route .small,.overview-new .app-heading .overview-route small{font-weight:400;line-height:1;color:#9c9c9c;font-size:75%}
+}
 .overview-new .build-pipeline{border-color:#d6d6d6}
 .overview-new .build-pipelines{margin-top:10px;margin-bottom:20px}
 .overview-new .component-label{font-size:11px;font-weight:500;padding:0 0 4px;color:#9c9c9c;text-transform:uppercase}

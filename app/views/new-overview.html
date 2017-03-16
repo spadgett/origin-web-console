@@ -115,10 +115,21 @@
             </div>
             <div ng-if="!overview.everythingFiltered || overview.viewBy === 'pipeline'">
               <div ng-if="overview.viewBy === 'app'" ng-repeat="app in overview.apps">
-                <h2 ng-if="app">
-                  <div class="component-label">Application</div>
-                  <span ng-bind-html="app | highlightKeywords : overview.state.filterKeywords"></span>
-                </h2>
+                <div ng-if="app" class="app-heading">
+                  <h2>
+                    <div class="component-label">Application</div>
+                    <span ng-bind-html="app | highlightKeywords : overview.state.filterKeywords"></span>
+                  </h2>
+                  <div ng-if="route = overview.bestRouteByApp[app]" class="pull-right">
+                    <h3 class="overview-route">
+                      <span ng-if="route | isWebRoute">
+                        <a ng-href="{{route | routeWebURL}}" target="_blank">{{route | routeLabel}}</a>
+                        <i class="fa fa-external-link small" aria-hidden="true"></i>
+                      </span>
+                      <span ng-if="!(route | isWebRoute)">{{route | routeLabel}}</span>
+                    </h3>
+                  </div>
+                </div>
                 <h2 ng-if="!app">
                   Other Resources
                 </h2>
