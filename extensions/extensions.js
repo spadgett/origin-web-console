@@ -11,14 +11,19 @@
  */
 angular.module('openshiftConsole')
   .run(function($rootScope, $compile, $routeParams, $timeout) {
+    // Wait for the view content to load before adding the custom header.
     $rootScope.$on('$viewContentLoaded', function() {
+      // Don't show the header for chromeless logs.
       if ($routeParams.view === 'chromeless') {
         $timeout(function() {
           $('.navbar').css('margin-top', '0');
         });
         return;
       }
-      $('.top-header').before($compile('<div id="custom-header" class="custom-header"></div>')($rootScope));
+
+      // Add the custom header above the top header element.
+      var scope = $rootScope.$new();
+      $('.top-header').before($compile('<div id="custom-header" class="custom-header"></div>')(scope));
     });
   })
   .directive('customHeader', function() {
