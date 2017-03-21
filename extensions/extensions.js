@@ -23,12 +23,12 @@ angular.module('openshiftConsole')
 
       // Add the custom header above the top header element.
       var scope = $rootScope.$new();
-      $('.top-header').before($compile('<div id="custom-header" class="custom-header"></div>')(scope));
+      $('.top-header').before($compile('<div id="custom-header" class="custom-header navbar-default" role="navigation"></div>')(scope));
     });
   })
   .directive('customHeader', function() {
     return {
       restrict: 'C',
-      template: '<div>Hello World</div>'
+      template: '<div>Custom Header</div>'
     };
   });
