@@ -12277,9 +12277,9 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "            'metrics-active': row.state.showMetrics,\n" +
     "            'metrics-not-active': !row.state.showMetrics\n" +
     "      }\">\n" +
-    "<div ng-if=\"row.state.breakpoint !== 'xs'\" class=\"overview-pod-template\" ng-class=\"{\n" +
+    "<div ng-if=\"row.state.breakpoint !== 'xxs' && row.state.breakpoint !== 'xs'\" class=\"overview-pod-template\" ng-class=\"{\n" +
     "          'ng-enter': row.previous,\n" +
-    "          'hidden-sm hidden-md': row.previous && row.state.breakpoint !== 'lg'\n" +
+    "          'hidden-sm hidden-md': row.previous\n" +
     "        }\">\n" +
     "\n" +
     "<pod-template pod-template=\"row.current | podTemplate\" images-by-docker-reference=\"row.state.imagesByDockerReference\" builds=\"row.state.builds\" class=\"hide-ng-leave\">\n" +
@@ -12333,7 +12333,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div ng-if=\"!row.current\" class=\"empty-state-message\">\n" +
     "<div ng-include src=\" 'views/overview/_list-row-empty-state.html' \"></div>\n" +
     "</div>\n" +
-    "<div ng-if=\"row.state.breakpoint === 'xs' && !row.state.previous\" class=\"row\">\n" +
+    "<div ng-if=\"(row.state.breakpoint === 'xxs' || row.state.breakpoint === 'xs') && !row.state.previous\" class=\"row\">\n" +
     "<div class=\"col-sm-12\">\n" +
     "\n" +
     "<uib-tabset ng-if=\"row.current || (row.services | hashSize) || row.recentPipelines.length || row.buildConfigs.length\" class=\"list-row-tabset\">\n" +
@@ -12347,7 +12347,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "\n" +
     "<pod-template pod-template=\"row.current | podTemplate\" images-by-docker-reference=\"row.state.imagesByDockerReference\" builds=\"row.state.builds\"></pod-template>\n" +
     "</uib-tab>\n" +
-    "<uib-tab ng-if=\"row.current && row.state.showMetrics && row.state.breakpoint !== 'md'\" active=\"row.selectedTab.metrics\">\n" +
+    "<uib-tab ng-if=\"row.current && row.state.showMetrics && row.state.breakpoint === 'xxs'\" active=\"row.selectedTab.metrics\">\n" +
     "<uib-tab-heading>Metrics</uib-tab-heading>\n" +
     "\n" +
     "<div ng-if=\"row.selectedTab.metrics\">\n" +
@@ -12386,15 +12386,17 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</uib-tabset>\n" +
     "</div>\n" +
     "</div>\n" +
+    "<div ng-if=\"row.state.breakpoint !== 'xxs' && row.state.breakpoint !== 'xs'\">\n" +
     "\n" +
-    "<overview-networking ng-if=\"row.state.breakpoint !== 'xs'\" services=\"row.services\" routes-by-service=\"row.state.routesByService\">\n" +
+    "<overview-networking services=\"row.services\" routes-by-service=\"row.state.routesByService\">\n" +
     "</overview-networking>\n" +
     "\n" +
-    "<overview-pipelines ng-if=\"!row.hidePipelines && row.state.breakpoint !== 'xs'\" recent-pipelines=\"row.recentPipelines\">\n" +
+    "<overview-pipelines ng-if=\"!row.hidePipelines\" recent-pipelines=\"row.recentPipelines\">\n" +
     "</overview-pipelines>\n" +
     "\n" +
-    "<overview-builds ng-if=\"row.state.breakpoint !== 'xs'\" build-configs=\"row.buildConfigs\" recent-builds-by-build-config=\"row.state.recentBuildsByBuildConfig\" context=\"row.state.context\" hide-log=\"row.state.limitWatches\">\n" +
+    "<overview-builds build-configs=\"row.buildConfigs\" recent-builds-by-build-config=\"row.state.recentBuildsByBuildConfig\" context=\"row.state.context\" hide-log=\"row.state.limitWatches\">\n" +
     "</overview-builds>\n" +
+    "</div>\n" +
     "</div>\n" +
     "</div> "
   );

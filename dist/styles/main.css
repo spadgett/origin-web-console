@@ -4551,11 +4551,15 @@ ul.messenger-theme-flat .messenger-message.alert-info .messenger-message-inner:b
 .overview-new .list-pf-expansion.in .empty-state-message{margin-bottom:30px;margin-top:20px;max-width:none;padding:0;text-align:center}
 .overview-new .list-pf-expansion.in .empty-state-message p{word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;min-width:0}
 .overview-new .list-pf-expansion.in .list-pf-content{max-width:100%}
-.overview-new .list-pf-expansion.in .list-pf-container{display:block;overflow:hidden}
-.overview-new .list-pf-name h3 a,.overview-new .overview-route{word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;min-width:0}
+.overview-new .list-pf-expansion.in .list-pf-container{display:block}
+@media (max-width:767px){.overview-new .list-pf-expansion.in .list-pf-container{overflow:hidden}
+}
 .overview-new .list-pf-expansion.in .pod-donut{text-align:center}
 .overview-new .list-pf-item{border-top-color:#dcdcdc}
 .overview-new .list-pf-item.active{border-top-color:#bbb}
+@media (min-width:480px){.overview-new .list-pf-item.active{overflow:hidden}
+}
+.overview-new .list-pf-name h3 a,.overview-new .overview-route{word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;min-width:0}
 .overview-new .list-pf-item>.list-pf-container{cursor:pointer}
 @media (max-width:767px){.overview-new .list-pf-item>.list-pf-container>.list-pf-content{align-items:stretch;flex-direction:column;width:100%;word-wrap:break-word;word-break:break-word;overflow-wrap:break-word;min-width:0}
 }
@@ -4606,9 +4610,6 @@ ul.messenger-theme-flat .messenger-message.alert-info .messenger-message-inner:b
 .overview-new .row-expanded-top{display:flex;flex-wrap:wrap;justify-content:space-between}
 @media (min-width:1200px){.overview-new .row-expanded-top .overview-animation-block,.overview-new .row-expanded-top .overview-pod-template{width:50%}
 }
-.overview-new .row-expanded-top .overview-pod-template{flex:1 1 auto}
-.overview-new .row-expanded-top .overview-pod-template .pod-template-block{padding-right:10px}
-.overview-new .row-expanded-top .overview-pod-template .pod-template-block.ng-leave-prepare{display:none}
 .overview-new .row-expanded-top .overview-animation-block{display:flex;flex:1 1 auto;justify-content:center}
 @media (min-width:768px){.overview-new .row-expanded-top .overview-animation-block.animation-in-progress .overview-deployment-donut .latest-donut{justify-content:flex-end}
 .overview-new .row-expanded-top .overview-animation-block .overview-deployment-donut{display:flex;flex:1 1 0%;height:150px;max-width:450px}
@@ -4620,25 +4621,27 @@ ul.messenger-theme-flat .messenger-message.alert-info .messenger-message-inner:b
 .overview-new .row-expanded-top .overview-animation-block .overview-deployment-donut.stacked-template{display:flex;flex-direction:column-reverse}
 .overview-new .row-expanded-top .overview-animation-block .overview-deployment-donut.stacked-template.ng-enter{animation:deploymentSlideDown 750ms ease forwards}
 }
+.overview-new .row-expanded-top .overview-animation-block .overview-deployment-donut .latest-donut{display:flex;flex:1 1 auto;justify-content:flex-end}
 .overview-new .row-expanded-top .overview-animation-block .overview-deployment-donut .previous-donut{display:flex;flex:1 1 auto}
+.overview-new .row-expanded-top .overview-animation-block .overview-deployment-donut .previous-donut.ng-enter-prepare,.overview-new .row-expanded-top.metrics-active .overview-metrics{display:none}
 .overview-new .row-expanded-top .overview-animation-block .overview-deployment-donut .previous-donut.ng-hide-add,.overview-new .row-expanded-top .overview-animation-block .overview-deployment-donut .previous-donut.ng-leave{animation:150ms disappear cubic-bezier(.215,.61,.355,1)}
-.overview-new .row-expanded-top .overview-animation-block .overview-deployment-donut .previous-donut.ng-enter-prepare{display:none}
 @media (max-width:767px){.overview-new .row-expanded-top .overview-animation-block .overview-deployment-donut .previous-donut{flex-direction:column}
 .overview-new .row-expanded-top .overview-animation-block .overview-deployment-donut .previous-donut deployment-donut{order:2}
 }
-.overview-new .row-expanded-top .overview-animation-block .overview-deployment-donut .latest-donut{display:flex;flex:1 1 auto;justify-content:flex-end}
 @media (max-width:1199px){.overview-new .row-expanded-top.metrics-active{flex-direction:column}
 .overview-new .row-expanded-top.metrics-active .overview-pod-template{min-width:100%;order:3}
 }
-@media (min-width:480px) and (max-width:1199px){.overview-new .row-expanded-top.metrics-active .overview-animation-block{padding-bottom:20px;justify-content:space-between}
+@media (min-width:480px) and (max-width:1199px){.overview-new .row-expanded-top.metrics-active .overview-animation-block{justify-content:space-between;padding-bottom:20px}
 .overview-new .row-expanded-top.metrics-active .overview-animation-block.animation-in-progress{justify-content:center}
 }
-.overview-new .row-expanded-top.metrics-active .overview-metrics{display:none}
 @media (min-width:480px){.overview-new .row-expanded-top.metrics-active .overview-metrics{display:block;width:50%}
 .overview-new .row-expanded-top.metrics-active .overview-metrics.ng-enter,.overview-new .row-expanded-top.metrics-active .overview-metrics.ng-hide-remove{animation:.3s appear cubic-bezier(.55,.055,.675,.19)}
 .overview-new .row-expanded-top.metrics-active .overview-metrics.ng-hide-add,.overview-new .row-expanded-top.metrics-active .overview-metrics.ng-leave{animation:150ms disappear cubic-bezier(.215,.61,.355,1)}
 }
 .overview-new .row-expanded-top.metrics-not-active .overview-pod-template{width:50%}
+.overview-new .row-expanded-top .overview-pod-template{flex:1 1 auto}
+.overview-new .row-expanded-top .overview-pod-template .pod-template-block{padding-right:10px}
+.overview-new .row-expanded-top .overview-pod-template .pod-template-block.ng-leave-prepare{display:none}
 .overview{font-weight:300}
 .overview .middle{background-color:#f2f2f2}
 .overview h2{line-height:1.4}

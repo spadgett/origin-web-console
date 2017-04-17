@@ -6,9 +6,9 @@
             'metrics-active': row.state.showMetrics,
             'metrics-not-active': !row.state.showMetrics
       }">
-        <div ng-if="row.state.breakpoint !== 'xs'" class="overview-pod-template" ng-class="{
+        <div ng-if="row.state.breakpoint !== 'xxs' && row.state.breakpoint !== 'xs'" class="overview-pod-template" ng-class="{
           'ng-enter': row.previous,
-          'hidden-sm hidden-md': row.previous && row.state.breakpoint !== 'lg'
+          'hidden-sm hidden-md': row.previous
         }">
           <!-- TODO: markup semantics suggest div.component-label in <pod-template> should be an h4, but only here on the overview -->
           <pod-template
@@ -99,7 +99,7 @@
       <div ng-include src=" 'views/overview/_list-row-empty-state.html' "></div>
     </div>
 
-    <div ng-if="row.state.breakpoint === 'xs' && !row.state.previous" class="row">
+    <div ng-if="(row.state.breakpoint === 'xxs' || row.state.breakpoint === 'xs') && !row.state.previous" class="row">
       <div class="col-sm-12">
         <!-- Only show the tabset if any of the tabs are visible. -->
         <uib-tabset ng-if="row.current || (row.services | hashSize) || row.recentPipelines.length || row.buildConfigs.length" class="list-row-tabset">
@@ -174,27 +174,27 @@
       </div>
     </div>
 
-    <!-- Networking Section -->
-    <overview-networking
-      ng-if="row.state.breakpoint !== 'xs'"
-      services="row.services"
-      routes-by-service="row.state.routesByService">
-    </overview-networking>
+    <div ng-if="row.state.breakpoint !== 'xxs' && row.state.breakpoint !== 'xs'">
+      <!-- Networking Section -->
+      <overview-networking
+        services="row.services"
+        routes-by-service="row.state.routesByService">
+      </overview-networking>
 
-    <!-- Pipelines Section -->
-    <overview-pipelines
-      ng-if="!row.hidePipelines && row.state.breakpoint !== 'xs'"
-      recent-pipelines="row.recentPipelines">
-    </overview-pipelines>
+      <!-- Pipelines Section -->
+      <overview-pipelines
+        ng-if="!row.hidePipelines"
+        recent-pipelines="row.recentPipelines">
+      </overview-pipelines>
 
-    <!-- Builds Section -->
-    <overview-builds
-      ng-if="row.state.breakpoint !== 'xs'"
-      build-configs="row.buildConfigs"
-      recent-builds-by-build-config="row.state.recentBuildsByBuildConfig"
-      context="row.state.context"
-      hide-log="row.state.limitWatches">
-    </overview-builds>
+      <!-- Builds Section -->
+      <overview-builds
+        build-configs="row.buildConfigs"
+        recent-builds-by-build-config="row.state.recentBuildsByBuildConfig"
+        context="row.state.context"
+        hide-log="row.state.limitWatches">
+      </overview-builds>
+    </div>
 
   </div><!-- /list-pf-content -->
 </div> <!-- /list-pf-container -->
