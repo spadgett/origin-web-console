@@ -40,7 +40,15 @@ angular.module('openshiftConsole')
     var annotation = $filter('annotation');
 
     var groupReplicaSets = function() {
-      $scope.replicaSetsByDeployment = LabelsService.groupBySelector(replicaSets, deployments, { matchSelector: true });
+      $scope.replicaSetsByDeployment = _.groupBy(replicaSets, function(replicaSet) {
+        var deploymentController = DeploymentsService.getDeploymentOwnerReference(replicaSet);
+        if (!deploymentController) {
+          return '';
+        }
+
+        return deploymentController.name;
+      });
+
       $scope.unfilteredReplicaSets = _.get($scope, ['replicaSetsByDeployment', ''], {});
       LabelFilter.addLabelSuggestionsFromResources($scope.unfilteredReplicaSets, $scope.labelSuggestions);
       LabelFilter.setLabelSuggestions($scope.labelSuggestions);

@@ -187,15 +187,14 @@ angular.module('openshiftConsole')
             }));
 
             // Watch replica sets for this deployment
-            // TODO: Use controller ref
             watches.push(DataService.watch({
               group: 'extensions',
               resource: 'replicasets'
             }, context, function(replicaSetData) {
               var replicaSets = replicaSetData.by('metadata.name');
-              var deploymentSelector = new LabelSelector(deployment.spec.selector);
               replicaSets = _.filter(replicaSets, function(replicaSet) {
-                return deploymentSelector.covers(new LabelSelector(replicaSet.spec.selector));
+                var ownerReferences = _.get(replicaSet, 'metadata.ownerReferences', []);
+                return _.some(ownerReferences, { uid: deployment.metadata.uid });
               });
               $scope.inProgressDeployment = _.chain(replicaSets).filter('status.replicas').size() > 1;
               $scope.replicaSetsForDeployment = DeploymentsService.sortByRevision(replicaSets);

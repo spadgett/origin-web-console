@@ -478,5 +478,13 @@ angular.module("openshiftConsole")
       return DataService.update(resourceGroupVersion, object.metadata.name, request, context);
     };
 
+    DeploymentsService.prototype.getDeploymentOwnerReference = function(replicaSet) {
+      var ownerRefs = _.get(replicaSet, 'metadata.ownerReferences', []);
+      return _.find(ownerRefs, {
+        apiVersion: 'extensions/v1beta1',
+        kind: 'Deployment'
+      });
+    };
+
     return new DeploymentsService();
   });
