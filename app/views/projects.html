@@ -25,9 +25,23 @@
                         <h1>My Projects</h1>
                         <div class="projects-options">
                           <div class="projects-add" ng-if="canCreate">
-                            <a href="create-project" class="btn btn-md btn-primary">
+                            <a href="" ng-click="openCreateProjectDialog()" class="btn btn-md btn-primary">
                               Create Project
                             </a>
+                            <div class="catalog-modal catalog-modal-create-project" ng-if="modals.showCreateProject">
+                              <h4 class="catalog-modal-title">
+                                Create Project
+                              </h4>
+                              <create-project
+                                alerts="alerts"
+                                is-dialog="true"
+                                on-cancel="closeCreateProjectDialog"
+                                redirect-action="closeCreateProjectDialog">
+                              </create-project>
+                              <a href="" class="catalog-modal-close" ng-click="closeCreateProjectDialog()">
+                                <span class="pficon pficon-close"></span>
+                              </a>
+                            </div>
                           </div>
                           <div class="projects-search">
                             <form role="form" class="search-pf has-button">

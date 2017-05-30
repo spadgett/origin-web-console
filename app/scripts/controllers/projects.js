@@ -15,6 +15,7 @@ angular.module('openshiftConsole')
                                               $timeout,
                                               AlertMessageService,
                                               AuthService,
+                                              Constants,
                                               DataService,
                                               KeywordService,
                                               Logger,
@@ -128,6 +129,18 @@ angular.module('openshiftConsole')
         update();
       }));
     });
+
+    $scope.openCreateProjectDialog = function() {
+      if (_.get(Constants, 'ENABLE_TECH_PREVIEW_FEATURE.service_catalog_landing_page')) {
+        _.set($scope, 'modals.showCreateProject', true);
+      } else {
+        $location('create-project');
+      }
+    };
+
+    $scope.closeCreateProjectDialog = function() {
+      _.set($scope, 'modals.showCreateProject', false);
+    };
 
     // Test if the user can submit project requests. Handle error notifications
     // ourselves because 403 responses are expected.
