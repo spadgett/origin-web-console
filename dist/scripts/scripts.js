@@ -6270,8 +6270,8 @@ a.loaded = !0, a.error = b;
 e.unwatchAll(g);
 });
 }));
-} ]), angular.module("openshiftConsole").controller("CreateConfigMapController", [ "$filter", "$routeParams", "$scope", "$window", "AuthorizationService", "DataService", "Navigate", "ProjectsService", function(a, b, c, d, e, f, g, h) {
-c.alerts = {}, c.projectName = b.project, c.breadcrumbs = [ {
+} ]), angular.module("openshiftConsole").controller("CreateConfigMapController", [ "$filter", "$routeParams", "$scope", "$window", "AuthorizationService", "DataService", "Navigate", "NotificationsService", "ProjectsService", function(a, b, c, d, e, f, g, h, i) {
+c.projectName = b.project, c.breadcrumbs = [ {
 title:c.projectName,
 link:"project/" + c.projectName
 }, {
@@ -6279,8 +6279,16 @@ title:"Config Maps",
 link:"project/" + c.projectName + "/browse/config-maps"
 }, {
 title:"Create Config Map"
-} ], h.get(b.project).then(_.spread(function(h, i) {
-return c.project = h, c.breadcrumbs[0].title = a("displayName")(h), e.canI("configmaps", "create", b.project) ? (c.configMap = {
+} ];
+var j = function() {
+h.hideNotification("create-config-map-error");
+}, k = function() {
+d.history.back();
+};
+c.cancel = function() {
+j(), k();
+}, i.get(b.project).then(_.spread(function(d, i) {
+return c.project = d, c.breadcrumbs[0].title = a("displayName")(d), e.canI("configmaps", "create", b.project) ? (c.configMap = {
 apiVersion:"v1",
 kind:"ConfigMap",
 metadata:{
@@ -6288,14 +6296,18 @@ namespace:b.project
 },
 data:{}
 }, void (c.createConfigMap = function() {
-c.createConfigMapForm.$valid && (c.disableInputs = !0, f.create("configmaps", null, c.configMap, i).then(function() {
-d.history.back();
+c.createConfigMapForm.$valid && (j(), c.disableInputs = !0, f.create("configmaps", null, c.configMap, i).then(function() {
+h.addNotification({
+type:"success",
+message:"Config map " + c.configMap.metadata.name + " successfully created."
+}), k();
 }, function(b) {
-c.disableInputs = !1, c.alerts["create-config-map"] = {
+c.disableInputs = !1, h.addNotification({
+id:"create-config-map-error",
 type:"error",
 message:"An error occurred creating the config map.",
 details:a("getErrorDetails")(b)
-};
+});
 }));
 })) :void g.toErrorPage("You do not have authority to create config maps in project " + b.project + ".", "access_denied");
 }));
