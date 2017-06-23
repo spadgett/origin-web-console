@@ -13,8 +13,9 @@
       {{ctrl.selectedBinding.spec.secretName}} <small class="text-muted">&ndash; Secret</small>
     </div>
 
-    <p class="mar-top-lg">
-      <span class="pficon pficon-info"></span> You will need to redeploy your pods for this to take effect.
+    <p ng-if="!(ctrl.appsForBinding(ctrl.selectedBinding.metadata.name)  | size)" class="mar-top-lg">
+      <span class="pficon pficon-info" aria-hidden="true"></span>
+      You will need to redeploy your pods for this to take effect.
     </p>
   </div>
   <div ng-if="ctrl.error">
