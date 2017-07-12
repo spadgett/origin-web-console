@@ -14484,7 +14484,7 @@ verbs:[ "create", "update" ]
 }, {
 group:"extensions",
 resource:"deployments",
-verbs:[ "create", "update" ]
+verbs:[ "update", "delete" ]
 } ],
 deploymentConfigs:[ {
 group:"autoscaling",
@@ -14529,6 +14529,10 @@ resource:"replicasets",
 verbs:[ "update", "delete" ]
 } ],
 replicationControllers:[ {
+group:"autoscaling",
+resource:"horizontalpodautoscalers",
+verbs:[ "create", "update" ]
+}, {
 group:"",
 resource:"replicationcontrollers",
 verbs:[ "update", "delete" ]
@@ -14540,8 +14544,12 @@ verbs:[ "update", "delete" ]
 } ],
 services:[ {
 group:"",
+resource:"routes",
+verbs:[ "create" ]
+}, {
+group:"",
 resource:"services",
-verbs:[ "update", "create", "delete" ]
+verbs:[ "update", "delete" ]
 } ],
 secrets:[ {
 group:"",
