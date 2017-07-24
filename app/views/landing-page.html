@@ -11,6 +11,9 @@
           <overlay-panel show-panel="template" show-close="true" handle-close="templateDialogClosed">
             <process-template-dialog ng-if="template" template="template" on-dialog-closed="templateDialogClosed"></process-template-dialog>
           </overlay-panel>
+          <!-- Use ng-if to avoid remembering state from previous dialogs -->
+          <deploy-image-dialog ng-if="ordering.panelName === 'deployImage'" on-dialog-closed="closeOrderingPanel"></deploy-image-dialog>
+          <from-file-dialog ng-if="ordering.panelName === 'fromFile'" on-dialog-closed="closeOrderingPanel"></from-file-dialog>
           <landing-page base-project-url="project" on-template-selected="templateSelected">
             <landingsearch>
               <catalog-search catalog-items="catalogItems" base-project-url="project"></catalog-search>
@@ -21,7 +24,7 @@
               </div>
             </landingheader>
             <landingbody>
-              <services-view catalog-items="catalogItems" base-project-url="project"></services-view>
+              <services-view catalog-items="catalogItems" base-project-url="project" on-deploy-image-selected="deployImageSelected" on-from-file-selected="fromFileSelected"></services-view>
             </landingbody>
             <landingside>
               <projects-summary base-project-url="project" projects-url="projects" start-tour="startGuidedTour" view-edit-membership="viewMembership" catalog-items="catalogItems"></projects-summary>

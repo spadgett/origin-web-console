@@ -1,4 +1,4 @@
-<overlay-panel show-panel="$ctrl.visible" show-close="true" handle-close="$ctrl.close" ng-if="$ctrl.project">
+<overlay-panel show-panel="true" show-close="true" handle-close="$ctrl.close">
   <pf-wizard
        on-cancel="$ctrl.close()"
        on-finish="$ctrl.close()"
@@ -22,7 +22,7 @@
         <div class="order-service-config order-service-config-single-column">
           <div class="wizard-pf-main-form-contents">
             <form name="$ctrl.importForm">
-              <from-file is-dialog="true" project="$ctrl.project" context="$ctrl.context"></from-file>
+              <from-file is-dialog="true" project="$ctrl.project"></from-file>
             </form>
           </div>
         </div>

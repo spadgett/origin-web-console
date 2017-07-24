@@ -1,4 +1,4 @@
-<overlay-panel show-panel="$ctrl.visible" show-close="true" handle-close="$ctrl.close">
+<overlay-panel show-panel="true" show-close="true" handle-close="$ctrl.close">
   <pf-wizard
        on-cancel="$ctrl.close()"
        on-finish="$ctrl.close()"
@@ -19,7 +19,7 @@
          substeps="false"
          ok-to-nav-away="true"
          allow-click-nav="false"
-         next-enabled="!$ctrl.deployForm.$invalid">
+         next-enabled="$ctrl.deployForm.$valid || $ctrl.deployImageNewAppCreated">
       <div class="wizard-pf-main-inner-shadow-covers">
         <div class="order-service-config order-service-config-single-column">
           <div class="wizard-pf-main-form-contents">

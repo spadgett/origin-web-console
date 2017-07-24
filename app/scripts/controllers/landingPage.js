@@ -67,6 +67,18 @@ angular.module('openshiftConsole')
       });
     };
 
+    $scope.closeOrderingPanel = function() {
+      _.set($scope, 'ordering.panelName', '');
+    };
+
+    $scope.deployImageSelected = function() {
+      _.set($scope, 'ordering.panelName', 'deployImage');
+    };
+
+    $scope.fromFileSelected = function() {
+      _.set($scope, 'ordering.panelName', 'fromFile');
+    };
+
     $scope.templateDialogClosed = function() {
       addTemplateToRecentlyViewed();
       $scope.template = null;
