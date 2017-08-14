@@ -1,0 +1,92 @@
+//
+//  Navigation Bar for use with vertical navigation
+//  -----------------------------------------------
+
+#header-logo {
+  background-image: url('@{image-path}/logo-origin-thin.svg');
+  background-repeat: no-repeat;
+  background-position: center left;
+  // Use initial logo dimensions; or set a width and/or height (eg - background-size: auto 36px)
+  // Max logo dimensions width 230px / height 36px
+  background-size: initial;
+  height: @navbar-os-header-mobile - 1; // 1px border-bottom on navbar-os-mobile
+  width: 230px;
+}
+
+.navbar-pf-vertical {
+  background-color: @navbar-os-bg-color;
+  border-bottom: 1px solid @project-bar-border-color;
+  border-top: none;
+  min-height: 0;
+  @media(min-width: @screen-xs-max) {
+    padding-left: 20px;
+  }
+  .dropdown-menu:after {
+    border: 6px solid transparent;
+    border-bottom-color: #fff;
+    border-top-width: 0;
+    content: "";
+    display: block;
+    height: 0;
+    position: absolute;
+    right: 9px;
+    top: -6px;
+    vertical-align: middle;
+    width: 0;
+  }
+  .layout-pf-fixed .tech-preview & {
+    top: @tech-preview-banner-height;
+  }
+  .navbar-brand {
+    padding: 0;
+    @media(min-width: @screen-sm-min) {
+      padding-bottom: 10px;
+      padding-top: 10px;
+    }
+  }
+  .navbar-header {
+    float: left;
+  }
+  .navbar-iconic {
+    float: right;
+    margin: 0;
+    @media(min-width: @screen-sm-min) {
+      margin-right: @navbar-header-right-margin;
+    }
+    > li {
+      display: none;
+      float: left;
+      @media(min-width: @screen-sm-min) {
+        display: block;
+      }
+    }
+    .nav-item-iconic {
+      line-height: normal; // align text and icon
+      padding-right: 20px;
+      .username {
+        display: inline-block;
+        font-weight: 300;
+        max-width: 200px; // enable truncation
+        padding-right: 2px;
+        vertical-align: top; // align text and icon
+      }
+    }
+  }
+  .navbar-toggle {
+    margin: 3px 5px;
+    .icon-bar {
+      width: 20px;
+    }
+    @media(min-width: @screen-sm-min) {
+      margin: 13px 15px;
+      .icon-bar {
+        width: 22px;
+      }
+    }
+  }
+}
+
+.navbar-toggle:focus {
+  color: @navbar-pf-vertical-navbar-toggle-icon-bar-hover-bg; // for Firefox outline
+  .tab-focus();
+}
