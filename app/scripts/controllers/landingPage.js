@@ -63,11 +63,17 @@ angular.module('openshiftConsole')
     $scope.templateSelected = function(selectedTemplate) {
       // `selectedTemplate` might be a parial object (metadata only). If necessary, load the complete template object.
       loadCompleteTemplate(selectedTemplate).then(function(template) {
+        _.set($scope, 'ordering.panelName', 'template');
         $scope.template = template;
       });
     };
 
     $scope.closeOrderingPanel = function() {
+      if ($scope.template) {
+        addTemplateToRecentlyViewed();
+        $scope.template = null;
+      }
+
       _.set($scope, 'ordering.panelName', '');
     };
 
@@ -77,11 +83,6 @@ angular.module('openshiftConsole')
 
     $scope.fromFileSelected = function() {
       _.set($scope, 'ordering.panelName', 'fromFile');
-    };
-
-    $scope.templateDialogClosed = function() {
-      addTemplateToRecentlyViewed();
-      $scope.template = null;
     };
 
     AuthService.withUser().then(function() {
