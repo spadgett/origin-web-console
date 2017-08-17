@@ -124,6 +124,9 @@
       position: fixed;
       right: @log-scroll-top-offset-right;
       top: (@log-scroll-offset-top + @navbar-os-header-mobile + @project-bar-height-mobile);
+      .tech-preview & {
+        top: (@log-scroll-offset-top + @navbar-os-header-mobile + @project-bar-height-mobile + @tech-preview-banner-height);
+      }
       @media (min-width: @screen-sm-min) {
         top: (@log-scroll-offset-top + @navbar-os-header-desktop + @project-bar-height-desktop);
         .tech-preview & {
