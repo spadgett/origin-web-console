@@ -6,11 +6,12 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a href="/" class="navbar-brand">
-      <img class="navbar-brand-name" src="./../images/logo-origin-thin.svg" alt="OpenShift Origin">
+    <!-- JS click handler for #openshift-logo -->
+    <a class="navbar-brand" id="openshift-logo" href="./">
+      <div id="header-logo"></div>
     </a>
   </div>
-  <navbar-utility class="hidden-xs"></navbar-utility>
+  <navbar-utility></navbar-utility>
 </nav>
 
 <div ng-show="projectName" class="project-bar">
@@ -41,11 +42,6 @@
       <li ng-if-end role="menuitem"><a href="" ng-click="showOrderingPanel('fromFile')">Import YAML / JSON</a></li>
     </ul>
   </div>
-  <div row
-    extension-point
-    extension-name="nav-system-status-mobile"
-    extension-types="dom"
-    class="navbar-flex-btn hide-if-empty"></div>
 </div> <!-- /project-bar -->
 
 
