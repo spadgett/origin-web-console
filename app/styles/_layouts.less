@@ -7,13 +7,25 @@ html,body {
 }
 .layout-pf.layout-pf-fixed body {
   padding-top: @navbar-os-header-mobile;
+  &.tech-preview {
+    padding-top: (@navbar-os-header-mobile + @tech-preview-banner-height);
+  }
   @media(min-width: @screen-sm-min) {
     padding-top: @navbar-os-header-desktop;
+    &.tech-preview {
+      padding-top: (@navbar-os-header-desktop + @tech-preview-banner-height);
+    }
   }
   &.has-project-bar {
     padding-top: (@navbar-os-header-mobile + @project-bar-height-mobile);
+    &.tech-preview {
+      padding-top: (@navbar-os-header-mobile + @project-bar-height-mobile + @tech-preview-banner-height);
+    }
     @media(min-width: @screen-sm-min) {
       padding-top: (@navbar-os-header-desktop + @project-bar-height-desktop);
+      &.tech-preview {
+        padding-top: (@navbar-os-header-desktop + @project-bar-height-desktop + @tech-preview-banner-height);
+      }
     }
   }
 }
@@ -32,14 +44,8 @@ html,body {
     margin-bottom: @grid-gutter-width / 2;
   }
 }
-.layout-pf-fixed .tech-preview & {
-  // top: @tech-preview-banner-height;
-}
 .console-os {
   background-color: @body-bg;
-  &.tech-preview .top-header {
-    height: @navbar-os-header-mobile + @tech-preview-banner-height;
-  }
   .chromeless {
     // Prevent chromeless log-viewer from having margin or padding
     .middle-content,
@@ -47,10 +53,6 @@ html,body {
       margin:0 !important;
       padding:0 !important;
     }
-  }
-  .top-header {
-    position: relative;
-    height: @navbar-os-header-mobile;
   }
   .wrap {
     height: 100%;
@@ -69,15 +71,6 @@ html,body {
       h1 {
         margin: 10px 0 20px;
       }
-      .nav-pf-vertical {
-        top: @navbar-os-header-mobile;
-        .nav-vertical-primary {
-          display: none;
-        }
-        @media(min-width: @screen-sm-min) {
-          display: none;
-        }
-      }
     }
   }
 }
@@ -87,21 +80,4 @@ html,body {
 }
 .surface-shaded {
   background-color: @panel-shaded;
-}
-
-@media (min-width: @screen-sm-min) {
-  .console-os {
-    &.tech-preview {
-      .top-header {
-        height: @navbar-os-header-desktop + @tech-preview-banner-height;
-      }
-      .wrap {
-        margin-top: -(@navbar-os-header-desktop + @tech-preview-banner-height); /* top offset height */
-        padding-top: @navbar-os-header-desktop + @tech-preview-banner-height; /* top offset height */
-      }
-    }
-    .top-header {
-      height: @navbar-os-header-desktop; /* top offset height */
-    }
-  }
 }

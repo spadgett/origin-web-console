@@ -271,4 +271,11 @@
       background-color: @navbar-pf-vertical-color;
     }
   }
+
+  .tech-preview & {
+    top: @navbar-os-header-mobile + @tech-preview-banner-height;
+    @media (min-width: @screen-sm-min) {
+      top: @navbar-os-header-desktop + @tech-preview-banner-height;
+    }
+  }
 }

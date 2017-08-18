@@ -35,14 +35,13 @@
     <link rel="stylesheet" type="text/css" href="styles/extensions.css">
     <style type="text/css">
 
-
     </style>
   </head>
-<body class="console-os">
+  <body class="console-os">
     <!-- Add your site or application content here -->
-
+    <ng-include ng-if="globalTechPreviewIndicator" src="'views/directives/header/_tech-preview-banner.html'" class="tech-preview-banner"></ng-include>
+    <project-header></project-header>
     <toast-notifications></toast-notifications>
-    <project-header class="top-header"></project-header>
     <div ng-view>
       <!-- Include default simple nav and shaded background as a placeholder until API discovery finishes -->
       <!-- <nav class="navbar navbar-pf-vertical top-header" role="navigation">
