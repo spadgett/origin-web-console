@@ -39,7 +39,7 @@
   </head>
   <body class="console-os">
     <!-- Add your site or application content here -->
-    <ng-include ng-if="globalTechPreviewIndicator" src="'views/directives/header/_tech-preview-banner.html'" class="tech-preview-banner"></ng-include>
+    <p ng-if="globalTechPreviewIndicator" class="tech-preview-banner">Technology preview is enabled</p>
     <project-header></project-header>
     <toast-notifications></toast-notifications>
     <div ng-view>
