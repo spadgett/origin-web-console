@@ -1,76 +1,16 @@
 //
 // Layouts (substructure)
 // ------------------------------------
-html,body {
-  margin:0;
-  padding:0;
-}
-.layout-pf.layout-pf-fixed body {
-  padding-top: @navbar-os-header-mobile;
-  &.tech-preview {
-    padding-top: (@navbar-os-header-mobile + @tech-preview-banner-height);
-  }
-  @media(min-width: @screen-sm-min) {
-    padding-top: @navbar-os-header-desktop;
-    &.tech-preview {
-      padding-top: (@navbar-os-header-desktop + @tech-preview-banner-height);
-    }
-  }
-  &.has-project-bar {
-    padding-top: (@navbar-os-header-mobile + @project-bar-height-mobile);
-    &.tech-preview {
-      padding-top: (@navbar-os-header-mobile + @project-bar-height-mobile + @tech-preview-banner-height);
-    }
-    @media(min-width: @screen-sm-min) {
-      padding-top: (@navbar-os-header-desktop + @project-bar-height-desktop);
-      &.tech-preview {
-        padding-top: (@navbar-os-header-desktop + @project-bar-height-desktop + @tech-preview-banner-height);
-      }
-    }
-  }
-}
-.layout-pf.layout-pf-fixed .container-pf-nav-pf-vertical {
-  padding-left: 0;
-  padding-right: 0;
-  position: relative;
-  @media(max-width: @screen-xs-max) {
-    // Remove left margin for mobile nav. The menu opens over the content.
-    margin-left: 0;
-  }
-  &.collapsed {
-    margin-left: 75px;
-  }
-  .middle-header {
-    margin-bottom: @grid-gutter-width / 2;
-  }
-}
+
 .console-os {
   background-color: @body-bg;
-  .chromeless {
-    // Prevent chromeless log-viewer from having margin or padding
-    .middle-content,
-    .middle-header {
-      margin:0 !important;
-      padding:0 !important;
-    }
+  .view {
+    height: 100%;
   }
   .wrap {
     height: 100%;
-    // Makes container extend full height for pages with bg color
-    .middle-content {
-      > .container {
-        height: 100%;
-        min-height: calc(100vh ~"-" @navbar-os-header-mobile);
-        @media(min-width: @screen-sm-min) {
-          min-height: calc(100vh ~"-" @navbar-os-header-desktop);
-        }
-      }
-    }
-    &.no-sidebar {
-      // .surface-shaded;
-      h1 {
-        margin: 10px 0 20px;
-      }
+    &.no-sidebar h1 {
+      margin: 10px 0 20px;
     }
   }
 }
@@ -78,6 +18,51 @@ html,body {
   background-color: @panel-light;
   border-bottom: 1px solid @page-header-border-color;
 }
+.layout-pf.layout-pf-fixed {
+  min-height: 0;
+  height: 100%;
+  body {
+    height: 1px;
+    padding-top: @navbar-os-header-mobile;
+    &.tech-preview {
+      padding-top: (@navbar-os-header-mobile + @tech-preview-banner-height);
+    }
+    @media(min-width: @screen-sm-min) {
+      padding-top: @navbar-os-header-desktop;
+      &.tech-preview {
+        padding-top: (@navbar-os-header-desktop + @tech-preview-banner-height);
+      }
+    }
+    &.has-project-bar {
+      padding-top: (@navbar-os-header-mobile + @project-bar-height-mobile);
+      &.tech-preview {
+        padding-top: (@navbar-os-header-mobile + @project-bar-height-mobile + @tech-preview-banner-height);
+      }
+      @media(min-width: @screen-sm-min) {
+        padding-top: (@navbar-os-header-desktop + @project-bar-height-desktop);
+        &.tech-preview {
+          padding-top: (@navbar-os-header-desktop + @project-bar-height-desktop + @tech-preview-banner-height);
+        }
+      }
+    }
+  }
+  .container-pf-nav-pf-vertical {
+    padding-left: 0;
+    padding-right: 0;
+    position: relative;
+    @media(max-width: @screen-xs-max) {
+      // Remove left margin for mobile nav. The menu opens over the content.
+      margin-left: 0;
+    }
+    &.collapsed {
+      margin-left: 75px;
+    }
+    .middle-header {
+      margin-bottom: @grid-gutter-width / 2;
+    }
+  }
+}
 .surface-shaded {
   background-color: @panel-shaded;
+  min-height: 100%;
 }
