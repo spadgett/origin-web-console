@@ -138,7 +138,7 @@ angular.module('openshiftConsole')
       }
     };
   })
-  .directive('projectHeader',
+  .directive('header',
     function(
       $filter,
       $location,
@@ -156,7 +156,7 @@ angular.module('openshiftConsole')
 
     return {
       restrict: 'EA',
-      templateUrl: 'views/directives/header/project-header.html',
+      templateUrl: 'views/directives/header/header.html',
       link: function($scope, $elem) {
         $scope.toggleNav = function() {
           var collapsed = _.get($rootScope, 'nav.collapsed');
@@ -301,13 +301,6 @@ angular.module('openshiftConsole')
       restrict: 'E',
       transclude: true,
       templateUrl: 'views/directives/header/_navbar-utility-mobile.html'
-    };
-  })
-  .directive('defaultHeader', function() {
-    return {
-      restrict: 'E',
-      transclude: true,
-      templateUrl: 'views/directives/header/default-header.html'
     };
   })
   // TODO: rename this :)
