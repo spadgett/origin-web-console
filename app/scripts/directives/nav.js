@@ -138,7 +138,7 @@ angular.module('openshiftConsole')
       }
     };
   })
-  .directive('header',
+  .directive('oscHeader',
     function(
       $filter,
       $location,
