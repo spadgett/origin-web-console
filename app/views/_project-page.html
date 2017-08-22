@@ -1,9 +1,0 @@
-<div ng-class="{'show-sidebar-right': renderOptions.showEventsSidebar}">
-  <div ng-transclude id="container-main">
-  </div>
-  <div ng-if="renderOptions.showEventsSidebar && !renderOptions.collapseEventsSidebar" class="sidebar-right sidebar-pf sidebar-pf-right">
-    <div class="right-section">
-      <events-sidebar ng-if="projectContext" project-context="projectContext" collapsed="renderOptions.collapseEventsSidebar"></events-sidebar>
-    </div>
-  </div>
-</div>
