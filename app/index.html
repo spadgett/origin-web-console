@@ -42,7 +42,7 @@
     <p ng-if="globalTechPreviewIndicator" ng-cloak class="tech-preview-banner">Technology preview is enabled</p>
     <osc-header></osc-header>
     <toast-notifications></toast-notifications>
-    <div ng-view class="view">
+    <div ng-view class="view container-pf-nav-pf-vertical" ng-class="{ 'collapsed-nav': nav.collapsed }">
       <!-- Include default simple nav and shaded background as a placeholder until API discovery finishes -->
       <!-- <nav class="navbar navbar-pf-vertical top-header" role="navigation">
         <div row>

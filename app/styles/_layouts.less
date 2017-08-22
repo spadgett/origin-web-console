@@ -43,19 +43,19 @@
         &.tech-preview {
           padding-top: (@navbar-os-header-desktop + @project-bar-height-desktop + @tech-preview-banner-height);
         }
+        .container-pf-nav-pf-vertical {
+          margin-left: 200px;
+          &.collapsed-nav {
+            margin-left: 75px;
+          }
+        }
       }
     }
   }
   .container-pf-nav-pf-vertical {
-    padding-left: 0;
-    padding-right: 0;
-    position: relative;
-    @media(max-width: @screen-xs-max) {
-      // Remove left margin for mobile nav. The menu opens over the content.
-      margin-left: 0;
-    }
-    &.collapsed {
-      margin-left: 75px;
+    &,
+    &.collapsed-nav {
+      margin-left: 0; // override PatternFly default
     }
     .middle-header {
       margin-bottom: @grid-gutter-width / 2;

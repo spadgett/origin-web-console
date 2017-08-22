@@ -19,31 +19,36 @@ angular.module('openshiftConsole')
       restrict: 'E',
       templateUrl: 'views/_sidebar.html',
       controller: function($scope) {
-        var path = $location.path().replace("/project/" + $scope.projectName, "");
+        var path;
         var hoverDelay = 300;
         var hideDelay = hoverDelay + 200;
 
         $scope.navItems = Constants.PROJECT_NAVIGATION;
         $scope.sidebar = {};
 
-        $scope.activePrimary = _.find($scope.navItems, function(primaryItem) {
-          if (itemMatchesPath(primaryItem, path)) {
-            $scope.activeSecondary = null;
-            return true;
-          }
-
-          // Check if there is a secondary nav item that is active
-          return _.some(primaryItem.secondaryNavSections, function(secondarySection) {
-            var activeSecondary = _.find(secondarySection.items, function(secondaryItem) {
-              return itemMatchesPath(secondaryItem, path);
-            });
-            if (activeSecondary) {
-              $scope.activeSecondary = activeSecondary;
+        var updateActive = function() {
+          $scope.activePrimary = _.find($scope.navItems, function(primaryItem) {
+            path = $location.path().replace("/project/" + $scope.projectName, "");
+            if (itemMatchesPath(primaryItem, path)) {
+              $scope.activeSecondary = null;
               return true;
             }
-            return false;
+
+            // Check if there is a secondary nav item that is active
+            return _.some(primaryItem.secondaryNavSections, function(secondarySection) {
+              var activeSecondary = _.find(secondarySection.items, function(secondaryItem) {
+                return itemMatchesPath(secondaryItem, path);
+              });
+              if (activeSecondary) {
+                $scope.activeSecondary = activeSecondary;
+                return true;
+              }
+              return false;
+            });
           });
-        });
+        };
+        updateActive();
+        $scope.$on('$routeChangeSuccess', updateActive);
 
         $scope.navURL = function(href) {
           if (!href) {
