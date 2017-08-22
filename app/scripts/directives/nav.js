@@ -284,13 +284,6 @@ angular.module('openshiftConsole')
       }
     };
   })
-  .directive('projectPage', function() {
-    return {
-      restrict: 'E',
-      transclude: true,
-      templateUrl: 'views/_project-page.html'
-    };
-  })
   .directive('navbarUtility', function() {
     return {
       restrict: 'E',

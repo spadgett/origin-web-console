@@ -4,10 +4,7 @@
 
 .right-section {
   height: 100%;
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: @sidebar-right-width-sm;
+  position: fixed;
   .right-container {
     align-items: flex-start;
     bottom: 0;
@@ -75,10 +72,9 @@
 .show-sidebar-right {
   @media (min-width: @screen-sm-min) {
     display: flex;
-    height: auto !important;
     min-height: 100%;
   }
-  #container-main {
+  .middle {
     flex: 1 1 auto;
   }
   .sidebar-right {
@@ -95,6 +91,7 @@
       flex: 0 0 @sidebar-right-width-xlg;
     }
     .right-section {
+      width: @sidebar-right-width-sm;
       @media (min-width: @screen-md-min) {
         width: @sidebar-right-width-md;
       }
