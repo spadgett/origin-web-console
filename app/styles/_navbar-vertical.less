@@ -21,6 +21,19 @@
   @media(min-width: @screen-xs-max) {
     padding-left: 20px;
   }
+  .dropdown-menu:after {
+    border: 6px solid transparent;
+    border-bottom-color: #fff;
+    border-top-width: 0;
+    content: "";
+    display: block;
+    height: 0;
+    position: absolute;
+    right: 9px;
+    top: -6px;
+    vertical-align: middle;
+    width: 0;
+  }
   .layout-pf-fixed .tech-preview & {
     top: @tech-preview-banner-height;
   }
@@ -48,13 +61,14 @@
       }
     }
     .nav-item-iconic {
+      line-height: normal; // align text and icon
       padding-right: 20px;
       .username {
         display: inline-block;
         font-weight: 300;
-        line-height: 1.2; // prevent clipping of descenders
         max-width: 200px; // enable truncation
         padding-right: 2px;
+        vertical-align: top; // align text and icon
       }
     }
   }
