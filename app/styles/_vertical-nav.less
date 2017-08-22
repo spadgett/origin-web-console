@@ -59,16 +59,13 @@
         height: auto;
         padding: 10px 15px;
       }
-      // remove margin from icon that causes shifting when toggled
       .fa, .pficon {
         font-size: (@font-size-base + 2);
-        margin-right: 0;
         @media(min-width: @screen-sm-min) {
           font-size: (@font-size-base + 5);
         }
       }
       .list-group-item-value {
-        margin-left: 10px;
         text-decoration: none !important;
       }
     }
@@ -91,9 +88,6 @@
     // right arrow alignment
     > a:after {
       font-size: 14px;
-      top: initial;
-      padding: 0;
-      line-height: inherit;
     }
   }
   .nav-pf-secondary-nav {
