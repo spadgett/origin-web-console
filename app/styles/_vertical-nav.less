@@ -69,6 +69,13 @@
         text-decoration: none !important;
       }
     }
+    // padding aligns arrow vertically
+    &.secondary-nav-item-pf > a:after {
+      padding: 16px 0;
+      @media(max-width: @screen-xs-max) {
+        padding: 8px 0;
+      }
+    }
   }
   &.collapsed {
     .list-group-item.secondary-nav-item-pf:hover,
