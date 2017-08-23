@@ -4,7 +4,7 @@
         <breadcrumbs breadcrumbs="breadcrumbs"></breadcrumbs>
         <alerts alerts="alerts"></alerts>
         <div ng-if="!updated.resource" class="pad-top-md">Loading...</div>
-        <div ng-if="updated.resource" class="pad-top-md">
+        <div ng-if="updated.resource">
           <h1 class="truncate">Edit <span class="hidden-xs">{{updated.resource.kind | humanizeKind : true}}</span> {{updated.resource.metadata.name}}</h1>
           <parse-error error="error" ng-if="error"></parse-error>
 

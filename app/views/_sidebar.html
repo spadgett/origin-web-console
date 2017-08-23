@@ -19,7 +19,7 @@
         ng-mouseenter="onMouseEnter(primaryItem)"
         ng-mouseleave="onMouseLeave(primaryItem)"
         class="list-group-item">
-        <a ng-if="primaryItem.href" ng-href="{{navURL(primaryItem.href)}}">
+        <a ng-if="primaryItem.href" ng-href="{{navURL(primaryItem.href)}}" ng-click="nav.showMobileNav = false;">
           <span class="{{primaryItem.iconClass}}"></span> <span class="list-group-item-value">{{primaryItem.label}}</span>
         </a>
         <a
