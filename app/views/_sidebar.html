@@ -1,7 +1,7 @@
 <div class="nav-pf-vertical nav-pf-vertical-with-sub-menus"
   ng-class="{
     collapsed: nav.collapsed && !isMobile,
-    hidden: !nav.showMobileNav && isMobile,
+    'hide-mobile-nav': !nav.showMobileNav && isMobile,
     'hover-secondary-nav-pf': sidebar.secondaryOpen && !isMobile,
     'show-mobile-nav': nav.showMobileNav && isMobile,
     'show-mobile-secondary': nav.showMobileNav && sidebar.showMobileSecondary && isMobile
