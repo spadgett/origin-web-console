@@ -41,12 +41,16 @@
   }
   .container-pf-nav-pf-vertical {
     height: 100%;
+    transition: margin-left .1s ease-in-out;
     &,
     &.collapsed-nav {
       margin-left: 0; // override PatternFly default
     }
     .middle-header {
       margin-bottom: @grid-gutter-width / 2;
+    }
+    .view {
+      height: 100%;
     }
   }
 }
