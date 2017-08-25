@@ -235,7 +235,6 @@ angular.module('openshiftConsole')
         };
 
         $scope.$on('$routeChangeSuccess', function() {
-          console.log('$routeChangeSuccess');
           var projectName = $routeParams.project;
           if ($scope.projectName === projectName) {
             // The project hasn't changed.
