@@ -11,9 +11,10 @@ angular.module('openshiftConsole')
           var liObj = {
             type: 'dom',
             node: [
-              '<li>',
+              '<li class="list-group-item">',
               '<a href="' + _.escape(app.href) + '">',
-              '<span class="' + _.escape(app.iconClass) + ' fa-fw" aria-hidden="true"></span> ' + _.escape(app.title),
+              '<span class="' + _.escape(app.iconClass) + ' fa-fw" aria-hidden="true"></span> ',
+              '<span class="list-group-item-value">' + _.escape(app.title) + '</span>',
               '</a>',
               '</li>'
             ].join('')

@@ -314,11 +314,22 @@ angular.module('openshiftConsole')
       }
     };
   })
-  .directive('navbarUtilityMobile', function() {
+  .directive('navbarUtilityMobile', function($timeout) {
     return {
       restrict: 'E',
       transclude: true,
-      templateUrl: 'views/directives/header/_navbar-utility-mobile.html'
+      templateUrl: 'views/directives/header/_navbar-utility-mobile.html',
+      link: function($scope, $element) {
+        $timeout(function() {
+          // Add necessary Patternfly classes to the elements. We need to do this
+          // in JavaScript to maintain compatibility with older extensions.
+          var menuItems = $element.find('li');
+          menuItems.addClass('list-group-item');
+          menuItems.find('a').contents().filter(function() {
+            return this.nodeType === 3 && $.trim(this.nodeValue).length;
+          }).wrap('<span class="list-group-item-value"/>');
+        });
+      }
     };
   })
   // TODO: rename this :)
