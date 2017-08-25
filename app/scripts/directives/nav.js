@@ -150,7 +150,6 @@ angular.module('openshiftConsole')
       $rootScope,
       $routeParams,
       $timeout,
-      AuthService,
       AuthorizationService,
       Constants,
       ProjectsService,
@@ -168,6 +167,7 @@ angular.module('openshiftConsole')
       templateUrl: 'views/directives/header/header.html',
       link: function($scope, $elem) {
         var MAX_PROJETS_TO_DISPLAY = 100;
+        $scope.project = projects[ $routeParams.project ];
 
         $scope.toggleNav = function() {
           var collapsed = _.get($rootScope, 'nav.collapsed');
@@ -234,59 +234,45 @@ angular.module('openshiftConsole')
           });
         };
 
-        var init = function() {
-          updateProjects().then(function() {
-            $scope.project = projects[ $routeParams.project ];
-            updateOptions();
-          });
+        $scope.$on('$routeChangeSuccess', function() {
+          console.log('$routeChangeSuccess');
+          var projectName = $routeParams.project;
+          if ($scope.projectName === projectName) {
+            // The project hasn't changed.
+            return;
+          }
 
-          $scope.$on('$routeChangeSuccess', function() {
-            var projectName = $routeParams.project;
-            if ($scope.projectName === projectName) {
-              // The project hasn't changed.
-              return;
-            }
-            if($routeParams.view === "chromeless") {
-              $scope.chromeless = true;
-            }
+          $scope.projectName = projectName;
+          if($routeParams.view === "chromeless") {
+            $scope.chromeless = true;
+          }
 
-            if (projectName && !$scope.chromeless) {
-              $('body').addClass('has-project-bar');
-              // Check if the user can add to project after switching projects.
-              // Assume false until the request completes.
-              $scope.canIAddToProject = false;
-              // Make sure we have project rules before we check canIAddToProject or we get the wrong value.
-              // FIXME: We are not requesting this twice, here and in ProjectService
-              // FIXME: AuthorizationService should not cache the wrong value before the rules load
-              AuthorizationService.getProjectRules(projectName).then(function() {
-                // Make sure the user hasn't switched projects while the request was still in flight.
-                if ($scope.projectName !== projectName) {
-                  return;
-                }
+          if (projectName && !$scope.chromeless) {
+            $('body').addClass('has-project-bar');
+            // Check if the user can add to project after switching projects.
+            // Assume false until the request completes.
+            $scope.canIAddToProject = false;
+            // Make sure we have project rules before we check canIAddToProject or we get the wrong value.
+            // FIXME: We are not requesting this twice, here and in ProjectService
+            // FIXME: AuthorizationService should not cache the wrong value before the rules load
+            AuthorizationService.getProjectRules(projectName).then(function() {
+              // Make sure the user hasn't switched projects while the request was still in flight.
+              if ($scope.projectName !== projectName) {
+                return;
+              }
 
-                $scope.canIAddToProject = AuthorizationService.canIAddToProject(projectName);
-              });
-            } else {
-              $('body').removeClass('has-project-bar');
-            }
+              $scope.canIAddToProject = AuthorizationService.canIAddToProject(projectName);
+            });
 
-            // TODO: relist projects? Probably better not to for cluster admins
-            // that might have hundreds of projects. But we would want to update
-            // the dropdown at least when the user navigates to the project list,
-            // and we have an updated list.
             updateProjects().then(function() {
               $scope.projectName = projectName;
               $scope.project = _.get(projects, [ projectName ]);
               updateOptions();
             });
-          });
-        };
-
-        if (AuthService.isLoggedIn()) {
-          init();
-        } else {
-          AuthService.onUserChanged(init);
-        }
+          } else {
+            $('body').removeClass('has-project-bar');
+          }
+        });
 
         select
           .selectpicker({
