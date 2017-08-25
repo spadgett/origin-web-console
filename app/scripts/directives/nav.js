@@ -323,11 +323,52 @@ angular.module('openshiftConsole')
         $timeout(function() {
           // Add necessary Patternfly classes to the elements. We need to do this
           // in JavaScript to maintain compatibility with older extensions.
+
+          // Before:
+          //   <li>
+          //     <a href=""><span class="fa fa-dashboard"> Dashboard</a>
+          //   </li>
+          //
+          // After:
+          //   <li class="list-group-item">
+          //     <a href=""><span class="fa fa-dashboard"> <span class="list-group-item-value">Dashboard</span></a>
+          //   </li>
+
+          // Add `list-group-item` to `li` elements.
           var menuItems = $element.find('li');
           menuItems.addClass('list-group-item');
-          menuItems.find('a').contents().filter(function() {
-            return this.nodeType === 3 && $.trim(this.nodeValue).length;
-          }).wrap('<span class="list-group-item-value"/>');
+
+          var menuItemByHref = {};
+
+          menuItems.each(function(i, menuItem) {
+            var links = $(menuItem).find('a');
+
+            // Remember the menu item for each link so we can set active
+            // styles. Assumes href is unique for each menu item.
+            links.each(function(j, link) {
+              if (link.href) {
+                menuItemByHref[link.href] = menuItem;
+              }
+            });
+
+            // Add `list-group-item-value` to the link text, but don't wrap the icons.
+            links.contents().filter(function() {
+              // Filter for non-empty text nodes (node type 3).
+              // https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
+              return this.nodeType === 3 && $.trim(this.nodeValue).length;
+            }).wrap('<span class="list-group-item-value"/>');
+          });
+
+          var updateActive = function() {
+            menuItems.removeClass('active');
+            var menuItem = menuItemByHref[window.location.href];
+            if (menuItem) {
+              $(menuItem).addClass('active');
+            }
+          };
+
+          updateActive();
+          $scope.$on('$routeChangeSuccess', updateActive);
         });
       }
     };
