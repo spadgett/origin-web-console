@@ -5,11 +5,6 @@
 // Always show system-status if it exists
 [extension-name="nav-system-status"] {
   display: block !important;
-  .nav-item-iconic {
-    @media(max-width: @screen-xs-max) {
-      padding: 10px 15px 10px 5px !important;
-    }
-  }
 }
 
 .status-issue {
@@ -22,7 +17,7 @@
   // 900px is the minimum required to display the status-issue description
   // under the following conditions:
   //   * #header-logo with width of 320px (OCP);
-  //   * a username that exceeds 200px in width
+  //   * a username that exceeds the max width
   @media(min-width: 900px) {
     display: inline;
   }
