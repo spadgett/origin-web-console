@@ -1,18 +1,10 @@
 <ul class="nav navbar-nav navbar-right navbar-iconic">
-  <li>
-    <notification-counter></notification-counter>
-  </li>
   <li
     extension-point
     extension-name="nav-system-status"
     extension-types="dom"></li>
 
-  <li class="drawer-pf-trigger">
-    <a class="nav-item-iconic">
-      <span class="fa fa-bell" title="Notifications"></span>
-      <span class="badge"> </span><!-- in order to show the empty badge this requires a space, otherwise add a value -->
-    </a>
-  </li>
+  <notification-counter></notification-counter>
 
   <li ng-if="launcherApps.length > 0">
     <pf-application-launcher items="launcherApps" is-list="true"></pf-application-launcher>
