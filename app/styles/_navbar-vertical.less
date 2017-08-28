@@ -53,6 +53,13 @@
     @media(min-width: @screen-sm-min) {
       margin-right: @navbar-header-right-margin;
     }
+    .drawer-pf-trigger {
+      display: block;
+      float: left;
+      a {
+        display: block;
+      }
+    }
     .dropdown .nav-item-iconic {
       padding-right: 20px;
     }
@@ -60,10 +67,6 @@
       display: none;
       float: left;
       @media(min-width: @screen-sm-min) {
-        display: block;
-      }
-      // always show the notification drawer icon
-      &.drawer-pf-trigger {
         display: block;
       }
     }
