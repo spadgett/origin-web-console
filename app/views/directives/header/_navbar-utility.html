@@ -4,7 +4,7 @@
     extension-name="nav-system-status"
     extension-types="dom"></li>
 
-  <notification-counter></notification-counter>
+  <notification-counter ng-hide="chromeless"></notification-counter>
 
   <li ng-if="launcherApps.length > 0">
     <pf-application-launcher items="launcherApps" is-list="true"></pf-application-launcher>
