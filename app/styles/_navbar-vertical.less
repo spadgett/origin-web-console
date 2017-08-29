@@ -50,6 +50,7 @@
     float: left;
   }
   .navbar-iconic {
+    display: flex;
     float: right;
     margin: 0;
     @media(min-width: @screen-sm-min) {
@@ -66,8 +67,7 @@
     }
 
     .drawer-pf-trigger {
-      display: block;
-      float: left;
+      display: inline-block; // workaround for Safari bug
       a {
         display: block;
       }
@@ -77,9 +77,8 @@
     }
     > li {
       display: none;
-      float: left;
       @media(min-width: @screen-sm-min) {
-        display: block;
+        display: inline-block; // workaround for Safari bug
       }
     }
     .nav-item-iconic {
