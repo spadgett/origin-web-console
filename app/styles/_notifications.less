@@ -9,10 +9,10 @@
 notification-drawer-wrapper {
   .drawer-pf {
     height: calc(~"100vh - 80px"); //to create a 20px offset bottom
-    top: @navbar-os-header-desktop - 10;
+    top: @navbar-os-header-height-desktop - 10;
     z-index: @zindex-navbar-fixed + 1; // was 1050
     .tech-preview & {
-      top: @navbar-os-header-desktop + @tech-preview-banner-height - 10;
+      top: @navbar-os-header-height-desktop + @tech-preview-banner-height - 10;
     }
   }
   // the whole block is clickable, need to set pointer on all of these
