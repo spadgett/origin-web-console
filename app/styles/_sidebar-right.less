@@ -157,10 +157,11 @@
   }
   .right-content {
     .events {
-      padding-top: 10px;
+      // Because .right-section is position:fixed, we need to account for the top nav and project bar combined height,
+      // so offset that amount by adding padding-bottom, which makes the entire scrollable area visible.
+      padding-bottom: (@navbar-os-header-height-mobile + @project-bar-height-mobile + @tech-preview-banner-height);
     }
     .event {
-      border: 1px solid transparent;
       display: flex;
       align-items: center;
       padding: 10px 20px;
