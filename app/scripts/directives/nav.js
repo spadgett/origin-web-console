@@ -74,6 +74,29 @@ angular.module('openshiftConsole')
           return userCan;
         };
 
+        $scope.itemClicked = function(primaryItem) {
+          if (primaryItem.href) {
+            // Make sure any secondary nav closes if a primary item with an
+            // href was activated using the keyboard.
+            $scope.nav.showMobileNav = false;
+            $scope.sidebar.secondaryOpen = false;
+            return;
+          }
+
+          // Remove `isHover` from any of the items if another primary item was
+          // activated using the keyboard.
+          _.each($scope.navItems, function(navItem) {
+            navItem.isHover = false;
+          });
+
+          // Open the item regardless of whether the mouse is really over it
+          // for keyboard and screen reader accessibility.
+          primaryItem.isHover = true;
+          primaryItem.mobileSecondary = $scope.isMobile;
+          $scope.sidebar.showMobileSecondary = $scope.isMobile;
+          $scope.sidebar.secondaryOpen = true;
+        };
+
         $scope.onMouseEnter = function(primaryItem) {
           if (_.isEmpty(primaryItem.secondaryNavSections)) {
             return;
