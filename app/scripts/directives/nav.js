@@ -159,9 +159,7 @@ angular.module('openshiftConsole')
           if (isMobile !== $scope.isMobile) {
             $scope.$evalAsync(function() {
               $scope.isMobile = isMobile;
-              if (isMobile) {
-                _.set($rootScope, 'nav.collapsed', false);
-              } else {
+              if (!isMobile) {
                 _.set($rootScope, 'nav.showMobileNav', false);
                 _.each($scope.navItems, function(primaryItem) {
                   primaryItem.mobileSecondary = false;
@@ -202,11 +200,32 @@ angular.module('openshiftConsole')
       templateUrl: 'views/directives/header/header.html',
       link: function($scope, $elem) {
         var MAX_PROJETS_TO_DISPLAY = 100;
+        var NAV_COLLAPSED_STORAGE_KEY = 'openshift/vertical-nav-collapsed';
         $scope.project = projects[ $routeParams.project ];
 
+        var setCollapsed = function(collapsed, updateSavedState) {
+          var storageValue;
+          _.set($rootScope, 'nav.collapsed', collapsed);
+
+          if (updateSavedState) {
+            storageValue = collapsed ? 'true' : 'false';
+            localStorage.setItem(NAV_COLLAPSED_STORAGE_KEY, storageValue);
+          }
+        };
+
+        var readSavedCollapsedState = function() {
+          var savedState = localStorage.getItem(NAV_COLLAPSED_STORAGE_KEY) === 'true';
+          setCollapsed(savedState);
+        };
+        readSavedCollapsedState();
+
+        var isCollapsed = function() {
+          return _.get($rootScope, 'nav.collapsed', false);
+        };
+
         $scope.toggleNav = function() {
-          var collapsed = _.get($rootScope, 'nav.collapsed');
-          _.set($rootScope, 'nav.collapsed', !collapsed);
+          var collapsed = isCollapsed();
+          setCollapsed(!collapsed, true);
         };
 
         $scope.toggleMobileNav = function() {
@@ -217,6 +236,7 @@ angular.module('openshiftConsole')
         $scope.closeOrderingPanel = function() {
           _.set($scope, 'ordering.panelName', "");
         };
+
         $scope.showOrderingPanel = function(panelName) {
           _.set($scope, 'ordering.panelName', panelName);
         };
