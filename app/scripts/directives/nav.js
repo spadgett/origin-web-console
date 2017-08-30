@@ -223,6 +223,10 @@ angular.module('openshiftConsole')
           return _.get($rootScope, 'nav.collapsed', false);
         };
 
+        var setMobileNavVisible = function(visible) {
+          _.set($rootScope, 'nav.showMobileNav', visible);
+        };
+
         $scope.toggleNav = function() {
           var collapsed = isCollapsed();
           setCollapsed(!collapsed, true);
@@ -230,7 +234,11 @@ angular.module('openshiftConsole')
 
         $scope.toggleMobileNav = function() {
           var showMobileNav = _.get($rootScope, 'nav.showMobileNav');
-          _.set($rootScope, 'nav.showMobileNav', !showMobileNav);
+          setMobileNavVisible(!showMobileNav);
+        };
+
+        $scope.closeMobileNav = function() {
+          setMobileNavVisible(false);
         };
 
         $scope.closeOrderingPanel = function() {
