@@ -7,6 +7,7 @@ notification-drawer-wrapper {
     height: calc(100vh ~"-" (@navbar-os-header-height-mobile + @project-bar-height-mobile));
     position: fixed;
     top: (@navbar-os-header-height-mobile + @project-bar-height-mobile);
+    z-index: @zindex-navbar-fixed - 2; // two less than navbar, one less than project-bar
     @media(max-width: 350px) {
       left: 0;
       width: 100%;
