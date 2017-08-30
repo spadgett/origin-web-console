@@ -52,6 +52,12 @@ angular.module('openshiftConsole')
         updateActive();
         $scope.$on('$routeChangeSuccess', updateActive);
 
+        var clearHover = function() {
+          _.each($scope.navItems, function(navItem) {
+            navItem.isHover = false;
+          });
+        };
+
         $scope.navURL = function(href) {
           if (!href) {
             return '';
@@ -85,9 +91,7 @@ angular.module('openshiftConsole')
 
           // Remove `isHover` from any of the items if another primary item was
           // activated using the keyboard.
-          _.each($scope.navItems, function(navItem) {
-            navItem.isHover = false;
-          });
+          clearHover();
 
           // Open the item regardless of whether the mouse is really over it
           // for keyboard and screen reader accessibility.
@@ -131,6 +135,12 @@ angular.module('openshiftConsole')
               return primaryItem.isHover && !_.isEmpty(primaryItem.secondaryNavSections);
             });
           }, hideDelay);
+        };
+
+        $scope.closeNav = function() {
+          clearHover();
+          $scope.nav.showMobileNav = false;
+          $scope.sidebar.secondaryOpen = false;
         };
 
         $scope.collapseMobileSecondary = function(primaryItem, event) {

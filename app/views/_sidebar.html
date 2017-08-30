@@ -5,7 +5,8 @@
     'hover-secondary-nav-pf': sidebar.secondaryOpen && !isMobile,
     'show-mobile-nav': nav.showMobileNav && isMobile,
     'show-mobile-secondary': nav.showMobileNav && sidebar.showMobileSecondary && isMobile
-  }">
+  }"
+  on-esc="closeNav()">
   <nav class="nav-vertical-primary">
     <ul class="list-group">
       <li
