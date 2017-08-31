@@ -1,9 +1,9 @@
   <div class="middle surface-shaded">
     <div class="middle-content">
       <div class="container-fluid">
-        <breadcrumbs breadcrumbs="breadcrumbs"></breadcrumbs>
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-md-10">
+            <breadcrumbs breadcrumbs="breadcrumbs"></breadcrumbs>
             <div ng-if="!targetKind || !targetName || !project" class="mar-top-md">
               Loading...
             </div>
@@ -51,7 +51,7 @@
                   expand="true"
                   can-toggle="false"></label-editor>
 
-                <div class="buttons gutter-top">
+                <div class="buttons gutter-top gutter-bottom">
                   <button
                       type="submit"
                       class="btn btn-primary btn-lg"

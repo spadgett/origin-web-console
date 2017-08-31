@@ -1,17 +1,17 @@
   <div class="middle surface-shaded" ng-show="buildConfig">
     <div class="middle-content">
       <div class="container-fluid">
-        <breadcrumbs breadcrumbs="breadcrumbs"></breadcrumbs>
-        <alerts alerts="alerts"></alerts>
-        <div ng-if="!loaded">Loading...</div>
-        <h1>
-          Edit Build Config {{buildConfig.metadata.name}}
-          <small>&mdash; {{strategyType | startCase}} Build Strategy</small>
-        </h1>
-        <fieldset ng-disabled="disableInputs">
-          <form class="edit-form" name="form" novalidate ng-submit="save()">
-            <div class="row">
-              <div class="col-lg-12">
+        <div class="row">
+          <div class="col-md-10">
+            <breadcrumbs breadcrumbs="breadcrumbs"></breadcrumbs>
+            <alerts alerts="alerts"></alerts>
+            <div ng-if="!loaded">Loading...</div>
+            <h1>
+              Edit Build Config {{buildConfig.metadata.name}}
+              <small>&mdash; {{strategyType | startCase}} Build Strategy</small>
+            </h1>
+            <fieldset ng-disabled="disableInputs">
+              <form class="edit-form" name="form" novalidate ng-submit="save()">
                 <div ng-if="buildConfig.spec.source.type !== 'None'" class="section">
                   <h3>Source Configuration</h3>
                   <dl class="dl-horizontal left">

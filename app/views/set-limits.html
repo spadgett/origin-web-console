@@ -1,9 +1,9 @@
   <div class="middle surface-shaded">
     <div class="middle-content">
       <div class="container-fluid">
-        <breadcrumbs breadcrumbs="breadcrumbs"></breadcrumbs>
         <div class="row">
-          <div class="col-md-12">
+          <div class="col-md-10">
+            <breadcrumbs breadcrumbs="breadcrumbs"></breadcrumbs>
             <div ng-show="!containers.length">Loading...</div>
             <form ng-if="containers.length" name="form" class="set-limits-form" novalidate>
               <h1>Resource Limits: {{name}}</h1>
