@@ -305,9 +305,7 @@ angular.module('openshiftConsole')
           }
 
           $scope.projectName = projectName;
-          if($routeParams.view === "chromeless") {
-            $scope.chromeless = true;
-          }
+          $scope.chromeless = $routeParams.view === "chromeless";
 
           if (projectName && !$scope.chromeless) {
             $('body').addClass('has-project-bar');
@@ -315,8 +313,6 @@ angular.module('openshiftConsole')
             // Assume false until the request completes.
             $scope.canIAddToProject = false;
             // Make sure we have project rules before we check canIAddToProject or we get the wrong value.
-            // FIXME: We are not requesting this twice, here and in ProjectService
-            // FIXME: AuthorizationService should not cache the wrong value before the rules load
             AuthorizationService.getProjectRules(projectName).then(function() {
               // Make sure the user hasn't switched projects while the request was still in flight.
               if ($scope.projectName !== projectName) {
