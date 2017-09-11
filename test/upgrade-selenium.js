@@ -6,4 +6,4 @@ pconfig.webdriverVersions.selenium = '2.53.0';
 
 require('fs').writeFile(
   'node_modules/protractor/config.json', JSON.stringify(pconfig)
-); 
+);

@@ -18,9 +18,9 @@ exports.projectDetails = () => {
 };
 
 exports.createProject = (project, uri) => {
-  for (let key in project) {
-    h.setInputValue(key, project[key]);
-  }
+  h.setInputValue('name', project.name);
+  h.setInputValue('displayName', project.displayName);
+  h.setInputValue('description', project.description);
   h.clickAndGo('Create', uri);
 };
 
@@ -29,7 +29,12 @@ exports.deleteProject = (project) => {
   let projectTile = element(by.cssContainingText(".project-info", project['name']));
   projectTile.element(by.css('.dropdown-toggle')).click();
   projectTile.element(by.linkText('Delete Project')).click();
-  h.setInputValue('confirmName', project.name);
+  // Workaround error with Firefox 53+ and sendKeys
+  // https://github.com/mozilla/geckodriver/issues/659
+  // TODO: We need to upgrade geckodriver, but that requires a newer Selenium
+  // and bumping many other dependencies.
+  browser.executeScript("$('input#resource-to-delete').val('" + project.name + "').trigger('change');");
+  // h.setInputValue('confirmName', project.name);
   let deleteButton = element(by.cssContainingText(".modal-dialog .btn", "Delete"));
   browser.wait(protractor.ExpectedConditions.elementToBeClickable(deleteButton), 2000);
   deleteButton.click();
@@ -55,21 +60,27 @@ exports.deleteAllProjects = () => {
   });
 
   projectTiles.each((elem) => {
-    let projectTitle = elem.element(by.css('.tile-target span')).getText();
-    elem.element(by.css('.dropdown-toggle')).click();
-    elem.element(by.linkText('Delete Project')).click();
-    h.setInputValue('confirmName', projectTitle);
-    // then click delete
-    let modal = element(by.css('.modal-dialog'));
-    let deleteButton = modal.element(by.cssContainingText(".modal-dialog .btn", "Delete"));
-    browser.wait(protractor.ExpectedConditions.elementToBeClickable(deleteButton), 2000);
-    deleteButton.click();
-    h.waitForPresence(".alert-success", "marked for deletion");
-    h.waitForElemRemoval(element(by.css('.modal-dialog')));
-    numDeleted++;
-    if(numDeleted >= count) {
-      allDeleted.fulfill(numDeleted);
-    }
+    elem.element(by.css('.tile-target span')).getText().then(function(projectTitle) {
+      elem.element(by.css('.dropdown-toggle')).click();
+      elem.element(by.linkText('Delete Project')).click();
+      // Workaround error with Firefox 53+ and sendKeys
+      // https://github.com/mozilla/geckodriver/issues/659
+      // TODO: We need to upgrade geckodriver, but that requires a newer Selenium
+      // and bumping many other dependencies.
+      browser.executeScript("$('input#resource-to-delete').val('" + projectTitle + "').trigger('change');");
+      // h.setInputValue('confirmName', projectTitle);
+      // then click delete
+      let modal = element(by.css('.modal-dialog'));
+      let deleteButton = modal.element(by.cssContainingText(".modal-dialog .btn", "Delete"));
+      browser.wait(protractor.ExpectedConditions.elementToBeClickable(deleteButton), 2000);
+      deleteButton.click();
+      h.waitForPresence(".alert-success", "marked for deletion");
+      h.waitForElemRemoval(element(by.css('.modal-dialog')));
+      numDeleted++;
+      if(numDeleted >= count) {
+        allDeleted.fulfill(numDeleted);
+      }
+    });
   });
   return allDeleted.promise;
 };

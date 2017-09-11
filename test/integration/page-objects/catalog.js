@@ -41,8 +41,8 @@ class CatalogPage extends Page {
   }
   clickImport() {
     return this._findTabs()
-               .element(by.cssContainingText('a', 'Import YAML / JSON'))
-               .click();
+               .element(by.cssContainingText('a', 'Import YAML'))
+               .click().click();
   }
   setImportValue(str) {
     return browser.executeScript((value) => {

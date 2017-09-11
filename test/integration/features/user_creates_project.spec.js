@@ -57,9 +57,7 @@ let createFromSource = (projectName, builderImageName, appName) => {
   expect(element(by.cssContainingText('h2', "Build Configuration")).isPresent()).toBe(true);
   expect(element(by.cssContainingText('h2', "Scaling")).isPresent()).toBe(true);
   expect(element(by.cssContainingText('h2', "Labels")).isPresent()).toBe(true);
-  let appNameInput = element(by.name('appname'));
-  appNameInput.clear();
-  appNameInput.sendKeys(appName);
+  h.setInputValue('appname', appName);
   h.clickAndGo('Create', 'project/' + projectName + '/overview');
 };
 
@@ -169,7 +167,7 @@ describe('', () => {
 
         it('should validate taken name when trying to create', () => {
           goToCreateProjectPage();
-          element(by.model('name')).clear().sendKeys(project['name']);
+          h.setInputValue('name', project.name);
           element(by.buttonText("Create")).click();
           expect(element(by.css("[ng-if=nameTaken]")).isDisplayed()).toBe(true);
           expect(browser.getCurrentUrl()).toMatch(/\/create-project$/);

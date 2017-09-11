@@ -23,13 +23,21 @@ exports.login = function(loginPageAlreadyLoaded) {
   var driver = browser.driver;
   if (!loginPageAlreadyLoaded) {
     browser.get('/');
-    driver.wait(function() {
-      return driver.isElementPresent(by.name("username"));
+    browser.driver.wait(function() {
+      return browser.driver.getCurrentUrl().then(function(url) {
+        return /login/.test(url);
+      });
     }, 3000);
   }
 
-  driver.findElement(by.name("username")).sendKeys("e2e-user");
-  driver.findElement(by.name("password")).sendKeys("e2e-user");
+  // Workaround error with Firefox 53+ and sendKeys
+  // https://github.com/mozilla/geckodriver/issues/659
+  // TODO: We need to upgrade geckodriver, but that requires a newer Selenium
+  // and bumping many other dependencies.
+  browser.executeScript('document.getElementById("inputUsername").value = "e2e-user";');
+  browser.executeScript('document.getElementById("inputPassword").value = "e2e-user";');
+  // driver.findElement(by.name("username")).sendKeys("e2e-user");
+  // driver.findElement(by.name("password")).sendKeys("e2e-user");
   driver.findElement(by.css("button[type='submit']")).click();
 
   driver.wait(function() {
@@ -115,7 +123,13 @@ exports.setInputValue = function(name, value) {
   var input = element(by.model(name));
   waitForElem(input);
   input.clear();
-  input.sendKeys(value);
-  expect(input.getAttribute("value")).toBe(value);
+  // Workaround error with Firefox 53+ and sendKeys
+  // https://github.com/mozilla/geckodriver/issues/659
+  // TODO: We need to upgrade geckodriver, but that requires a newer Selenium
+  // and bumping many other dependencies.
+  // Assumes name and value don't have special characters.
+  browser.executeScript("$('input[name=\"" + name + "\"').val('" + value + "').trigger('change');");
+  //input.sendKeys(value);
+  // expect(input.getAttribute("value")).toBe(value);
   return input;
 };

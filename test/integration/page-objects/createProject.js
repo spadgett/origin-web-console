@@ -12,10 +12,9 @@ class CreateProjectPage extends Page {
     return 'create-project';
   }
   enterProjectInfo() {
-    for (let key in this.project) {
-      h.waitForElem( element( by.model( key )));
-      h.setInputValue(key, this.project[key]);
-    }
+    h.setInputValue('name', this.project.name);
+    h.setInputValue('displayName', this.project.displayName);
+    h.setInputValue('description', this.project.description);
     return this;
   }
   submit() {
