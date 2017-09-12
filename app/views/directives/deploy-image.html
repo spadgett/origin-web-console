@@ -56,6 +56,11 @@
               </button>
             </span>
           </div>
+          <div ng-if="input.selectedProject.metadata.uid" class="help-block">
+            If searching for an image in a private repository,
+            <a href="" ng-click="openCreateSecretModal()" role="button">create an image pull secret</a>
+            in project {{input.selectedProject | displayName}}.
+          </div>
           <div ng-if="!input.selectedProject.metadata.uid" class="help-block">
             Image search is only available for existing projects.
           </div>

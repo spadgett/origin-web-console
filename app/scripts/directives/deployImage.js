@@ -388,6 +388,24 @@ angular.module("openshiftConsole")
           // for an event for when the button is clicked.
           $scope.$on('newAppFromDeployImage', $scope.create);
           $scope.$on('$destroy', hideErrorNotifications);
+
+          $scope.openCreateSecretModal = function() {
+            var project = _.get($scope, 'input.selectedProject');
+            if (!project) {
+              return;
+            }
+
+            var dialogScope = $scope.$new();
+            dialogScope.type = 'image';
+            dialogScope.namespace = project.metadata.name;
+            $uibModal.open({
+              animation: true,
+              backdrop: 'static',
+              templateUrl: 'views/modals/create-secret.html',
+              controller: 'CreateSecretModalController',
+              scope: dialogScope
+            });
+          };
       }
     };
   });
