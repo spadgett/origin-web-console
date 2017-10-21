@@ -7299,7 +7299,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<li ng-if-start=\"!catalogLandingPageEnabled\" role=\"menuitem\"><a ng-href=\"project/{{currentProjectName}}/create?tab=fromCatalog\">Browse Catalog</a></li>\n" +
     "<li role=\"menuitem\"><a ng-href=\"project/{{currentProjectName}}/create?tab=deployImage\">Deploy Image</a></li>\n" +
     "<li ng-if-end role=\"menuitem\"><a ng-href=\"project/{{currentProjectName}}/create?tab=fromFile\">Import YAML / JSON</a></li>\n" +
-    "<li ng-if-start=\"catalogLandingPageEnabled\" role=\"menuitem\"><a href=\"./\">Browse Catalog</a></li>\n" +
+    "<li ng-if-start=\"catalogLandingPageEnabled\" role=\"menuitem\"><a ng-href=\"./?addToProject={{currentProject.metadata.name}}\">Browse Catalog</a></li>\n" +
     "<li role=\"menuitem\"><a href=\"\" ng-click=\"showOrderingPanel('deployImage')\">Deploy Image</a></li>\n" +
     "<li ng-if-end role=\"menuitem\"><a href=\"\" ng-click=\"showOrderingPanel('fromFile')\">Import YAML / JSON</a></li>\n" +
     "<li role=\"menuitem\"><a href=\"\" ng-click=\"showOrderingPanel('fromProject')\">Select from Project</a></li>\n" +
@@ -9144,7 +9144,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div ng-if=\"!$ctrl.apiObject.metadata.deletionTimestamp && !($ctrl.bindableServiceInstances | size)\">\n" +
     "<span>You must have a bindable service in your namespace in order to create bindings.</span>\n" +
     "<div>\n" +
-    "<a href=\"./\">Browse Catalog</a>\n" +
+    "<a ng-href=\"./?addToProject={{$ctrl.projectContext.projectName}}\">Browse Catalog</a>\n" +
     "</div>\n" +
     "</div>\n" +
     "<div ng-if=\"!($ctrl.bindings | size) && ($ctrl.bindableServiceInstances | size) && !($ctrl.serviceBindingsVersion | canI : 'create')\">\n" +
@@ -11598,7 +11598,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "Use your source or an example repository to build an application image, or add components like databases and message queues.\n" +
     "</p>\n" +
     "<p class=\"gutter-top\">\n" +
-    "<a ng-if=\"overview.catalogLandingPageEnabled\" href=\"./\" class=\"btn btn-lg btn-primary\">\n" +
+    "<a ng-if=\"overview.catalogLandingPageEnabled\" ng-href=\"./?addToProject={{project.metadata.name}}\" class=\"btn btn-lg btn-primary\">\n" +
     "Browse Catalog\n" +
     "</a>\n" +
     "<a ng-if=\"!overview.catalogLandingPageEnabled\" ng-href=\"project/{{projectName}}/create\" class=\"btn btn-lg btn-primary\">\n" +
@@ -12478,7 +12478,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div ng-if=\"($ctrl.refApiObject.kind !== 'ServiceInstance')  && !($ctrl.bindableServiceInstances | size)\">\n" +
     "<span>You must have a bindable service in your namespace in order to create bindings.</span>\n" +
     "<div>\n" +
-    "<a href=\"./\">Browse Catalog</a>\n" +
+    "<a ng-href=\"./?addToProject={{$ctrl.namespace}}\">Browse Catalog</a>\n" +
     "</div>\n" +
     "</div>\n" +
     "</div>"

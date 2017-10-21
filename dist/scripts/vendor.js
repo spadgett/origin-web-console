@@ -78215,7 +78215,7 @@ localStorage.setItem("catalog-recently-viewed-services", JSON.stringify(e)), thi
 }();
 r.$inject = [ "$rootScope" ], t.RecentlyViewedServiceItems = r;
 }, function(e, t) {
-e.exports = '<pf-filter-panel config="$ctrl.config">\n  <div class="filter-panel-container">\n    <input type="text" ng-model="$ctrl.keywordFilter.value"\n           class="keyword-filter"\n           placeholder="{{$ctrl.keywordFilter.placeholder}}"\n           ng-keypress="$ctrl.onKeywordKeyPress($event)"\n           autocorrect="off"\n           autocapitalize="none"\n           spellcheck="false">\n    <div class="category" ng-repeat="filter in $ctrl.filterPanelModel" ng-if="!$first">\n      {{filter.title}}\n      <span\n        class="pficon pficon-info vendor-info-icon"\n        data-toggle="tooltip"\n        aria-hidden="true"\n        data-original-title="This filter will only apply to items which contain publisher information. Items that do not have a publisher will not be shown in the filter results.">\n      </span>\n      <ul>\n        <li ng-repeat="value in filter.values">\n          <label>\n            <input type="checkbox"\n                   ng-model="value.selected"\n                   ng-change="$ctrl.filterChanged()">\n            <span class="category-option-label">{{value.title}}</span>\n          </label>\n        </li>\n      </ul>\n    </div>\n  </div>\n</pf-filter-panel>\n';
+e.exports = '<pf-filter-panel config="$ctrl.config">\n  <div class="filter-panel-container">\n    <input type="text" ng-model="$ctrl.keywordFilter.value"\n           class="keyword-filter"\n           placeholder="{{$ctrl.keywordFilter.placeholder}}"\n           ng-keypress="$ctrl.onKeywordKeyPress($event)"\n           autocorrect="off"\n           autocapitalize="none"\n           spellcheck="false">\n    <div class="category" ng-repeat="filter in $ctrl.filterPanelModel" ng-if="!$first">\n      {{filter.title}}\n      <span\n        class="pficon pficon-info vendor-info-icon"\n        data-toggle="tooltip"\n        aria-hidden="true"\n        data-original-title="This filter will only apply to items which contain publisher information. Items that do not have a publisher will not be shown in the filter results.">\n      </span>\n      <ul>\n        <li ng-repeat="value in filter.values">\n          <div class="checkbox">\n            <label class="category-option-label">\n              <input type="checkbox"\n                     ng-model="value.selected"\n                     ng-change="$ctrl.filterChanged()">\n              {{value.title}}\n            </label>\n          </div>\n        </li>\n      </ul>\n    </div>\n  </div>\n</pf-filter-panel>\n';
 }, function(e, t) {
 e.exports = '\x3c!-- Use angular-schema-form to show a form based on the parameter JSON schema. --\x3e\n<ng-form class="catalog-parameters" ng-class="{\'readonly\': $ctrl.readOnly}"\n  sf-model="$ctrl.hideValues ? $ctrl.hiddenModel : $ctrl.model"\n  sf-form="$ctrl.parameterForm"\n  sf-schema="$ctrl.readOnly ? $ctrl.readonlyParameterSchema : $ctrl.parameterSchema"\n  sf-options="$ctrl.parameterFormDefaults">\n</ng-form>\n';
 }, function(e, t) {
@@ -79046,21 +79046,21 @@ t.SelectPlanController = r;
 "use strict";
 t.__esModule = !0;
 var i = n(1), r = n(0), o = function() {
-function e(t, n, i, o, a, s, l, c) {
-var u = this;
+function e(t, n, i, o, a, s, l, c, u) {
+var d = this;
 this.ctrl = this, this.getProjectChoices = function() {
-return u.ctrl.matchingProjects ? u.ctrl.matchingProjects : u.largeProjectList ? [] : u.projects;
+return d.ctrl.matchingProjects ? d.ctrl.matchingProjects : d.largeProjectList ? [] : d.projects;
 }, this.groupChoicesBy = function(e) {
-return u.largeProjectList ? "" : e.metadata.uid ? u.RecentlyViewedProjectsService.isRecentlyViewed(e.metadata.uid) ? "Recently Viewed" : "Other Projects" : "";
+return d.largeProjectList ? "" : e.metadata.uid ? d.RecentlyViewedProjectsService.isRecentlyViewed(e.metadata.uid) ? "Recently Viewed" : "Other Projects" : "";
 }, this.refreshChoices = function(t) {
 var n;
-n = u.lastSearch && t.startsWith(u.lastSearch) ? u.lastResults : u.projects, u.lastSearch = t, u.lastResults = u.filterProjects(t, n), u.ctrl.matchingProjects = r.take(u.lastResults, e.LARGE_PROJECT_LIST_SIZE);
+n = d.lastSearch && t.startsWith(d.lastSearch) ? d.lastResults : d.projects, d.lastSearch = t, d.lastResults = d.filterProjects(t, n), d.ctrl.matchingProjects = r.take(d.lastResults, e.LARGE_PROJECT_LIST_SIZE);
 }, this.canIAddToProject = function() {
-var e = !0, t = r.get(u.ctrl.selectedProject, "metadata.name");
-u.isNewProject() || u.AuthorizationService.getProjectRules(t).then(function() {
-e = u.AuthorizationService.canIAddToProject(t), u.ctrl.forms && u.ctrl.forms.selectProjectForm.selectProject.$setValidity("cannotAddToProject", e);
-}), u.ctrl.forms && u.ctrl.forms.selectProjectForm.selectProject.$setValidity("cannotAddToProject", e);
-}, this.$filter = t, this.$scope = n, this.AuthService = i, this.AuthorizationService = o, this.KeywordService = a, this.Logger = s, this.ProjectsService = l, this.RecentlyViewedProjectsService = c, this.largeProjectList = !1, this.lastSearch = "", this.lastResults = [];
+var e = !0, t = r.get(d.ctrl.selectedProject, "metadata.name");
+d.isNewProject() || d.AuthorizationService.getProjectRules(t).then(function() {
+e = d.AuthorizationService.canIAddToProject(t), d.ctrl.forms && d.ctrl.forms.selectProjectForm.selectProject.$setValidity("cannotAddToProject", e);
+}), d.ctrl.forms && d.ctrl.forms.selectProjectForm.selectProject.$setValidity("cannotAddToProject", e);
+}, this.$filter = t, this.$location = n, this.$scope = i, this.AuthService = o, this.AuthorizationService = a, this.KeywordService = s, this.Logger = l, this.ProjectsService = c, this.RecentlyViewedProjectsService = u, this.largeProjectList = !1, this.lastSearch = "", this.lastResults = [];
 }
 return e.prototype.$onInit = function() {
 var e = this;
@@ -79099,18 +79099,18 @@ if (!e) return this.largeProjectList ? [] : t;
 var n = [ "metadata.name", 'metadata.annotations["openshift.io/display-name"]' ], i = this.KeywordService.generateKeywords(e);
 return this.KeywordService.filterForKeywords(t, n, i);
 }, e.prototype.updateProjects = function(t) {
-var n = this;
-if (this.largeProjectList = r.size(t) >= e.LARGE_PROJECT_LIST_SIZE, this.largeProjectList) return this.ctrl.placeholder = "Filter projects by name", this.ctrl.searchEnabled = !0, this.ctrl.refreshDelay = 500, this.projects = t, void (this.ctrl.numProjectChoices = r.size(this.projects));
+var n = this, i = this.$location.search().addToProject;
+if (i && !this.ctrl.selectedProject && (this.ctrl.selectedProject = t[i], this.onSelectProjectChange()), this.largeProjectList = r.size(t) >= e.LARGE_PROJECT_LIST_SIZE, this.largeProjectList) return this.ctrl.placeholder = "Filter projects by name", this.ctrl.searchEnabled = !0, this.ctrl.refreshDelay = 500, this.projects = t, void (this.ctrl.numProjectChoices = r.size(this.projects));
 this.ctrl.placeholder = "Select project";
-var i = {
+var o = {
 metadata: {
 annotations: {
 "openshift.io/display-name": "Create Project",
 "new-display-name": ""
 }
 }
-}, o = r.reject(t, "metadata.deletionTimestamp");
-this.projects = this.RecentlyViewedProjectsService.orderByMostRecentlyViewed(o), this.ctrl.searchEnabled = !r.isEmpty(o), this.ctrl.refreshDelay = 0, this.ctrl.existingProjectNames = r.map(t, "metadata.name"), this.ctrl.selectedProject || 1 !== r.size(this.projects) || (this.ctrl.selectedProject = this.projects[0], this.onSelectProjectChange()), this.ctrl.canCreate ? (this.ctrl.placeholder = "Select or create project", this.projects.unshift(i), 1 === r.size(this.projects) && (this.ctrl.selectedProject = i, this.onSelectProjectChange())) : 0 === r.size(this.projects) && (this.ctrl.noProjectsCantCreate = !0, this.AuthService.withUser().then(function(e) {
+}, a = r.reject(t, "metadata.deletionTimestamp");
+this.projects = this.RecentlyViewedProjectsService.orderByMostRecentlyViewed(a), this.ctrl.searchEnabled = !r.isEmpty(a), this.ctrl.refreshDelay = 0, this.ctrl.existingProjectNames = r.map(t, "metadata.name"), this.ctrl.selectedProject || 1 !== r.size(this.projects) || (this.ctrl.selectedProject = this.projects[0], this.onSelectProjectChange()), this.ctrl.canCreate ? (this.ctrl.placeholder = "Select or create project", this.projects.unshift(o), 1 === r.size(this.projects) && (this.ctrl.selectedProject = o, this.onSelectProjectChange())) : 0 === r.size(this.projects) && (this.ctrl.noProjectsCantCreate = !0, this.AuthService.withUser().then(function(e) {
 n.ctrl.user = e;
 }), this.$scope.$emit("no-projects-cannot-create")), this.ctrl.numProjectChoices = r.size(this.projects);
 }, e.prototype.listProjects = function() {
@@ -79120,7 +79120,7 @@ e.updateProjects(t.by("metadata.name"));
 });
 }, e;
 }();
-o.$inject = [ "$filter", "$scope", "AuthService", "AuthorizationService", "KeywordService", "Logger", "ProjectsService", "RecentlyViewedProjectsService" ], o.LARGE_PROJECT_LIST_SIZE = 500, t.SelectProjectController = o;
+o.$inject = [ "$filter", "$location", "$scope", "AuthService", "AuthorizationService", "KeywordService", "Logger", "ProjectsService", "RecentlyViewedProjectsService" ], o.LARGE_PROJECT_LIST_SIZE = 500, t.SelectProjectController = o;
 }, function(e, t, n) {
 "use strict";
 t.__esModule = !0;
@@ -79242,7 +79242,7 @@ var u = this;
 this.ctrl = this, this.configChanged = !0, this.secrets = [], this.clearValidityWatcher = function() {
 u.validityWatcher && (u.validityWatcher(), u.validityWatcher = void 0), u.ctrl.reviewStep.allowed = !1;
 }, this.showPlan = function() {
-u.clearValidityWatcher(), u.ctrl.configPageShown = !1;
+u.clearValidityWatcher(), u.ctrl.configPageShown = !1, u.configStep.hidden ? u.ctrl.nextTitle = "Update" : u.ctrl.nextTitle = "Next >", u.planStep.valid = u.ctrl.selectedPlan !== u.originalPlan || !u.configStep.hidden;
 }, this.showConfig = function() {
 u.clearValidityWatcher(), u.ctrl.configPageShown = !0, u.configStep.valid = r.get(u.ctrl, "forms.orderConfigureForm.$valid") && u.configChanged, u.reviewStep.allowed = u.configStep.valid, u.validityWatcher = u.$scope.$watch("$ctrl.forms.orderConfigureForm.$valid", function(e, t) {
 u.configStep.valid = e && u.configChanged, u.reviewStep.allowed = u.configStep.valid;
