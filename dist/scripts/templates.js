@@ -6064,6 +6064,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
 
   $templateCache.put('views/directives/create-secret.html',
     "<ng-form name=\"secretForm\" class=\"create-secret-form\">\n" +
+    "<div class=\"modal-body\">\n" +
     "<div ng-if=\"!type\" class=\"form-group mar-top-lg\">\n" +
     "<label for=\"secret-type\">Secret Type</label>\n" +
     "<ui-select input-id=\"secret-type\" required ng-model=\"newSecret.type\" search-enabled=\"false\" ng-change=\"newSecret.authType = secretAuthTypeMap[newSecret.type].authTypes[0].id\">\n" +
@@ -6166,13 +6167,13 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<label class=\"required\" for=\"cacert\">CA Certificate File</label>\n" +
     "<osc-file-input id=\"cacert-file-input\" model=\"newSecret.data.cacert\" drop-zone-id=\"cacert\" help-text=\"Upload your ca.crt file.\" required=\"true\"></osc-file-input>\n" +
     "<div ui-ace=\"{\n" +
-    "            mode: 'txt',\n" +
-    "            theme: 'eclipse',\n" +
-    "            rendererOptions: {\n" +
-    "              fadeFoldWidgets: true,\n" +
-    "              showPrintMargin: false\n" +
-    "            }\n" +
-    "          }\" ng-model=\"newSecret.data.cacert\" class=\"create-secret-editor ace-bordered\" id=\"cacert-editor\" required></div>\n" +
+    "              mode: 'txt',\n" +
+    "              theme: 'eclipse',\n" +
+    "              rendererOptions: {\n" +
+    "                fadeFoldWidgets: true,\n" +
+    "                showPrintMargin: false\n" +
+    "              }\n" +
+    "            }\" ng-model=\"newSecret.data.cacert\" class=\"create-secret-editor ace-bordered\" id=\"cacert-editor\" required></div>\n" +
     "</div>\n" +
     "</div>\n" +
     "<div ng-if=\"newSecret.authType === 'kubernetes.io/ssh-auth'\">\n" +
@@ -6180,12 +6181,12 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<label for=\"privateKey\" class=\"required\">SSH Private Key</label>\n" +
     "<osc-file-input id=\"private-key-file-input\" model=\"newSecret.data.privateKey\" drop-zone-id=\"private-key\" help-text=\"Upload your private SSH key file.\"></osc-file-input>\n" +
     "<div ui-ace=\"{\n" +
-    "            theme: 'eclipse',\n" +
-    "            rendererOptions: {\n" +
-    "              fadeFoldWidgets: true,\n" +
-    "              showPrintMargin: false\n" +
-    "            }\n" +
-    "          }\" ng-model=\"newSecret.data.privateKey\" class=\"create-secret-editor ace-bordered\" id=\"private-key-editor\" required></div>\n" +
+    "              theme: 'eclipse',\n" +
+    "              rendererOptions: {\n" +
+    "                fadeFoldWidgets: true,\n" +
+    "                showPrintMargin: false\n" +
+    "              }\n" +
+    "            }\" ng-model=\"newSecret.data.privateKey\" class=\"create-secret-editor ace-bordered\" id=\"private-key-editor\" required></div>\n" +
     "<div class=\"help-block\">\n" +
     "Private SSH key file for Git authentication.\n" +
     "</div>\n" +
@@ -6204,13 +6205,13 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<label class=\"required\" for=\"gitconfig\">Git Configuration File</label>\n" +
     "<osc-file-input id=\"gitconfig-file-input\" model=\"newSecret.data.gitconfig\" drop-zone-id=\"gitconfig\" help-text=\"Upload your .gitconfig or  file.\" required=\"true\"></osc-file-input>\n" +
     "<div ui-ace=\"{\n" +
-    "            mode: 'ini',\n" +
-    "            theme: 'eclipse',\n" +
-    "            rendererOptions: {\n" +
-    "              fadeFoldWidgets: true,\n" +
-    "              showPrintMargin: false\n" +
-    "            }\n" +
-    "          }\" ng-model=\"newSecret.data.gitconfig\" class=\"create-secret-editor ace-bordered\" id=\"gitconfig-editor\" required></div>\n" +
+    "              mode: 'ini',\n" +
+    "              theme: 'eclipse',\n" +
+    "              rendererOptions: {\n" +
+    "                fadeFoldWidgets: true,\n" +
+    "                showPrintMargin: false\n" +
+    "              }\n" +
+    "            }\" ng-model=\"newSecret.data.gitconfig\" class=\"create-secret-editor ace-bordered\" id=\"gitconfig-editor\" required></div>\n" +
     "</div>\n" +
     "</div>\n" +
     "<div ng-if=\"newSecret.authType === 'kubernetes.io/dockercfg'\">\n" +
@@ -6267,14 +6268,14 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<label for=\"dockerConfig\" class=\"required\">Configuration File</label>\n" +
     "<osc-file-input id=\"dockercfg-file-input\" model=\"newSecret.data.dockerConfig\" drop-zone-id=\"docker-config\" help-text=\"Upload a .dockercfg or .docker/config.json file\" required=\"true\"></osc-file-input>\n" +
     "<div ui-ace=\"{\n" +
-    "            mode: 'json',\n" +
-    "            theme: 'eclipse',\n" +
-    "            onChange: aceChanged,\n" +
-    "            rendererOptions: {\n" +
-    "              fadeFoldWidgets: true,\n" +
-    "              showPrintMargin: false\n" +
-    "            }\n" +
-    "          }\" ng-model=\"newSecret.data.dockerConfig\" class=\"create-secret-editor ace-bordered\" id=\"dockerconfig-editor\" required></div>\n" +
+    "              mode: 'json',\n" +
+    "              theme: 'eclipse',\n" +
+    "              onChange: aceChanged,\n" +
+    "              rendererOptions: {\n" +
+    "                fadeFoldWidgets: true,\n" +
+    "                showPrintMargin: false\n" +
+    "              }\n" +
+    "            }\" ng-model=\"newSecret.data.dockerConfig\" class=\"create-secret-editor ace-bordered\" id=\"dockerconfig-editor\" required></div>\n" +
     "<div class=\"help-block\">\n" +
     "File with credentials and other configuration for connecting to a secured image registry.\n" +
     "</div>\n" +
@@ -6309,9 +6310,12 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "</div>\n" +
     "</div>\n" +
+    "</div>\n" +
+    "<div class=\"modal-footer\">\n" +
     "<div class=\"buttons gutter-top-bottom\">\n" +
-    "<button class=\"btn btn-lg btn-primary\" type=\"button\" ng-disabled=\"secretForm.$invalid || secretForm.$pristine || invalidConfigFormat\" ng-click=\"create()\">Create</button>\n" +
     "<button class=\"btn btn-lg btn-default\" type=\"button\" ng-click=\"cancel()\">Cancel</button>\n" +
+    "<button class=\"btn btn-lg btn-primary\" type=\"button\" ng-disabled=\"secretForm.$invalid || secretForm.$pristine || invalidConfigFormat\" ng-click=\"create()\">Create</button>\n" +
+    "</div>\n" +
     "</div>\n" +
     "</ng-form>"
   );
@@ -10941,9 +10945,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</span>\n" +
     "</h2>\n" +
     "</div>\n" +
-    "<div class=\"modal-body\">\n" +
     "<create-secret type=\"type\" service-account-to-link=\"serviceAccountToLink\" namespace=\"namespace\" on-create=\"onCreate(newSecret)\" on-cancel=\"onCancel()\"></create-secret>\n" +
-    "</div>\n" +
     "</div>"
   );
 
@@ -13924,10 +13926,11 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
 
 
   $templateCache.put('components/osc-webhook-triggers/osc-webhook-triggers.html',
-    "<ng-form name=\"secretsForm\" class=\"add-webhook\">\n" +
+    "<ng-form name=\"$ctrl.secretsForm\" class=\"add-webhook\">\n" +
     "<div ng-repeat=\"trigger in $ctrl.webhookTriggers\">\n" +
     "<div class=\"add-webhook-row\">\n" +
-    "<ui-select ng-model=\"trigger.data.type\" ng-disabled=\"$ctrl.isDeprecated(trigger)\" on-select=\"$ctrl.triggerTypeChange(trigger)\" search-enabled=\"false\" title=\"Select a webhook type\" class=\"select-webhook-type\" flex>\n" +
+    "<div class=\"select-webhook-type\">\n" +
+    "<ui-select ng-model=\"trigger.data.type\" name=\"triggerType{{$index}}\" ng-disabled=\"$ctrl.isDeprecated(trigger)\" on-select=\"$ctrl.triggerTypeChange(trigger)\" search-enabled=\"false\" title=\"Select a webhook type\" ng-class=\"{'has-error': $ctrl.missingInputError('triggerType', $index, trigger.data.type, trigger.data[trigger.data.type.toLowerCase()].secretReference.name) }\" focus-on=\"triggerTypeFocus{{$index}}\" flex>\n" +
     "<ui-select-match placeholder=\"Webhook type\">\n" +
     "{{ $select.selected.label }}\n" +
     "</ui-select-match>\n" +
@@ -13935,7 +13938,14 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "{{ option.label }}\n" +
     "</ui-select-choices>\n" +
     "</ui-select>\n" +
-    "<ui-select ng-if=\"!$ctrl.isDeprecated(trigger)\" ng-model=\"trigger.data[trigger.data.type.toLowerCase()].secretReference.name\" ng-disabled=\"!trigger.data.type\" ng-required=\"trigger.data.type\" on-select=\"$ctrl.triggerSecretChange(trigger)\" title=\"Select a webhook secret reference\" class=\"select-secret-ref\" flex>\n" +
+    "<div class=\"has-error\" ng-show=\"$ctrl.missingInputError('triggerType', $index, trigger.data.type, trigger.data[trigger.data.type.toLowerCase()].secretReference.name)\">\n" +
+    "<span class=\"help-block\">\n" +
+    "Secret type is required.\n" +
+    "</span>\n" +
+    "</div>\n" +
+    "</div>\n" +
+    "<div class=\"select-secret-ref\">\n" +
+    "<ui-select ng-if=\"!$ctrl.isDeprecated(trigger)\" ng-model=\"trigger.data[trigger.data.type.toLowerCase()].secretReference.name\" name=\"triggerSecretRef{{$index}}\" on-select=\"$ctrl.triggerSecretChange(trigger)\" title=\"Select a webhook secret reference\" ng-class=\"{'has-error': $ctrl.missingInputError('triggerSecretRef', $index, trigger.data.type, trigger.data[trigger.data.type.toLowerCase()].secretReference.name) }\" flex>\n" +
     "<ui-select-match placeholder=\"Webhook secret reference\">\n" +
     "{{ $select.selected.metadata.name }}\n" +
     "</ui-select-match>\n" +
@@ -13943,8 +13953,14 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<div ng-bind-html=\"webhookSecret.metadata.name | highlight : $select.search\"></div>\n" +
     "</ui-select-choices>\n" +
     "</ui-select>\n" +
+    "<div class=\"has-error select-secret-ref\" ng-show=\"$ctrl.missingInputError('triggerSecretRef', $index, trigger.data.type, trigger.data[trigger.data.type.toLowerCase()].secretReference.name)\">\n" +
+    "<span class=\"help-block\">\n" +
+    "Secret reference is required.\n" +
+    "</span>\n" +
+    "</div>\n" +
+    "</div>\n" +
     "<div class=\"select-secret-ref deprecated-secret input-group\" ng-if=\"$ctrl.isDeprecated(trigger)\">\n" +
-    "<input ng-model=\"trigger.data[trigger.data.type.toLowerCase()].secret\" class=\"form-control\" type=\"{{trigger.secretInputType}}\" autocorrect=\"off\" autocapitalize=\"none\" spellcheck=\"false\" select-on-focus disabled=\"disabled\">\n" +
+    "<input ng-model=\"trigger.data[trigger.data.type.toLowerCase()].secret\" class=\"form-control\" type=\"{{trigger.secretInputType}}\" autocorrect=\"off\" autocapitalize=\"none\" spellcheck=\"false\" disabled=\"disabled\">\n" +
     "<div class=\"input-group-btn\">\n" +
     "<button type=\"button\" class=\"btn btn-default toggle\" title=\"Toggle Token Visibility\" aria-label=\"Toggle Token Visibility\" ng-click=\"$ctrl.toggleSecretInputType(trigger)\">\n" +
     "<span class=\"glyphicon glyphicon-eye-open\" aria-hidden=\"true\"></span>\n" +
@@ -13964,7 +13980,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "</div>\n" +
     "<div class=\"add-webhook-action-btns\">\n" +
-    "<button class=\"btn btn-link pad-left-none\" type=\"button\" ng-click=\"$ctrl.checkLastAndAddNew()\">Add Webhook</button>\n" +
+    "<button class=\"btn btn-link pad-left-none\" type=\"button\" ng-click=\"$ctrl.addEmptyWebhookTrigger()\">Add Webhook</button>\n" +
     "<span ng-if=\"$ctrl.secretsVersion | canI : 'create'\">\n" +
     "<span class=\"action-divider\" aria-hidden=\"true\"> | </span>\n" +
     "<button class=\"btn btn-link\" href=\"\" type=\"button\" ng-click=\"$ctrl.openCreateWebhookSecretModal()\">Create New Webhook Secret</button>\n" +
