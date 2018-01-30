@@ -1,16 +1,16 @@
 <ng-form name="$ctrl.secretsForm" class="add-webhook">
-  <div ng-repeat="trigger in $ctrl.webhookTriggers">
+  <div ng-repeat="trigger in $ctrl.webhookTriggers track by $index" ng-init="secretFieldName = 'triggerSecretRef' + $index">
     <div class="add-webhook-row">
       <div class="select-webhook-type">
-        <ui-select 
+        <ui-select
           ng-model="trigger.data.type"
           name="triggerType{{$index}}"
           ng-disabled="$ctrl.isDeprecated(trigger)"
           on-select="$ctrl.triggerTypeChange(trigger)"
           search-enabled="false"
           title="Select a webhook type"
-          ng-class="{'has-error': $ctrl.missingInputError('triggerType', $index, trigger.data.type, trigger.data[trigger.data.type.toLowerCase()].secretReference.name) }"
-          focus-on="triggerTypeFocus{{$index}}"
+          ng-class="{'has-warning': trigger.isDuplicate }"
+          focus-on="focus-index-{{$index}}"
           flex>
           <ui-select-match placeholder="Webhook type">
             {{ $select.selected.label }}
@@ -19,21 +19,17 @@
             {{ option.label }}
           </ui-select-choices>
         </ui-select>
-        <div class="has-error" ng-show="$ctrl.missingInputError('triggerType', $index, trigger.data.type, trigger.data[trigger.data.type.toLowerCase()].secretReference.name)">
-          <span class="help-block">
-            Secret type is required.
-          </span>
-        </div>
       </div>
 
-      <div class="select-secret-ref">
+      <div class="select-secret-ref" ng-if="!$ctrl.isDeprecated(trigger)">
         <ui-select
-          ng-if="!$ctrl.isDeprecated(trigger)"
           ng-model="trigger.data[trigger.data.type.toLowerCase()].secretReference.name"
-          name="triggerSecretRef{{$index}}"
+          name="{{secretFieldName}}"
           on-select="$ctrl.triggerSecretChange(trigger)"
           title="Select a webhook secret reference"
-          ng-class="{'has-error': $ctrl.missingInputError('triggerSecretRef', $index, trigger.data.type, trigger.data[trigger.data.type.toLowerCase()].secretReference.name) }"
+          ng-class="{'has-error': $ctrl.secretsForm[secretFieldName].$invalid && $ctrl.secretsForm[secretFieldName].$touched}"
+          ng-disabled="!trigger.data.type"
+          ng-required="trigger.data.type"
           flex>
           <ui-select-match placeholder="Webhook secret reference">
             {{ $select.selected.metadata.name }}
@@ -42,7 +38,7 @@
             <div ng-bind-html="webhookSecret.metadata.name | highlight : $select.search"></div>
           </ui-select-choices>
         </ui-select>
-        <div class="has-error select-secret-ref" ng-show="$ctrl.missingInputError('triggerSecretRef', $index, trigger.data.type, trigger.data[trigger.data.type.toLowerCase()].secretReference.name)">
+        <div class="has-error select-secret-ref" ng-show="$ctrl.secretsForm[secretFieldName].$invalid && $ctrl.secretsForm[secretFieldName].$touched">
           <span class="help-block">
             Secret reference is required.
           </span>
@@ -89,5 +85,5 @@
       <span class="action-divider" aria-hidden="true"> | </span>
       <button class="btn btn-link" href="" type="button" ng-click="$ctrl.openCreateWebhookSecretModal()">Create New Webhook Secret</button>
     </span>
-  </div> 
+  </div>
 </ng-form>

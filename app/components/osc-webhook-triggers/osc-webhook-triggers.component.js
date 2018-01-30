@@ -37,12 +37,19 @@
           type: ""
         }
       });
-      var numberOfTriggers = ctrl.webhookTriggers.length - 1;
-      $timeout(function() {$scope.$broadcast('triggerTypeFocus' + numberOfTriggers);});
+      var newIndex = ctrl.webhookTriggers.length - 1;
+      $timeout(function() {
+        $scope.$broadcast('focus-index-' + newIndex);
+      });
     };
 
     // Check if new or modified webhook trigger is a duplicate. If so, show a warning under the appropriate trigger
     var checkDuplicates = function(trigger) {
+      var type = _.get(trigger, 'data.type');
+      if (!type || _.isNil(trigger.data[type.toLowerCase()])) {
+        return;
+      }
+
       var matchingTriggers = _.filter(ctrl.webhookTriggers, function(wehbookTrigger) {
         return _.isEqual(wehbookTrigger.data, trigger.data);
       });
@@ -125,19 +132,6 @@
 
     ctrl.triggerSecretChange = function(trigger) {
       checkDuplicates(trigger);
-    };
-
-    ctrl.missingInputError = function(selectBoxName, rowIndex, type, secretReferenceName) {
-      var fullSelectBoxName = selectBoxName + rowIndex;
-      if (!_.has(ctrl.secretsForm, fullSelectBoxName)) {
-        return false;
-      }
-      if (selectBoxName === 'triggerType') {
-        return ctrl.secretsForm[fullSelectBoxName].$touched && !type && secretReferenceName;
-      } else if (selectBoxName === 'triggerSecretRef') {
-        return ctrl.secretsForm[fullSelectBoxName].$touched && type && !secretReferenceName;
-      }
-      return false;
     };
 
     ctrl.openCreateWebhookSecretModal = function() {
