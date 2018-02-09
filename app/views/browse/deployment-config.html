@@ -344,6 +344,10 @@
               <uib-tab-heading>Events</uib-tab-heading>
               <events api-objects="[ deploymentConfig ]" project-context="projectContext" ng-if="selectedTab.events"></events>
             </uib-tab>
+            <uib-tab active="selectedTab.yaml">
+              <uib-tab-heading>YAML</uib-tab-heading>
+              <inline-yaml resource="deploymentConfig"></inline-yaml>
+            </uib-tab>
           </uib-tabset>
         </div><!-- /col-* -->
       </div>

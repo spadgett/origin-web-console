@@ -108,3 +108,20 @@ copy-to-clipboard .input-group.limit-width {
 .ui-select-dropdown {
   z-index: @zindex-navbar-fixed + 1;
 }
+
+.inline-yaml-form {
+  margin-top: -15px;
+  .alert {
+    // Prevent top margin collapsing.
+    display: inline-block;
+    margin-top: 15px;
+    width: 100%;
+  }
+  .ace_editor.editor {
+    height: 55vh;
+  }
+  .button-group {
+    margin-bottom: 20px;
+    margin-top: 20px;
+  }
+}

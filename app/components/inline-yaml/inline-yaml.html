@@ -1,0 +1,26 @@
+<form name="$ctrl.form" class="inline-yaml-form">
+  <div ng-if="$ctrl.conflict" class="alert alert-warning">
+    <span class="pficon pficon-warning-triangle-o" aria-hidden="true"></span>
+    <span class="sr-only">Warning:</span>
+    {{$ctrl.updatedResource.kind | humanizeKind | upperFirst}} <strong>{{$ctrl.updatedResource.metadata.name}}</strong> has
+    changed since you started editing it. You'll need to copy any changes you've made and edit the
+    {{$ctrl.updatedResource.kind | humanizeKind}} again.
+  </div>
+  <alerts alerts="$ctrl.alerts"></alerts>
+  <parse-error error="$ctrl.error" ng-if="$ctrl.error"></parse-error>
+  <ui-ace-yaml
+    resource="$ctrl.updatedResource"
+    ng-readonly="updatingNow || !($ctrl.resourceGroupVersion | canI : 'update')"
+    ng-required="true">
+  </ui-ace-yaml>
+  <div ng-if="$ctrl.resourceGroupVersion | canI : 'update'" class="button-group mar-top-xl">
+    <button class="btn btn-primary"
+            type="button"
+            ng-click="$ctrl.save()"
+            ng-disabled="!$ctrl.modified || form.$invalid || $ctrl.updatingNow || $ctrl.conflict">Save</button>
+    <button class="btn btn-default"
+            type="button"
+            ng-click="$ctrl.reload()"
+            ng-disabled="$ctrl.updatingNow">Reload</button>
+  </div>
+</form>

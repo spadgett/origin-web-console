@@ -104,6 +104,10 @@
               <uib-tab-heading>Events</uib-tab-heading>
               <events api-objects="[ service ]" project-context="projectContext" ng-if="selectedTab.events"></events>
             </uib-tab>
+            <uib-tab active="selectedTab.yaml">
+              <uib-tab-heading>YAML</uib-tab-heading>
+              <inline-yaml resource="service"></inline-yaml>
+            </uib-tab>
           </uib-tabset>
         </div><!-- /col-* -->
       </div>

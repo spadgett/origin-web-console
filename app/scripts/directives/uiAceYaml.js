@@ -9,6 +9,7 @@
     controllerAs: '$ctrl',
     bindings: {
       resource: '=',
+      ngReadonly: '<?',
       ngRequired: '<?',
       showFileInput: '<?'
     },
