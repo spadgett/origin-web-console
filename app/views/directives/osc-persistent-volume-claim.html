@@ -26,8 +26,8 @@
             repeat="sclass as sclass in storageClasses | toArray | filter : { metadata: { name: $select.search } } ">
             <div>
               <span ng-bind-html="sclass.metadata.name  | highlight : $select.search"></span>
-              <span ng-if="sclass.parameters.type || sclass.parameters.zone || (sclass | description)" class="text-muted">
-                <small>&ndash;
+              <div ng-if="sclass.parameters.type || sclass.parameters.zone || (sclass | description) || (sclass | storageClassAccessMode)" class="text-muted">
+                <small>
                   <span ng-if="sclass.parameters.type">
                     Type: {{sclass.parameters.type}}
                   </span>
@@ -35,12 +35,16 @@
                     <span ng-if="sclass.parameters.type">|</span>
                     Zone: {{sclass.parameters.zone}}
                   </span>
-                  <span ng-if="sclass | description">
+                  <span ng-if="(sclass | storageClassAccessMode)">
                     <span ng-if="sclass.parameters.type || sclass.parameters.zone">|</span>
+                    Access: {{sclass | storageClassAccessMode}}
+                  </span>
+                  <span ng-if="sclass | description">
+                    <span ng-if="sclass.parameters.type || sclass.parameters.zone || (sclass | storageClassAccessMode)">|</span>
                     {{sclass | description}}
                   </span>
                 </small>
-              </span>
+              </div>
             </div>
           </ui-select-choices>
         </ui-select>
@@ -97,19 +101,35 @@
     </div>
 
     <div class="form-group" >
-      <label class="required">Access Mode</label><br/>
-      <label class="radio-inline">
-        <input type="radio" name="accessModes" ng-model="claim.accessModes" value="ReadWriteOnce" aria-describedby="access-modes-help" ng-checked="true" >
-        Single User (RWO)
+      <label class="required">Access Mode
+        <span ng-if="claim.storageClass && (claim.storageClass | storageClassAccessMode)">
+          <small>(cannot be changed)</small>
+        </span>
       </label>
-      <label class="radio-inline">
-        <input type="radio" id="accessModes" name="accessModes" ng-model="claim.accessModes" value="ReadWriteMany" aria-describedby="access-modes-help" >
-        Shared Access (RWX)
-      </label>
-      <label class="radio-inline">
-        <input type="radio" name="accessModes" ng-model="claim.accessModes" value="ReadOnlyMany" aria-describedby="access-modes-help">
-        Read Only (ROX)
-      </label>
+      <div>
+        <label class="radio-inline">
+          <input type="radio" name="accessModes" ng-model="claim.accessModes" value="ReadWriteOnce"
+                 aria-describedby="access-modes-help" ng-true-value="’1’" ng-false-value="’0’"
+                 ng-checked="((claim.storageClass | storageClassAccessMode)==='ReadWriteOnce')
+                  || !claim.storageClass || !(claim.storageClass | storageClassAccessMode)"
+                 ng-disabled="(claim.storageClass | storageClassAccessMode)">
+          Single User (RWO)
+        </label>
+        <label class="radio-inline">
+          <input type="radio" id="accessModes" name="accessModes" ng-model="claim.accessModes" value="ReadWriteMany"
+                 aria-describedby="access-modes-help" ng-true-value="’1’" ng-false-value="’0’"
+                 ng-checked="(claim.storageClass | storageClassAccessMode)==='ReadWriteMany'"
+                 ng-disabled="(claim.storageClass | storageClassAccessMode)">
+          Shared Access (RWX)
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="accessModes" ng-model="claim.accessModes" value="ReadOnlyMany"
+                 aria-describedby="access-modes-help" ng-true-value="’1’" ng-false-value="’0’"
+                 ng-checked="(claim.storageClass | storageClassAccessMode)==='ReadOnlyMany'"
+                 ng-disabled="(claim.storageClass | storageClassAccessMode)">
+          Read Only (ROX)
+        </label>
+      </div>
       <div>
         <span id="access-modes-help" class="help-block">Permissions to the mounted volume.</span>
       </div>

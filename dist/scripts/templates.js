@@ -8204,8 +8204,8 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<ui-select-choices repeat=\"sclass as sclass in storageClasses | toArray | filter : { metadata: { name: $select.search } } \">\n" +
     "<div>\n" +
     "<span ng-bind-html=\"sclass.metadata.name  | highlight : $select.search\"></span>\n" +
-    "<span ng-if=\"sclass.parameters.type || sclass.parameters.zone || (sclass | description)\" class=\"text-muted\">\n" +
-    "<small>&ndash;\n" +
+    "<div ng-if=\"sclass.parameters.type || sclass.parameters.zone || (sclass | description) || (sclass | storageClassAccessMode)\" class=\"text-muted\">\n" +
+    "<small>\n" +
     "<span ng-if=\"sclass.parameters.type\">\n" +
     "Type: {{sclass.parameters.type}}\n" +
     "</span>\n" +
@@ -8213,12 +8213,16 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "<span ng-if=\"sclass.parameters.type\">|</span>\n" +
     "Zone: {{sclass.parameters.zone}}\n" +
     "</span>\n" +
-    "<span ng-if=\"sclass | description\">\n" +
+    "<span ng-if=\"(sclass | storageClassAccessMode)\">\n" +
     "<span ng-if=\"sclass.parameters.type || sclass.parameters.zone\">|</span>\n" +
+    "Access: {{sclass | storageClassAccessMode}}\n" +
+    "</span>\n" +
+    "<span ng-if=\"sclass | description\">\n" +
+    "<span ng-if=\"sclass.parameters.type || sclass.parameters.zone || (sclass | storageClassAccessMode)\">|</span>\n" +
     "{{sclass | description}}\n" +
     "</span>\n" +
     "</small>\n" +
-    "</span>\n" +
+    "</div>\n" +
     "</div>\n" +
     "</ui-select-choices>\n" +
     "</ui-select>\n" +
@@ -8257,19 +8261,26 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "</div>\n" +
     "<div class=\"form-group\">\n" +
-    "<label class=\"required\">Access Mode</label><br/>\n" +
+    "<label class=\"required\">Access Mode\n" +
+    "<span ng-if=\"claim.storageClass && (claim.storageClass | storageClassAccessMode)\">\n" +
+    "<small>(cannot be changed)</small>\n" +
+    "</span>\n" +
+    "</label>\n" +
+    "<div>\n" +
     "<label class=\"radio-inline\">\n" +
-    "<input type=\"radio\" name=\"accessModes\" ng-model=\"claim.accessModes\" value=\"ReadWriteOnce\" aria-describedby=\"access-modes-help\" ng-checked=\"true\">\n" +
+    "<input type=\"radio\" name=\"accessModes\" ng-model=\"claim.accessModes\" value=\"ReadWriteOnce\" aria-describedby=\"access-modes-help\" ng-true-value=\"’1’\" ng-false-value=\"’0’\" ng-checked=\"((claim.storageClass | storageClassAccessMode)==='ReadWriteOnce')\n" +
+    "                  || !claim.storageClass || !(claim.storageClass | storageClassAccessMode)\" ng-disabled=\"(claim.storageClass | storageClassAccessMode)\">\n" +
     "Single User (RWO)\n" +
     "</label>\n" +
     "<label class=\"radio-inline\">\n" +
-    "<input type=\"radio\" id=\"accessModes\" name=\"accessModes\" ng-model=\"claim.accessModes\" value=\"ReadWriteMany\" aria-describedby=\"access-modes-help\">\n" +
+    "<input type=\"radio\" id=\"accessModes\" name=\"accessModes\" ng-model=\"claim.accessModes\" value=\"ReadWriteMany\" aria-describedby=\"access-modes-help\" ng-true-value=\"’1’\" ng-false-value=\"’0’\" ng-checked=\"(claim.storageClass | storageClassAccessMode)==='ReadWriteMany'\" ng-disabled=\"(claim.storageClass | storageClassAccessMode)\">\n" +
     "Shared Access (RWX)\n" +
     "</label>\n" +
     "<label class=\"radio-inline\">\n" +
-    "<input type=\"radio\" name=\"accessModes\" ng-model=\"claim.accessModes\" value=\"ReadOnlyMany\" aria-describedby=\"access-modes-help\">\n" +
+    "<input type=\"radio\" name=\"accessModes\" ng-model=\"claim.accessModes\" value=\"ReadOnlyMany\" aria-describedby=\"access-modes-help\" ng-true-value=\"’1’\" ng-false-value=\"’0’\" ng-checked=\"(claim.storageClass | storageClassAccessMode)==='ReadOnlyMany'\" ng-disabled=\"(claim.storageClass | storageClassAccessMode)\">\n" +
     "Read Only (ROX)\n" +
     "</label>\n" +
+    "</div>\n" +
     "<div>\n" +
     "<span id=\"access-modes-help\" class=\"help-block\">Permissions to the mounted volume.</span>\n" +
     "</div>\n" +

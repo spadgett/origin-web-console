@@ -8994,14 +8994,19 @@ r.history.back();
 };
 n.cancel = g, u.get(t.project).then(_.spread(function(r, a) {
 function o() {
-var e = angular.copy(m);
-e.metadata.name = n.claim.name, e.spec.accessModes = [ n.claim.accessModes || "ReadWriteOnce" ];
-var t = n.claim.unit || "Mi";
-if (e.spec.resources.requests.storage = n.claim.amount + t, n.claim.selectedLabels) {
-var r = d.mapEntries(d.compactEntries(n.claim.selectedLabels));
-_.isEmpty(r) || _.set(e, "spec.selector.matchLabels", r);
+var t = angular.copy(m);
+t.metadata.name = n.claim.name, t.spec.accessModes = [ n.claim.accessModes || "ReadWriteOnce" ];
+var r = n.claim.unit || "Mi";
+if (t.spec.resources.requests.storage = n.claim.amount + r, n.claim.selectedLabels) {
+var a = d.mapEntries(d.compactEntries(n.claim.selectedLabels));
+_.isEmpty(a) || _.set(t, "spec.selector.matchLabels", a);
 }
-return n.claim.storageClass && "No Storage Class" !== n.claim.storageClass.metadata.name && (e.metadata.annotations["volume.beta.kubernetes.io/storage-class"] = n.claim.storageClass.metadata.name), e;
+if (n.claim.storageClass && "No Storage Class" !== n.claim.storageClass.metadata.name) {
+t.metadata.annotations["volume.beta.kubernetes.io/storage-class"] = n.claim.storageClass.metadata.name;
+var o = e("storageClassAccessMode");
+o(n.claim.storageClass) && (t.spec.accessModes = [ o(n.claim.storageClass) ]);
+}
+return t;
 }
 n.project = r, i.canI(p, "create", t.project) ? n.createPersistentVolumeClaim = function() {
 if (f(), n.createPersistentVolumeClaimForm.$valid) {
@@ -15090,6 +15095,10 @@ return (r < 0 || a < 0 || o < 0) && (r = a = o = 0), r && t.push(r + "h"), a && 
 }), angular.module("openshiftConsole").filter("storageClass", [ "annotationFilter", function(e) {
 return function(t) {
 return e(t, "volume.beta.kubernetes.io/storage-class");
+};
+} ]).filter("storageClassAccessMode", [ "annotationFilter", function(e) {
+return function(t) {
+return e(t, "storage.alpha.openshift.io/access-mode");
 };
 } ]).filter("tags", [ "annotationFilter", function(e) {
 return function(t, n) {
