@@ -14017,7 +14017,7 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "</div>\n" +
     "<div class=\"select-secret-ref deprecated-secret input-group\" ng-if=\"$ctrl.isDeprecated(trigger)\">\n" +
-    "<input ng-model=\"trigger.data[trigger.data.type.toLowerCase()].secret\" class=\"form-control\" type=\"{{trigger.secretInputType}}\" autocorrect=\"off\" autocapitalize=\"none\" spellcheck=\"false\" disabled=\"disabled\">\n" +
+    "<input ng-model=\"trigger.data[trigger.data.type.toLowerCase()].secret\" class=\"form-control\" type=\"{{trigger.secretInputType}}\" autocorrect=\"off\" autocapitalize=\"none\" autocomplete=\"off\" spellcheck=\"false\" disabled=\"disabled\">\n" +
     "<div class=\"input-group-btn\">\n" +
     "<button type=\"button\" class=\"btn btn-default toggle\" title=\"Toggle Token Visibility\" aria-label=\"Toggle Token Visibility\" ng-click=\"$ctrl.toggleSecretInputType(trigger)\">\n" +
     "<span class=\"glyphicon glyphicon-eye-open\" aria-hidden=\"true\"></span>\n" +
