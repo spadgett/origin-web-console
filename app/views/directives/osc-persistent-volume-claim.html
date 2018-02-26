@@ -8,11 +8,11 @@
       </div>
     </div>
     <div ng-if="storageClasses.length" class="form-group">
-      <!--storage class-->
       <label>Storage Class</label>
       <div>
         <ui-select
           ng-model="claim.storageClass"
+          on-select="onStorageClassSelected($item)"
           theme="bootstrap"
           search-enabled="true"
           title="Select a storage class"
@@ -101,7 +101,8 @@
     </div>
 
     <div class="form-group" >
-      <label class="required">Access Mode
+      <label class="required">
+        Access Mode
         <span ng-if="claim.storageClass && (claim.storageClass | storageClassAccessMode)">
           <small>(cannot be changed)</small>
         </span>
@@ -110,22 +111,18 @@
         <label class="radio-inline">
           <input type="radio" name="accessModes" ng-model="claim.accessModes" value="ReadWriteOnce"
                  aria-describedby="access-modes-help" ng-true-value="’1’" ng-false-value="’0’"
-                 ng-checked="((claim.storageClass | storageClassAccessMode)==='ReadWriteOnce')
-                  || !claim.storageClass || !(claim.storageClass | storageClassAccessMode)"
                  ng-disabled="(claim.storageClass | storageClassAccessMode)">
           Single User (RWO)
         </label>
         <label class="radio-inline">
           <input type="radio" id="accessModes" name="accessModes" ng-model="claim.accessModes" value="ReadWriteMany"
                  aria-describedby="access-modes-help" ng-true-value="’1’" ng-false-value="’0’"
-                 ng-checked="(claim.storageClass | storageClassAccessMode)==='ReadWriteMany'"
                  ng-disabled="(claim.storageClass | storageClassAccessMode)">
           Shared Access (RWX)
         </label>
         <label class="radio-inline">
           <input type="radio" name="accessModes" ng-model="claim.accessModes" value="ReadOnlyMany"
                  aria-describedby="access-modes-help" ng-true-value="’1’" ng-false-value="’0’"
-                 ng-checked="(claim.storageClass | storageClassAccessMode)==='ReadOnlyMany'"
                  ng-disabled="(claim.storageClass | storageClassAccessMode)">
           Read Only (ROX)
         </label>

@@ -8192,10 +8192,9 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "</div>\n" +
     "<div ng-if=\"storageClasses.length\" class=\"form-group\">\n" +
-    "\n" +
     "<label>Storage Class</label>\n" +
     "<div>\n" +
-    "<ui-select ng-model=\"claim.storageClass\" theme=\"bootstrap\" search-enabled=\"true\" title=\"Select a storage class\" class=\"select-role\">\n" +
+    "<ui-select ng-model=\"claim.storageClass\" on-select=\"onStorageClassSelected($item)\" theme=\"bootstrap\" search-enabled=\"true\" title=\"Select a storage class\" class=\"select-role\">\n" +
     "<ui-select-match placeholder=\"Select a storage class\">\n" +
     "<span>\n" +
     "{{$select.selected.metadata.name}}\n" +
@@ -8261,23 +8260,23 @@ angular.module('openshiftConsoleTemplates', []).run(['$templateCache', function(
     "</div>\n" +
     "</div>\n" +
     "<div class=\"form-group\">\n" +
-    "<label class=\"required\">Access Mode\n" +
+    "<label class=\"required\">\n" +
+    "Access Mode\n" +
     "<span ng-if=\"claim.storageClass && (claim.storageClass | storageClassAccessMode)\">\n" +
     "<small>(cannot be changed)</small>\n" +
     "</span>\n" +
     "</label>\n" +
     "<div>\n" +
     "<label class=\"radio-inline\">\n" +
-    "<input type=\"radio\" name=\"accessModes\" ng-model=\"claim.accessModes\" value=\"ReadWriteOnce\" aria-describedby=\"access-modes-help\" ng-true-value=\"’1’\" ng-false-value=\"’0’\" ng-checked=\"((claim.storageClass | storageClassAccessMode)==='ReadWriteOnce')\n" +
-    "                  || !claim.storageClass || !(claim.storageClass | storageClassAccessMode)\" ng-disabled=\"(claim.storageClass | storageClassAccessMode)\">\n" +
+    "<input type=\"radio\" name=\"accessModes\" ng-model=\"claim.accessModes\" value=\"ReadWriteOnce\" aria-describedby=\"access-modes-help\" ng-true-value=\"’1’\" ng-false-value=\"’0’\" ng-disabled=\"(claim.storageClass | storageClassAccessMode)\">\n" +
     "Single User (RWO)\n" +
     "</label>\n" +
     "<label class=\"radio-inline\">\n" +
-    "<input type=\"radio\" id=\"accessModes\" name=\"accessModes\" ng-model=\"claim.accessModes\" value=\"ReadWriteMany\" aria-describedby=\"access-modes-help\" ng-true-value=\"’1’\" ng-false-value=\"’0’\" ng-checked=\"(claim.storageClass | storageClassAccessMode)==='ReadWriteMany'\" ng-disabled=\"(claim.storageClass | storageClassAccessMode)\">\n" +
+    "<input type=\"radio\" id=\"accessModes\" name=\"accessModes\" ng-model=\"claim.accessModes\" value=\"ReadWriteMany\" aria-describedby=\"access-modes-help\" ng-true-value=\"’1’\" ng-false-value=\"’0’\" ng-disabled=\"(claim.storageClass | storageClassAccessMode)\">\n" +
     "Shared Access (RWX)\n" +
     "</label>\n" +
     "<label class=\"radio-inline\">\n" +
-    "<input type=\"radio\" name=\"accessModes\" ng-model=\"claim.accessModes\" value=\"ReadOnlyMany\" aria-describedby=\"access-modes-help\" ng-true-value=\"’1’\" ng-false-value=\"’0’\" ng-checked=\"(claim.storageClass | storageClassAccessMode)==='ReadOnlyMany'\" ng-disabled=\"(claim.storageClass | storageClassAccessMode)\">\n" +
+    "<input type=\"radio\" name=\"accessModes\" ng-model=\"claim.accessModes\" value=\"ReadOnlyMany\" aria-describedby=\"access-modes-help\" ng-true-value=\"’1’\" ng-false-value=\"’0’\" ng-disabled=\"(claim.storageClass | storageClassAccessMode)\">\n" +
     "Read Only (ROX)\n" +
     "</label>\n" +
     "</div>\n" +
