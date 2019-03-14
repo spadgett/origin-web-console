@@ -1,8 +1,0 @@
-<bind-results error="ctrl.error"
-              binding="ctrl.binding"
-              service-to-bind="ctrl.serviceToBind.metadata.name"
-              bind-type="{{ctrl.bindType}}"
-              application-to-bind="ctrl.appToBind.metadata.name"
-              show-pod-presets="'pod_presets' | enableTechPreviewFeature"
-              secret-href="ctrl.binding.spec.secretName | navigateResourceURL : 'Secret' : ctrl.target.metadata.namespace">
-</bind-results>

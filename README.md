@@ -1,8 +1,13 @@
+Notice
+======
+
+**Important!** New web console development for OpenShift 4.0 has moved to [openshift/console](https://github.com/openshift/console). Pull requests with new features should be opened against that repository.
+
+Issues and bug fixes for OpenShift 3.x can be opened against this repository. Pull requests should be opened against the enterprise-3.x branch corresponding to the release where the fix needs to be made.
+
 OpenShift Management Console
 =========================
 The management console for [OpenShift Origin](https://github.com/openshift/origin).
-
-[![Build Status](https://travis-ci.org/openshift/origin-web-console.svg?branch=master)](https://travis-ci.org/openshift/origin-web-console)
 
 Contributing
 ------------
